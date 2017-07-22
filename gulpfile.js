@@ -67,6 +67,7 @@ gulp.task('scripts', function () {
 		'bower_components/modernizr1/modernizr.js',
 		'bower_components/swiper/dist/js/swiper.js',
 		'bower_components/fancybox/dist/jquery.fancybox.js',
+		'bower_components/croppie/croppie.js',
 		'app/Resources/assets/js/*.js'
 	])
 		.pipe(concat('scripts.js'))

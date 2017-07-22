@@ -6,6 +6,7 @@
 		"jquery": "~2.2.3",
 		"normalize-scss": "~3.0.3",
 		"fancybox": "^3.1.20",
+		"croppie": "2.5.0",
 		"swiper": "3.4.2"
 	},
 	"private": true

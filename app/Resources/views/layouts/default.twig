@@ -39,7 +39,7 @@
 		<div class="container">
 			<div class="header__wrapper">
 				<div class="header__logo">
-					<a href="index.html" class="header__logo-link">
+					<a href="{{ path('homepage') }}" class="header__logo-link">
 						<img src="/assets/img/logo.png" alt="" class="header__logo-img">
 					</a>
 				</div>
@@ -47,16 +47,16 @@
 					<nav class="nav">
 						<ul class="nav__list">
 							<li class="nav__item">
-								<a href="about.html" class="nav__link">О лиге</a>
+								<a href="{{ path('about') }}" class="nav__link">О лиге</a>
 							</li>
 							<li class="nav__item">
-								<a href="calendar.html" class="nav__link">Календарь</a>
+								<a href="{{ path('calendar') }}" class="nav__link">Календарь</a>
 							</li>
 							<li class="nav__item">
-								<a href="news.html" class="nav__link">Новости</a>
+								<a href="{{ path('news') }}" class="nav__link">Новости</a>
 							</li>
 							<li class="nav__item">
-								<a href="media.html" class="nav__link">Медиа</a>
+								<a href="{{ path('media') }}" class="nav__link">Медиа</a>
 							</li>
 						</ul>
 					</nav>
@@ -64,7 +64,7 @@
 				{% block headerUser %}
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                     <div class="header__user">
-                        <a href="profile.html" class="btn btn--action">Личный кабинет</a>
+                        <a href="{{ path('profile.index') }}" class="btn btn--action">Личный кабинет</a>
                     </div>
                     {% else %}
                     <div class="header__user">
@@ -90,16 +90,16 @@
 				<div class="footer__text-logo">Пензенская Любительская Хоккейная Лига</div>
 				<ul class="footer__nav-list">
 					<li class="footer__nav-item">
-						<a href="about.html" class="footer__nav-link">О лиге</a>
+						<a href="{{ path('about') }}" class="footer__nav-link">О лиге</a>
 					</li>
 					<li class="footer__nav-item">
-						<a href="calendar.html" class="footer__nav-link">Календарь</a>
+						<a href="{{ path('calendar') }}" class="footer__nav-link">Календарь</a>
 					</li>
 					<li class="footer__nav-item">
-						<a href="news.html" class="footer__nav-link">Новости</a>
+						<a href="{{ path('news') }}" class="footer__nav-link">Новости</a>
 					</li>
 					<li class="footer__nav-item">
-						<a href="media.html" class="footer__nav-link">Медиа</a>
+						<a href="{{ path('media') }}" class="footer__nav-link">Медиа</a>
 					</li>
 				</ul>
 				<div class="footer__elarts">
@@ -109,5 +109,6 @@
 		</div>
 	</footer>
 	<script src="{{ asset('assets/js/scripts.min.js')}}"></script>
+    {% block javascript %}{% endblock %}
 </body>
 </html>

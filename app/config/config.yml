@@ -79,3 +79,17 @@ fos_user:
     registration:
         confirmation:
           enabled:    false # change to true for required email confirmation
+
+liip_imagine:
+    resolvers :
+        default :
+            web_path : ~
+    filter_sets:
+        avatar_normal:
+            format: png
+            filters:
+                thumbnail: { size: [176, 176], mode: outbound }
+        avatar_mini:
+            format: png
+            filters:
+                thumbnail: { size: [48, 48], mode: outbound }

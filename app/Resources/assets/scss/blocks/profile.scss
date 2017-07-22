@@ -124,6 +124,7 @@
 .profile-empty__item {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 
   &:not(:first-child) {
     margin-top: 20px;
@@ -142,7 +143,10 @@
   .select {
     padding: 0 25px;
   }
-
+  .form-message {
+    flex-basis: 100%;
+    padding-left: 210px;
+  }
   &--select {
     position: relative;
 

@@ -4,33 +4,33 @@
     <section class="profile wrapper page">
         <div class="profile__info">
             <div class="profile__img-wrapper">
-                <img src="/assets/img/players/p-1.jpg" alt="" class="profile__img">
+                <img src="{{ asset('avatar/' ~ profile.image) }}" alt="" class="profile__img">
             </div>
             <div class="profile__content">
                 <div class="profile__name">
-                    Оразаев Айдар Муратович
-                    <a href="profile-empty.html" class="profile__settings">Редактировать</a>
+                    {{ profile.fullName }}
+                    <a href="{{ path('profile.player.edit') }}" class="profile__settings">Редактировать</a>
                 </div>
                 <div class="profile__list">
                     <div class="profile__item">
                         <div class="profile__type">Дата рождения:</div>
-                        <div class="profile__value">10.12.1989</div>
+                        <div class="profile__value">{{ profile.birthdate|date('d.m.Y') }}</div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Позиция:</div>
-                        <div class="profile__value">Левый нападающий</div>
+                        <div class="profile__value">{{ profile.position|position }}</div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Хват:</div>
-                        <div class="profile__value">Левый</div>
+                        <div class="profile__value">{{ profile.stick|stick }}</div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Рост (см.):</div>
-                        <div class="profile__value">176</div>
+                        <div class="profile__value">{{ profile.height }}</div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Вес (кг.):</div>
-                        <div class="profile__value">55</div>
+                        <div class="profile__value">{{ profile.weight }}</div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Команда:</div>

@@ -230,3 +230,7 @@ h1 {
   padding: 0 5px;
   box-sizing: border-box;
 }
+
+.croppie-container .cr-resizer, .croppie-container .cr-viewport {
+	border: none;
+}

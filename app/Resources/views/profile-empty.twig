@@ -1,52 +1,62 @@
 {% extends 'layouts/default.twig' %}
 
+{% form_theme form _self %}
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        {% for error in errors %}
+            <div class="form-message form-message--error">
+                {{ error.message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock form_errors %}
+
 {% block content %}
     <section class="wrapper page">
         <h1 class="title">Данные игрока</h1>
         <div class="profile-empty">
             <div class="profile-empty__left">
-                <form action="#" class="profile-empty__form">
+                <form action="{{ path('profile.player.edit') }}" method="post" class="profile-empty__form">
                     <div class="profile-empty__item">
-                        <label for="surname" class="label">Фамилия</label>
-                        <input id="surname" type="text" class="input" placeholder="Иванов">
+                        {{ form_widget(form._token) }}
+                        {{ form_label(form.surname, 'Фамилия', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.surname, {attr: {placeholder: 'Иванов',class: not form.surname.vars.valid ? 'input input--error' : 'input'}}) }}
+                        {{ form_errors(form.surname) }}
                     </div>
                     <div class="profile-empty__item">
-                        <label for="name" class="label">Имя</label>
-                        <input id="name" type="text" class="input" placeholder="Иван">
+                        {{ form_label(form.firstName, 'Имя', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.firstName, {attr: {placeholder: 'Иван',class: not form.firstName.vars.valid ? 'input input--error' : 'input'}}) }}
+                        {{ form_errors(form.firstName) }}
                     </div>
                     <div class="profile-empty__item">
-                        <label for="patronymic" class="label">Отчество</label>
-                        <input id="patronymic" type="text" class="input" placeholder="Иванович">
+                        {{ form_label(form.secondName, 'Отчество', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.secondName, {attr: {placeholder: 'Иванович',class: not form.secondName.vars.valid ? 'input input--error' : 'input'}}) }}
+                        {{ form_errors(form.secondName) }}
                     </div>
                     <div class="profile-empty__item">
-                        <label for="date" class="label">Дата рождения</label>
-                        <input id="date" type="text" class="input" placeholder="10.12.1989">
+                        {{ form_label(form.birthdate, 'Дата рождения', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.birthdate, {attr: {placeholder: '10.12.1989',class: not form.birthdate.vars.valid ? 'input input--error' : 'input'}}) }}
+                        {{ form_errors(form.birthdate) }}
                     </div>
                     <div class="profile-empty__item profile-empty__item--select">
-                        <label for="position" class="label">Позиция</label>
-                        <select id="position" class="select">
-                            <option value="">Вратарь</option>
-                            <option value="">Левый защитник</option>
-                            <option value="">Правый защитник</option>
-                            <option value="">Центральный нападающий</option>
-                            <option value="">Левый нападающий</option>
-                            <option value="">Правый нападающий</option>
-                        </select>
+                        {{ form_label(form.position, 'Позиция', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.position, {attr: {class: 'select'}}) }}
+                        {{ form_errors(form.position) }}
                     </div>
                     <div class="profile-empty__item profile-empty__item--select">
-                        <label for="stick" class="label">Хват</label>
-                        <select id="stick" class="select">
-                            <option value="">Левый</option>
-                            <option value="">Правый</option>
-                        </select>
+                        {{ form_label(form.stick, 'Хват', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.stick, {attr: {class: 'select'}}) }}
+                        {{ form_errors(form.stick) }}
                     </div>
                     <div class="profile-empty__item">
-                        <label for="height" class="label">Рост (см.)</label>
-                        <input id="height" type="text" class="input" placeholder="189">
+                        {{ form_label(form.height, 'Рост (см.)', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.height, {attr: {placeholder: '189',class: not form.height.vars.valid ? 'input input--error' : 'input'}}) }}
+                        {{ form_errors(form.height) }}
                     </div>
                     <div class="profile-empty__item">
-                        <label for="weight" class="label">Вес (кг.)</label>
-                        <input id="weight" type="text" class="input" placeholder="93">
+                        {{ form_label(form.weight, 'Вес (кг.)', {label_attr : {class: 'label'}}) }}
+                        {{ form_widget(form.weight, {attr: {placeholder: '93', class: not form.weight.vars.valid ? 'input input--error' : 'input'}}) }}
+                        {{ form_errors(form.weight) }}
                     </div>
                     <div class="profile-empty__button">
                         <button class="btn btn--action" type="submit">Сохранить</button>
@@ -54,11 +64,85 @@
                 </form>
             </div>
             <div class="profile-empty__right">
-                <div class="profile-empty__img"></div>
+                <div class="profile-empty__img" id="upload-avatar" style="{{ profile and profile.image ? 'background:none': ''  }}">
+                    {% if profile and profile.image %}
+                        <img src="{{ asset('/avatar/' ~ profile.image ) }}" style="width: 100%; height: 100%">
+                    {% endif %}
+                </div>
                 <div class="profile-empty__upload">
-                    <a href="#" class="btn btn--default">Загрузить фото</a>
+                    <a href="#" class="btn btn--default js-avatar-upload">Загрузить фото</a>
+                    <a href="#" class="btn btn--default js-avatar-save" style="display: none">Сохарнить</a>
+                    <input type="file" id="upload" value="" accept="image/*" style="display: none">
                 </div>
             </div>
         </div>
     </section>
 {% endblock %}
+
+ {% block javascript %}
+     <script>
+		 $(document).ready(function () {
+			 var $uploadCrop;
+			 function readFile(input) {
+				 if (input.files && input.files[0]) {
+					 var reader = new FileReader();
+					 reader.onload = function (e) {
+						 $('#upload-avatar').html('');
+						 if (!$uploadCrop) {
+							 $uploadCrop = $('#upload-avatar').croppie({
+								 viewport: {
+									 width: 176,
+									 height: 176,
+									 type: 'square'
+								 },
+								 showZoomer: false,
+								 boundary: {
+									 width: 176,
+									 height: 176
+								 },
+								 enableExif: true
+							 });
+						 }
+						 $uploadCrop.croppie('bind', {
+							 url: e.target.result
+						 }).then(function(){});
+					 }
+					 reader.readAsDataURL(input.files[0]);
+				 }
+			 }
+
+			 $('#upload').on('change', function () {
+				 $('#upload-avatar').attr('style', 'background: none');
+			 	readFile(this);
+				 $('.js-avatar-upload').hide();
+				 $('.js-avatar-save').show();
+			 });
+			 $('.js-avatar-upload').on('click', function (ev) {
+				 $('#upload').trigger('click');
+				 return false;
+			 });
+
+			 $('.js-avatar-save').on('click', function (ev) {
+			 	const $btn = $(this);
+				 $uploadCrop.croppie('result', {
+					 type: 'base64',
+					 size: 'original',
+					 format: 'png'
+				 }).then(function (resp) {
+				 	$.ajax({
+                        type: 'post',
+                        url: '/profile/avatar/upload',
+                        data: {image: resp},
+                        success: function (response) {
+							$('.js-avatar-upload').show();
+							$('.js-avatar-save').hide();
+							$uploadCrop.croppie('destroy');
+							$uploadCrop = undefined;
+							$('#upload-avatar').attr('style', 'background: none').html('<img src="/avatar/'+ response + '" style="width: 100%; height: 100%">');
+                        }
+                    })
+				 });
+			 });
+		 });
+     </script>
+ {% endblock %}

@@ -14,7 +14,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity
  * @ORM\Table(name="users")
- * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(
  *     fields={"usernameCanonical", "emailCanonical"},
  *     errorPath="email",
@@ -34,14 +33,19 @@ class User extends \FOS\UserBundle\Model\User
 	 */
 	protected $id;
 
+	/**
+	 * @ORM\OneToOne(targetEntity="PlayerProfile", mappedBy="user", cascade={"persist"})
+	 */
+	private $profile;
 
 	/**
-	 * @return mixed
+	 * @return int
 	 */
 	public function getId()
 	{
 		return $this->id;
 	}
+
 
 	/**
 	 * @param $role
@@ -74,6 +78,9 @@ class User extends \FOS\UserBundle\Model\User
 		return parent::setEmailCanonical($usernameCanonical);
 	}
 
+	/**
+	 * @param $role
+	 */
 	public function setRegRole($role)
 	{
 		switch ($role) {
@@ -86,6 +93,9 @@ class User extends \FOS\UserBundle\Model\User
 		}
 	}
 
+	/**
+	 * @return null|string
+	 */
 	public function getRegRole()
 	{
 		if ($this->hasRole(self::ROLE_FAN)) {
@@ -94,5 +104,39 @@ class User extends \FOS\UserBundle\Model\User
 			return self::ROLE_PLAYER;
 		}
 		return null;
+	}
+
+	/**
+	 * @return PlayerProfile|null
+	 * @throws \RuntimeException
+	 */
+	public function getPlayerProfile()
+	{
+		if ($this->hasRole(self::ROLE_PLAYER)) {
+			return $this->profile;
+		}
+		throw new \RuntimeException();
+	}
+
+	/**
+	 * @param PlayerProfile $profile
+	 */
+	public function setPlayerProfile(PlayerProfile $profile)
+	{
+		if (!$this->hasRole(self::ROLE_PLAYER)) {
+			throw new \RuntimeException();
+		}
+		if ($profile->getUser()->getId() != $this->getId()) {
+			throw new \RuntimeException();
+		}
+		$this->profile = $profile;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPlayer()
+	{
+		return $this->hasRole(self::ROLE_PLAYER);
 	}
 }
