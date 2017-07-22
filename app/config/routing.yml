@@ -1,3 +1,19 @@
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
+
+fos_user_security_logout:
+    path:     /logout
+    defaults: { _controller: FOSUserBundle:Security:logout }
+
+fos_user_security_check:
+    path:     /login_check
+    defaults: { _controller: FOSUserBundle:Security:check }
+
+registration:
+    path:     /registration
+    defaults: { _controller: AppBundle:Security:registration }
+
+login:
+    path:     /login
+    defaults: { _controller: AppBundle:Security:login }

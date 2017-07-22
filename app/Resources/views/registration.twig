@@ -1,30 +1,47 @@
 {% extends 'layouts/default.twig' %}
 
+{% form_theme form _self %}
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        {% for error in errors %}
+            <div class="form-message form-message--error">
+                {{ error.message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock form_errors %}
+
+
 {% block content %}
     <section class="registration page wrapper">
         <h1 class="title">Регистрация</h1>
-        <form action="#" class="registration__form">
+        <form action="{{ path('registration') }}" method="post"  class="registration__form">
             <div class="registration__item">
-                <label for="email" class="label">Ваш e-mail</label>
-                <input id="email" type="email" class="input input--error" placeholder="example@gmail.com" required>
-                <div class="form-message form-message--error">Данные введены не верно</div>
+                {{ form_widget(form._token) }}
+                {{ form_label(form.email, 'Ваш E-mail', {label_attr : {class: 'label'}}) }}
+                {{ form_widget(form.email, {attr: {placeholder: 'example@gmail.com',class: not form.email.vars.valid ? 'input input--error' : 'input'}}) }}
+                {{ form_errors(form.email) }}
             </div>
             <div class="registration__item">
-                <label for="pass-1" class="label">Пароль</label>
-                <input id="pass-1" type="password" class="input" required>
+                {{ form_label(form.plainPassword.first, 'Пароль', {label_attr : {class: 'label'}}) }}
+                {{ form_widget(form.plainPassword.first, {attr: {class: not form.plainPassword.first.vars.valid ? 'input input--error' : 'input'}}) }}
+                {{ form_errors(form.plainPassword.first) }}
             </div>
             <div class="registration__item">
-                <label for="pass-2" class="label">Подтвердите пароль</label>
-                <input id="pass-2" type="password" class="input" required>
+                {{ form_label(form.plainPassword.second, 'Подтведите пароль', {label_attr : {class: 'label'}}) }}
+                {{ form_widget(form.plainPassword.second, {attr: {class: not form.plainPassword.second.vars.valid ? 'input input--error' : 'input'}}) }}
+                {{ form_errors(form.plainPassword.second) }}
             </div>
             <div class="registration__item">
                 <div class="label">Роль</div>
                 <div class="registration__radio">
-                    <input name="role" id="radio-1" type="radio" class="input-radio" checked>
+                    {% dump(form.reg_role.vars) %}
+                    <input name="{{ form.reg_role.vars.full_name }}" id="radio-1" type="radio" class="input-radio" value="ROLE_PLAYER" checked>
                     <label for="radio-1" class="label label--radio">Игрок</label>
-                    <input name="role" id="radio-2" type="radio" class="input-radio">
+                    <input name="{{ form.reg_role.vars.full_name }}" id="radio-2" type="radio" class="input-radio" value="ROLE_FAN">
                     <label for="radio-2" class="label label--radio">Болельщик</label>
                 </div>
+                {{ form_errors(form.reg_role) }}
             </div>
             <div class="registration__button">
                 <button class="btn btn--action">Зарегистрироваться</button>

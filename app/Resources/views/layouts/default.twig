@@ -62,10 +62,16 @@
 					</nav>
 				</div>
 				{% block headerUser %}
-					<div class="header__user">
-						<a href="registration.html" class="btn btn--action">Регистрация</a>
-						<a href="signin.html" class="btn btn--default">Вход</a>
-					</div>
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    <div class="header__user">
+                        <a href="profile.html" class="btn btn--action">Личный кабинет</a>
+                    </div>
+                    {% else %}
+                    <div class="header__user">
+                        <a href="{{ path('registration') }}" class="btn btn--action">Регистрация</a>
+                        <a href="{{ path('login') }}" class="btn btn--default">Вход</a>
+                    </div>
+                    {% endif %}
 				{% endblock %}
 			</div>
 		</div>

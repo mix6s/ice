@@ -8,3 +8,8 @@ services:
         class: AppBundle\LoginEntryPoint
         arguments:
             - '@router'
+    app.event_listner.after_registration_listner:
+        class: AppBundle\EventListener\AfterRegistrationListner
+        arguments: ['@router']
+        tags:
+            - { name: kernel.event_subscriber }
