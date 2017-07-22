@@ -1,0 +1,44 @@
+.team__about {
+  display: flex;
+  align-items: flex-start;
+  border-bottom: 1px solid #c5dee9;
+  padding-bottom: 40px;
+}
+
+.team__img-wrapper {
+  width: 190px;
+  height: 150px;
+  overflow: hidden;
+  border: 1px solid #c5dee9;
+}
+
+.team__img {
+  height: 100%;
+}
+
+.team__content {
+  margin-left: 60px;
+}
+
+.team__item {
+  display: flex;
+
+  &:not(:first-child) {
+    margin-top: 15px;
+  }
+}
+
+.team__content-title {
+  min-width: 210px;
+  font-size: 16px;
+}
+
+.team__content-value {
+  display: flex;
+  flex-direction: column;
+  line-height: 24px;
+}
+
+.team__crew {
+  margin-top: 40px;
+}

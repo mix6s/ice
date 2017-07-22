@@ -1,0 +1,35 @@
+.registration__form {
+  width: 500px;
+}
+
+.registration__item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  .label {
+    min-width: 160px;
+
+    &--radio {
+      min-width: 100px;
+    }
+  }
+
+  .input {
+    width: 340px;
+  }
+
+  .form-message {
+    flex-basis: 100%;
+    padding-left: 160px;
+  }
+}
+
+.registration__radio {
+  display: flex;
+}
+
+.registration__button {
+  margin-top: 40px;
+}

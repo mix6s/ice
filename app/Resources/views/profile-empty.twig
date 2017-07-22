@@ -1,0 +1,70 @@
+{% extends 'layouts/default.twig' %}
+
+{% block headerUser %}
+    <div class="header__user">
+        <a href="profile.html" class="btn btn--action">Личный кабинет</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <section class="wrapper page">
+        <h1 class="title">Данные игрока</h1>
+        <div class="profile-empty">
+            <div class="profile-empty__left">
+                <form action="#" class="profile-empty__form">
+                    <div class="profile-empty__item">
+                        <label for="surname" class="label">Фамилия</label>
+                        <input id="surname" type="text" class="input" placeholder="Иванов">
+                    </div>
+                    <div class="profile-empty__item">
+                        <label for="name" class="label">Имя</label>
+                        <input id="name" type="text" class="input" placeholder="Иван">
+                    </div>
+                    <div class="profile-empty__item">
+                        <label for="patronymic" class="label">Отчество</label>
+                        <input id="patronymic" type="text" class="input" placeholder="Иванович">
+                    </div>
+                    <div class="profile-empty__item">
+                        <label for="date" class="label">Дата рождения</label>
+                        <input id="date" type="text" class="input" placeholder="10.12.1989">
+                    </div>
+                    <div class="profile-empty__item profile-empty__item--select">
+                        <label for="position" class="label">Позиция</label>
+                        <select id="position" class="select">
+                            <option value="">Вратарь</option>
+                            <option value="">Левый защитник</option>
+                            <option value="">Правый защитник</option>
+                            <option value="">Центральный нападающий</option>
+                            <option value="">Левый нападающий</option>
+                            <option value="">Правый нападающий</option>
+                        </select>
+                    </div>
+                    <div class="profile-empty__item profile-empty__item--select">
+                        <label for="stick" class="label">Хват</label>
+                        <select id="stick" class="select">
+                            <option value="">Левый</option>
+                            <option value="">Правый</option>
+                        </select>
+                    </div>
+                    <div class="profile-empty__item">
+                        <label for="height" class="label">Рост (см.)</label>
+                        <input id="height" type="text" class="input" placeholder="189">
+                    </div>
+                    <div class="profile-empty__item">
+                        <label for="weight" class="label">Вес (кг.)</label>
+                        <input id="weight" type="text" class="input" placeholder="93">
+                    </div>
+                    <div class="profile-empty__button">
+                        <button class="btn btn--action" type="submit">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+            <div class="profile-empty__right">
+                <div class="profile-empty__img"></div>
+                <div class="profile-empty__upload">
+                    <a href="#" class="btn btn--default">Загрузить фото</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

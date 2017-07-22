@@ -1,0 +1,26 @@
+<div class="content-right">
+    <section class="leaders">
+        <div class="leaders__title">Лидеры</div>
+        <div class="leaders__list">
+            {% include 'blocks/leaders-item.twig' with {item: {points: '7', name: 'Очков', role: 'Бомбардир'}} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: '13', name: 'Голов', role: 'Снайпер'}} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: '19', name: 'Пасов', role: 'Ассистент'}} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: '8', name: 'Очков', role: 'Защитник'}} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: '3', name: 'Очков', role: 'Вратарь'}} %}
+        </div>
+        <div class="leaders__link">
+            <a href="#">Вся статистика</a>
+        </div>
+    </section>
+    <section class="sidebar-table">
+        <div class="sidebar-table__title">Таблица</div>
+        <div class="sidebar-table__list">
+            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Конференция А'}} %}
+            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Конференция Б'}} %}
+            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Конференция С'}} %}
+        </div>
+        <div class="sidebar-table__link">
+            <a href="#">Вся статистика</a>
+        </div>
+    </section>
+</div>

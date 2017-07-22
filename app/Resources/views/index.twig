@@ -1,0 +1,65 @@
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="news wrapper">
+        <div class="news__title">
+            Новости
+            <a href="news.html" class="news__title-link">Все новости</a>
+        </div>
+        <div class="news__list">
+            {% include 'blocks/news-item.twig' with {item: {src: '/assets/img/news/n-1.jpg'}} %}
+            {% include 'blocks/news-item.twig' with {item: {src: '/assets/img/news/n-2.jpg'}} %}
+            {% include 'blocks/news-item.twig' with {item: {src: '/assets/img/news/n-3.jpg'}} %}
+        </div>
+    </section>
+    <section class="media wrapper">
+        <div class="media__title">
+            Медиа
+            <a href="media.html" class="media__title-link">Все материалы</a>
+        </div>
+        <div class="media__list">
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-1.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-2.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-3.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-4.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-5.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-6.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-7.jpg'}} %}
+            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-8.jpg'}} %}
+        </div>
+    </section>
+    <section class="about wrapper">
+        <div class="about__title">О нас</div>
+        <div class="about__wrapper">
+            <div class="about__content">
+                <p>
+                    В чемпионате Высшей хоккейной лиги – Всероссийском соревновании
+                    по хоккею сезона-2016/17 выступят двадцать шесть клубов.
+                </p>
+                <p>
+                    Согласно структуре проведения соревнования, в «регулярке» команды проведут двухкруговой турнир.
+                    Таким образом, на первом этапе команды проведут по 50 матчей.
+                </p>
+                <p>
+                    По итогам первого этапа шестнадцать команд получают право участия в серии игр плей-офф.
+                    Команды получают номер «посева» в очередности согласно набранным очкам. 
+                </p>
+                <p>
+                    Турнир откроется 8 сентября в Альметьевске: «Нефтяник» и ТХК определят победителя матча открытия.
+                    Регулярный чемпионат завершится 19 февраля. Старт плей-офф намечен на 24 февраля.
+                    Дата седьмой встречи финала плей-офф (если таковая потребуется) – 25 апреля. 
+                </p>
+                <p>
+                    В первом раунде плей-офф команды будут разделены на пары согласно местам, занятым
+                    в чемпионате: 1–16, 2–15, 3–14, 4–13, 5–12, 6–11, 7–10, 8–9.
+                    Преимущество своей площадки на всех стадиях розыгрыша получают команды с
+                    более высоким номером «посева».  
+                    На каждой следующей стадии плей-офф пары формируются по принципу: наиболее высокий
+                </p>
+            </div>
+            <div class="about__logo">
+                <img src="/assets/img/logo-about.png" alt="">
+            </div>
+        </div>
+    </section>
+{% endblock %}

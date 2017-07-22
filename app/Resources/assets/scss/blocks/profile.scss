@@ -1,0 +1,166 @@
+@import "../sprite";
+
+.profile {
+  padding: 60px 80px;
+}
+
+.profile__info {
+  display: flex;
+  align-items: flex-start;
+}
+
+.profile__img-wrapper {
+  width: 180px;
+  height: 180px;
+  box-sizing: border-box;
+  border: 2px solid #0085D6;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile__img {
+  width: 100%;
+}
+
+.profile__content {
+  margin-left: 50px;
+  flex-grow: 1;
+}
+
+.profile__name {
+  font-family: 'Roboto Slab', serif;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile__settings {
+  font-size: 0;
+  display: inline-block;
+  @include sprite($icon-settings);
+  transition: all .5s;
+
+  &:hover {
+    transform: rotate(360deg);
+  }
+}
+
+.profile__list {
+  margin-top: 40px;
+}
+
+.profile__item {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #c5dee9;
+}
+
+.profile__type {
+  font-size: 15px;
+  font-weight: 700;
+  min-width: 210px;
+}
+
+.profile__value {
+  font-size: 15px;
+}
+
+.profile__table {
+  margin-top: 60px;
+}
+
+.profile__table-header {
+  background-color: #0085d6;
+  font-family: 'Roboto Slab', serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  padding: 14px 0;
+}
+
+.profile-empty {
+  display: flex;
+  padding: 0 30px;
+  justify-content: space-between;
+  margin-top: 50px;
+}
+
+.profile-empty__left {
+  display: flex;
+  flex-grow: 1;
+}
+
+.profile-empty__right {
+  margin-left: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-empty__img {
+  width: 180px;
+  height: 180px;
+  box-sizing: border-box;
+  border: 2px solid #0085D6;
+  border-radius: 50%;
+  overflow: hidden;
+  background: url('../img/profile/profile-icon.png') 50% 50% no-repeat;
+  background-size: auto 130px;
+}
+
+.profile-empty__upload {
+  margin-top: 30px;
+}
+
+.profile-empty__form {
+  width: 100%;
+}
+
+.profile-empty__item {
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+
+  .label {
+    display: inline-block;
+    min-width: 210px;
+  }
+
+  .input,
+  .select {
+    flex-grow: 1;
+  }
+
+  .select {
+    padding: 0 25px;
+  }
+
+  &--select {
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-top: 7px solid #0085d6;
+      border-right: 7px solid transparent;
+      display: inline-block;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  }
+}
+
+.profile-empty__button {
+  margin-top: 40px;
+}

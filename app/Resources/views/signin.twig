@@ -1,0 +1,21 @@
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="signin page wrapper">
+        <h1 class="title">Вход на сайт</h1>
+        <form action="#" class="signin__form">
+            <div class="signin__item">
+                <label for="email" class="label">Ваш e-mail</label>
+                <input id="email" type="email" class="input input--error" placeholder="example@gmail.com" required>
+                <div class="form-message form-message--error">Данные введены не верно</div>
+            </div>
+            <div class="signin__item">
+                <label for="pass-1" class="label">Пароль</label>
+                <input id="pass-1" type="password" class="input" required>
+            </div>
+            <div class="signin__button">
+                <button class="btn btn--action">Войти</button>
+            </div>
+        </form>
+    </section>
+{% endblock %}

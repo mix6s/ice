@@ -1,0 +1,40 @@
+.sidebar-table {
+	background-color: #fff;
+	border: 1px solid #c5dee9;
+	padding: 15px 0;
+	margin-top: 15px;
+}
+
+.sidebar-table__title {
+	font-size: 24px;
+	color: #11364e;
+	font-family: 'Roboto Slab', serif;
+	font-weight: 700;
+	padding: 0 25px;
+}
+
+.sidebar-table__header {
+	font-family: 'Roboto Slab', serif;
+	font-size: 16px;
+	color: #fff;
+	padding: 14px 25px;
+	background-color: #0085d6;
+}
+
+.sidebar-table__item {
+	margin-top: 20px;
+}
+
+.sidebar-table__link {
+	margin-top: 20px;
+	text-align: center;
+
+	a {
+		font-size: 13px;
+		color: #0085d6;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="page wrapper">
+        {% include 'blocks/breadcrumbs.twig' %}
+        <h1 class="title">Медиа</h1>
+        <div class="all-media__list">
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-1.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-2.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-3.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-4.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-5.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-6.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-7.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-8.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-1.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-2.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-3.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-4.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-5.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-6.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-7.jpg'}} %}
+            {% include 'blocks/all-media-item.twig' with {item: {src: '/assets/img/media/m-8.jpg'}} %}
+        </div>
+    </section>
+{% endblock %}

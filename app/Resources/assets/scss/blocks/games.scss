@@ -1,0 +1,134 @@
+.games {
+	border-bottom: 2px solid #0085d6;
+	background-color: #ebf6fd;
+}
+
+.games__list {
+	margin-left: -1px;
+}
+
+.games__item {
+	padding: 0 10px 10px;
+	border-left: 1px solid #c5dee9;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	width: 207px;
+	box-sizing: border-box;
+	position: relative;
+}
+
+.games__date {
+	font-size: 12px;
+	color: #fff;
+	padding: 5px 10px;
+	background-color: #0085d6;
+	border-radius: 0 0 3px 3px;
+}
+
+.games__score-wrapper {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.games__score {
+	position: relative;
+	flex-basis: 50%;
+
+	&--guests {
+		margin-left: 25px;
+
+		&::before {
+			content: ':';
+			font-size: 29px;
+			color: #abb7bd;
+			position: absolute;
+			top: 0;
+			left: -16px;
+			font-weight: 800;
+		}
+	}
+
+	&--hosts {
+		text-align: right;
+	}
+}
+
+.games__goals {
+	font-size: 36px;
+	font-weight: 800;
+}
+
+.games__team {
+	font-size: 12px;
+	color: #0a2536;
+}
+
+.games__city {
+	font-size: 12px;
+	color: #829ba6;
+}
+
+.games__link {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+	font-size: 0;
+}
+
+.games__controls {
+	.swiper-button-prev {
+		width: 31px;
+		height: 32px;
+		background-image: none;
+		border: 2px solid #0085d6;
+		border-right: none;
+		box-sizing: border-box;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		bottom: -32px;
+		top: auto;
+		left: auto;
+		right: 61px;
+
+		&::before {
+			content: '';
+			width: 0;
+			height: 0;
+			border-top: 7px solid transparent;
+			border-right: 7px solid #0085d6;
+			border-bottom: 7px solid transparent;
+			display: inline-block;
+		}
+	}
+
+	.swiper-button-next {
+		width: 33px;
+		height: 32px;
+		background-image: none;
+		border: 2px solid #0085d6;
+		box-sizing: border-box;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		bottom: -32px;
+		top: auto;
+		right: 28px;
+
+		&::before {
+			content: '';
+			width: 0;
+			height: 0;
+			border-top: 7px solid transparent;
+			border-left: 7px solid #0085d6;
+			border-bottom: 7px solid transparent;
+			display: inline-block;
+		}
+	}
+}

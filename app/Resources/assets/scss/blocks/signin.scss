@@ -1,0 +1,27 @@
+.signin__form {
+  width: 500px;
+}
+
+.signin__item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  .label {
+    min-width: 160px;
+  }
+
+  .input {
+    width: 340px;
+  }
+
+  .form-message {
+    flex-basis: 100%;
+    padding-left: 160px;
+  }
+}
+
+.signin__button {
+  margin-top: 40px;
+}

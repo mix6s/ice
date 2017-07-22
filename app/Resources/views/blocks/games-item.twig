@@ -1,0 +1,16 @@
+<div class="games__item swiper-slide">
+    <div class="games__date">{{ item.date }}</div>
+    <div class="games__score-wrapper">
+        <div class="games__score games__score--hosts">
+            <div class="games__goals">{{ item.pointsHosts }}</div>
+            <div class="games__team">{{ item.teamHosts }}</div>
+            <div class="games__city">Пенза</div>
+        </div>
+        <div class="games__score games__score--guests">
+            <div class="games__goals">{{ item.pointsGuests }}</div>
+            <div class="games__team">{{ item.teamGuests }}</div>
+            <div class="games__city">Пенза</div>
+        </div>
+    </div>
+    <a href="/game.html" class="games__link">Ссылка на результат матча</a>
+</div>
