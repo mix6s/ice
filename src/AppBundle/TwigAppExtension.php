@@ -28,7 +28,7 @@ class TwigAppExtension extends \Twig_Extension
 	 * @param string $position
 	 * @return string
 	 */
-	public function positionFilter(string $position)
+	public function positionFilter(string $position = null)
 	{
 		switch ($position) {
 			case PlayerProfile::POSITION_GK:
@@ -52,7 +52,7 @@ class TwigAppExtension extends \Twig_Extension
 	 * @param string $stick
 	 * @return string
 	 */
-	public function stickFilter(string $stick)
+	public function stickFilter(string $stick = null)
 	{
 		switch ($stick) {
 			case PlayerProfile::STICK_L:
