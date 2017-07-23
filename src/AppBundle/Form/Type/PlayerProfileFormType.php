@@ -85,7 +85,6 @@ class PlayerProfileFormType extends AbstractType
 						'Левый нападающий' => PlayerProfile::POSITION_LF,
 						'Правый нападающий' => PlayerProfile::POSITION_RF,
 					],
-					'required' => false
 				]
 			)
 			->add(
@@ -96,7 +95,6 @@ class PlayerProfileFormType extends AbstractType
 						'Левый' => PlayerProfile::STICK_L,
 						'Правый' => PlayerProfile::STICK_R,
 					],
-					'required' => false
 				]
 			);
 
@@ -106,8 +104,8 @@ class PlayerProfileFormType extends AbstractType
 				function (\DateTime $asDateTime = null) {
 					return $asDateTime ? $asDateTime->format('d.m.Y') : '';
 				},
-				function ($asString) {
-					return new \DateTime($asString);
+				function ($asString = null) {
+					return !empty($asString) ? new \DateTime($asString) : null;
 				}
 			))
 		;

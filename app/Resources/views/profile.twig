@@ -14,7 +14,7 @@
                 <div class="profile__list">
                     <div class="profile__item">
                         <div class="profile__type">Дата рождения:</div>
-                        <div class="profile__value">{{ profile.birthdate|date('d.m.Y') }}</div>
+                        <div class="profile__value">{{ profile.birthdate ? profile.birthdate|date('d.m.Y') : '' }}</div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Позиция:</div>
