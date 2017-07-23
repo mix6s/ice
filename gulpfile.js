@@ -18,6 +18,20 @@ var gulp = require('gulp'),
 	twig = require('gulp-twig'),
 	runSequence = require('run-sequence').use(gulp);
 
+gulp.task('rename', function () {
+
+	gulp.src("./bower_components/swiper/dist/css/swiper.css")
+		.pipe(rename("bower_components/swiper/dist/css/swiper.scss"))
+		.pipe(gulp.dest("./"));
+
+	gulp.src("./bower_components/fancybox/dist/jquery.fancybox.css")
+		.pipe(rename("bower_components/fancybox/dist/jquery.fancybox.scss"))
+		.pipe(gulp.dest("./"));
+
+	gulp.src("./bower_components/croppie/croppie.css")
+		.pipe(rename("bower_components/croppie/croppie.scss"))
+		.pipe(gulp.dest("./"));
+});
 
 gulp.task('styles', function () {
 	var processors = [

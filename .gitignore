@@ -1,6 +1,5 @@
 /.idea/
 /.vagrant/
-Vagrantfile
 /vagrant/
 /.web-server-pid
 /app/config/parameters.yml
@@ -23,7 +22,9 @@ Vagrantfile
 !/web/assets/
 /web/assets/*
 !web/assets/.gitkeep
-
 !/web/avatar/
 /web/avatar/*
 !web/avatar/mini/.gitkeep
+/Vagrantfile
+/bin/symfony_requirements
+/bootstrap.sh
