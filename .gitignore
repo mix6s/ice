@@ -28,3 +28,4 @@
 /Vagrantfile
 /bin/symfony_requirements
 /bootstrap.sh
+/web/config.php
