@@ -19,6 +19,11 @@ use Domain\Exception\EntityNotFoundException;
 interface SeasonRepositoryInterface
 {
 	/**
+	 * @return int
+	 */
+	public function getNextId(): int;
+
+	/**
 	 * @param int $id
 	 * @return Season
 	 * @throws EntityNotFoundException

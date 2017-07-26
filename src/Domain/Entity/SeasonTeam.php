@@ -23,13 +23,15 @@ class SeasonTeam
 
 	/**
 	 * SeasonTeam constructor.
+	 * @param int $id
 	 * @param Team $team
 	 * @param League $league
 	 * @param Season $season
 	 * @param Player $coach
 	 */
-	private function __construct(Team $team, League $league, Season $season, Player $coach)
+	private function __construct(int $id, Team $team, League $league, Season $season, Player $coach)
 	{
+		$this->id = $id;
 		$this->team = $team;
 		$this->league = $league;
 		$this->season = $season;
@@ -37,15 +39,16 @@ class SeasonTeam
 	}
 
 	/**
+	 * @param int $id
 	 * @param Team $team
 	 * @param League $league
 	 * @param Season $season
 	 * @param Player $coach
 	 * @return SeasonTeam
 	 */
-	public static function create(Team $team, League $league, Season $season, Player $coach): SeasonTeam
+	public static function create(int $id, Team $team, League $league, Season $season, Player $coach): SeasonTeam
 	{
-		return new SeasonTeam($team, $league, $season, $coach);
+		return new SeasonTeam($id, $team, $league, $season, $coach);
 	}
 
 	/**

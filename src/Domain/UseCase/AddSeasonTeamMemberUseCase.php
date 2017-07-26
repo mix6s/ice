@@ -60,7 +60,8 @@ class AddSeasonTeamMemberUseCase
 			throw new DomainException(sprintf('Player with id %d already in another SeasonTeam'));
 		} catch (EntityNotFoundException $e) {}
 
-		$member = SeasonTeamMember::create($seasonTeam, $player, $request->getType());
+		$memberId = $this->getContainer()->getSeasonTeamMemberRepository()->getNextId();
+		$member = SeasonTeamMember::create($memberId, $seasonTeam, $player, $request->getType());
 		$this->getContainer()->getSeasonTeamMemberRepository()->save($member);
 		return new AddSeasonTeamMemberResponse($member);
 	}

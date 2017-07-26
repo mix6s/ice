@@ -21,6 +21,11 @@ use Domain\Exception\EntityNotFoundException;
 interface SeasonTeamRepository
 {
 	/**
+	 * @return int
+	 */
+	public function getNextId(): int;
+
+	/**
 	 * @param Team $team
 	 * @param Season $season
 	 * @return SeasonTeam

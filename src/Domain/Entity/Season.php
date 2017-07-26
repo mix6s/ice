@@ -19,20 +19,23 @@ class Season
 
 	/**
 	 * Season constructor.
+	 * @param int $id
 	 * @param int $year
 	 */
-	private function __construct(int $year)
+	private function __construct(int $id, int $year)
 	{
+		$this->id = $id;
 		$this->year = $year;
 	}
 
 	/**
+	 * @param int $id
 	 * @param int $year
 	 * @return Season
 	 */
-	public static function create(int $year): Season
+	public static function create(int $id, int $year): Season
 	{
-		return new Season($year);
+		return new Season($id, $year);
 	}
 
 
@@ -42,5 +45,13 @@ class Season
 	public function getYear(): int
 	{
 		return $this->year;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId(): int
+	{
+		return $this->id;
 	}
 }

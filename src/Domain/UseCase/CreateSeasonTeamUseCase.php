@@ -59,7 +59,8 @@ class CreateSeasonTeamUseCase
 			throw new DomainException('SeasonTeam already exist');
 		} catch (EntityNotFoundException $e) {}
 
-		$seasonTeam = SeasonTeam::create($team, $league, $season, $coach);
+		$id = $this->getContainer()->getSeasonTeamRepository()->getNextId();
+		$seasonTeam = SeasonTeam::create($id, $team, $league, $season, $coach);
 		$this->getContainer()->getSeasonTeamRepository()->save($seasonTeam);
 		return new CreateSeasonTeamResponse($seasonTeam);
 	}

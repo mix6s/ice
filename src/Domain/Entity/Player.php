@@ -28,12 +28,22 @@ class Player
 	}
 
 	/**
+	 * Player constructor.
+	 * @param int $id
+	 */
+	private function __construct(int $id)
+	{
+		$this->id = $id;
+	}
+
+	/**
 	 * @param $metadata
+	 * @param int $id
 	 * @return Player
 	 */
-	public static function create($metadata = null): Player
+	public static function create(int $id, $metadata = null): Player
 	{
-		$player = new Player();
+		$player = new Player($id);
 		$player->setMetadata($metadata);
 		return $player;
 	}

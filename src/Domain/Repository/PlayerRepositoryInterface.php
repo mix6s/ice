@@ -19,6 +19,11 @@ use Domain\Exception\EntityNotFoundException;
 interface PlayerRepositoryInterface
 {
 	/**
+	 * @return int
+	 */
+	public function getNextId(): int;
+
+	/**
 	 * @param int $id
 	 * @return Player
 	 * @throws EntityNotFoundException

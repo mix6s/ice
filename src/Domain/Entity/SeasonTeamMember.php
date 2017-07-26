@@ -22,27 +22,29 @@ class SeasonTeamMember
 
 	/**
 	 * SeasonTeamMember constructor.
+	 * @param int $id
 	 * @param SeasonTeam $seasonTeam
 	 * @param Player $player
 	 * @param string $type
 	 */
-	private function __construct(SeasonTeam $seasonTeam, Player $player, string $type)
+	private function __construct(int $id, SeasonTeam $seasonTeam, Player $player, string $type)
 	{
+		$this->id = $id;
 		$this->seasonTeam = $seasonTeam;
 		$this->player = $player;
 		$this->type = $type;
 	}
 
 	/**
+	 * @param int $id
 	 * @param SeasonTeam $seasonTeam
 	 * @param Player $player
 	 * @param string $type
 	 * @return SeasonTeamMember
 	 */
-	public static function create(SeasonTeam $seasonTeam, Player $player, string $type): SeasonTeamMember
+	public static function create(int $id, SeasonTeam $seasonTeam, Player $player, string $type): SeasonTeamMember
 	{
-		$member = new SeasonTeamMember($seasonTeam, $player, $type);
-		return $member;
+		return new SeasonTeamMember($id, $seasonTeam, $player, $type);
 	}
 
 	/**
@@ -67,5 +69,13 @@ class SeasonTeamMember
 	public function getSeasonTeam(): SeasonTeam
 	{
 		return $this->seasonTeam;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId(): int
+	{
+		return $this->id;
 	}
 }

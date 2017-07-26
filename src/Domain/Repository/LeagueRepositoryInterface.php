@@ -19,6 +19,11 @@ use Domain\Exception\EntityNotFoundException;
 interface LeagueRepositoryInterface
 {
 	/**
+	 * @return int
+	 */
+	public function getNextId(): int;
+
+	/**
 	 * @param int $id
 	 * @return League
 	 * @throws EntityNotFoundException

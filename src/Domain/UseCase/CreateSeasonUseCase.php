@@ -30,13 +30,14 @@ class CreateSeasonUseCase
 	 */
 	public function execute(CreateSeasonRequest $request): CreateSeasonResponse
 	{
+		$repository = $this->getContainer()->getSeasonRepository();
 		try {
-			$season = $this->getContainer()->getSeasonRepository()->findByYear($request->getYear());
+			$season = $repository->findByYear($request->getYear());
 			throw new DomainException(sprintf('Season for %d year already exist', $season->getYear()));
 		} catch (EntityNotFoundException $e) {}
 
-		$season = Season::create($request->getYear());
-		$this->getContainer()->getSeasonRepository()->save($season);
+		$season = Season::create($repository->getNextId(), $request->getYear());
+		$repository->save($season);
 		return new CreateSeasonResponse($season);
 	}
 }
