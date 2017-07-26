@@ -19,12 +19,21 @@ class Team
 	private $id;
 
 	/**
+	 * Team constructor.
+	 * @param int $id
+	 */
+	private function __construct(int $id)
+	{
+		$this->id = $id;
+	}
+
+	/**
 	 * @param $metadata
 	 * @return Team
 	 */
-	public static function create($metadata = null): Team
+	public static function create(int $id, $metadata = null): Team
 	{
-		$team = new Team();
+		$team = new Team($id);
 		$team->setMetadata($metadata);
 		return $team;
 	}

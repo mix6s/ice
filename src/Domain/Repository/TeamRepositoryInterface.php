@@ -19,6 +19,11 @@ use Domain\Exception\EntityNotFoundException;
 interface TeamRepositoryInterface
 {
 	/**
+	 * @return int
+	 */
+	public function getNextId(): int;
+
+	/**
 	 * @param int $id
 	 * @return Team
 	 * @throws EntityNotFoundException

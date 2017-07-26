@@ -27,8 +27,9 @@ class CreateTeamUseCase
 	 */
 	public function execute(CreateTeamRequest $request): CreateTeamResponse
 	{
-		$team = Team::create($request->getMetadata());
-		$this->getContainer()->getTeamRepository()->save($team);
+		$teamRepository = $this->getContainer()->getTeamRepository();
+		$team = Team::create($teamRepository->getNextId(), $request->getMetadata());
+		$teamRepository->save($team);
 		return new CreateTeamResponse($team);
 	}
 }
