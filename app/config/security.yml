@@ -3,7 +3,9 @@
 security:
     encoders:
         FOS\UserBundle\Model\UserInterface: bcrypt
-
+    role_hierarchy:
+        ROLE_COACH: ROLE_CONTROL
+        ROLE_ADMIN: ROLE_COACH
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username
@@ -25,4 +27,4 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
     access_control:
-        - { path: ^/control, allow_if: "user.isGranted('ROLE_ADMIN')" }
+        - { path: ^/control, roles: ROLE_CONTROL }

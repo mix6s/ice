@@ -1,0 +1,11 @@
+services:
+    domain.container:
+        class: DomainBundle\Container
+        arguments:
+            - '@service_container'
+
+    domain.repository.team:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\Team
