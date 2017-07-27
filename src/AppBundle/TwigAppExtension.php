@@ -2,7 +2,7 @@
 
 namespace AppBundle;
 
-use AppBundle\Entity\PlayerProfile;
+use DomainBundle\Entity\PlayerMetadata;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -31,17 +31,17 @@ class TwigAppExtension extends \Twig_Extension
 	public function positionFilter(string $position = null)
 	{
 		switch ($position) {
-			case PlayerProfile::POSITION_GK:
+			case PlayerMetadata::POSITION_GK:
 				return 'Вратарь';
-			case PlayerProfile::POSITION_LB:
+			case PlayerMetadata::POSITION_LB:
 				return 'Левый защитник';
-			case PlayerProfile::POSITION_RB:
+			case PlayerMetadata::POSITION_RB:
 				return 'Правый защитник';
-			case PlayerProfile::POSITION_CF:
+			case PlayerMetadata::POSITION_CF:
 				return 'Центральный нападающий';
-			case PlayerProfile::POSITION_LF:
+			case PlayerMetadata::POSITION_LF:
 				return 'Левый нападающий';
-			case PlayerProfile::POSITION_RF:
+			case PlayerMetadata::POSITION_RF:
 				return 'Правый нападающий';
 			default:
 				return '';
@@ -55,9 +55,9 @@ class TwigAppExtension extends \Twig_Extension
 	public function stickFilter(string $stick = null)
 	{
 		switch ($stick) {
-			case PlayerProfile::STICK_L:
+			case PlayerMetadata::STICK_L:
 				return 'Левый';
-			case PlayerProfile::STICK_R:
+			case PlayerMetadata::STICK_R:
 				return 'Правый';
 			default:
 				return '';

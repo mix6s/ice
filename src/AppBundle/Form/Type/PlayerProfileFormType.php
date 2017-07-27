@@ -9,7 +9,7 @@
 namespace AppBundle\Form\Type;
 
 
-use AppBundle\Entity\PlayerProfile;
+use DomainBundle\Entity\PlayerMetadata;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -78,12 +78,12 @@ class PlayerProfileFormType extends AbstractType
 				ChoiceType::class,
 				[
 					'choices' => [
-						'Вратарь' => PlayerProfile::POSITION_GK,
-						'Левый защитник' => PlayerProfile::POSITION_LB,
-						'Правый защитник' => PlayerProfile::POSITION_RB,
-						'Центральный нападающий' => PlayerProfile::POSITION_CF,
-						'Левый нападающий' => PlayerProfile::POSITION_LF,
-						'Правый нападающий' => PlayerProfile::POSITION_RF,
+						'Вратарь' => PlayerMetadata::POSITION_GK,
+						'Левый защитник' => PlayerMetadata::POSITION_LB,
+						'Правый защитник' => PlayerMetadata::POSITION_RB,
+						'Центральный нападающий' => PlayerMetadata::POSITION_CF,
+						'Левый нападающий' => PlayerMetadata::POSITION_LF,
+						'Правый нападающий' => PlayerMetadata::POSITION_RF,
 					],
 				]
 			)
@@ -92,8 +92,8 @@ class PlayerProfileFormType extends AbstractType
 				ChoiceType::class,
 				[
 					'choices' => [
-						'Левый' => PlayerProfile::STICK_L,
-						'Правый' => PlayerProfile::STICK_R,
+						'Левый' => PlayerMetadata::STICK_L,
+						'Правый' => PlayerMetadata::STICK_R,
 					],
 				]
 			);
@@ -118,7 +118,7 @@ class PlayerProfileFormType extends AbstractType
 	{
 		$resolver->setDefaults(
 			[
-				'data_class' => PlayerProfile::class,
+				'data_class' => PlayerMetadata::class,
 				'csrf_token_id' => 'PlayerProfile',
 				'method' => 'POST'
 			]

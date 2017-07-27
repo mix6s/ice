@@ -3,7 +3,9 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\User;
 use AppBundle\Form\Type\RegistrationFormType;
+use Domain\Repository\PlayerRepositoryInterface;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
@@ -98,6 +100,10 @@ class SecurityController extends Controller
 				$plainPassword = $user->getPlainPassword();
 				$event = new FormEvent($form, $request);
 				$dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
+				/** @var PlayerRepositoryInterface $playerRepository */
+				$playerRepository = $this->get('domain.repository.player');
+				/** @var User $user */
+				$user->createPlayer($playerRepository->getNextId(), null);
 				$userManager->updateUser($user);
 				$response = $event->getResponse();
 				if (null === $response) {

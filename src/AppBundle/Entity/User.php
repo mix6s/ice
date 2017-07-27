@@ -9,6 +9,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Domain\Entity\Player;
+use DomainBundle\Entity\PlayerMetadata;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -20,6 +22,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     message="fos_user.email.already_used",
  * 	   groups={"AppRegistration"}
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class User extends \FOS\UserBundle\Model\User
 {
@@ -37,9 +40,10 @@ class User extends \FOS\UserBundle\Model\User
 	protected $id;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="PlayerProfile", mappedBy="user", cascade={"persist"})
+	 * @ORM\OneToOne(targetEntity="Domain\Entity\Player", cascade={"persist"})
+	 * @ORM\JoinColumn(name="player_id", referencedColumnName="id")
 	 */
-	private $profile;
+	private $player;
 
 	/**
 	 * @return int
@@ -110,29 +114,26 @@ class User extends \FOS\UserBundle\Model\User
 	}
 
 	/**
-	 * @return PlayerProfile|null
+	 * @return PlayerMetadata|null
 	 * @throws \RuntimeException
 	 */
 	public function getPlayerProfile()
 	{
 		if ($this->hasRole(self::ROLE_PLAYER)) {
-			return $this->profile;
+			return $this->getPlayer()->getMetadata();
 		}
 		throw new \RuntimeException();
 	}
 
 	/**
-	 * @param PlayerProfile $profile
+	 * @param PlayerMetadata $profile
 	 */
-	public function setPlayerProfile(PlayerProfile $profile)
+	public function setPlayerProfile(PlayerMetadata $profile)
 	{
 		if (!$this->hasRole(self::ROLE_PLAYER)) {
 			throw new \RuntimeException();
 		}
-		if ($profile->getUser()->getId() != $this->getId()) {
-			throw new \RuntimeException();
-		}
-		$this->profile = $profile;
+		$this->getPlayer()->setMetadata($profile);
 	}
 
 	/**
@@ -141,5 +142,22 @@ class User extends \FOS\UserBundle\Model\User
 	public function isPlayer()
 	{
 		return $this->hasRole(self::ROLE_PLAYER);
+	}
+
+	/**
+	 * @return Player|null
+	 */
+	public function getPlayer()
+	{
+		return $this->player;
+	}
+
+	/**
+	 * @param int $id
+	 * @param $metadata
+	 */
+	public function createPlayer(int $id, $metadata)
+	{
+		$this->player = Player::create($id, $metadata);
 	}
 }

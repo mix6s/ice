@@ -8,7 +8,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\PlayerProfile;
+use DomainBundle\Entity\PlayerMetadata;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\PlayerProfileFormType;
 use Liip\ImagineBundle\Model\Binary;
@@ -31,7 +31,7 @@ class ProfileController extends Controller
 		/** @var User $user */
 		$user = $this->getUser();
 		if ($user->isPlayer()) {
-			/** @var PlayerProfile $profile */
+			/** @var PlayerMetadata $profile */
 			$profile = $user->getPlayerProfile();
 			if ($profile) {
 				return $this->render('profile.twig', [
@@ -54,10 +54,10 @@ class ProfileController extends Controller
 		$form = $this->createForm(PlayerProfileFormType::class, $profile);
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
-			/** @var PlayerProfile $profile */
+			/** @var PlayerMetadata $profile */
 			$profile = $form->getData();
-			$profile->setUser($user);
-			$this->get('doctrine.orm.entity_manager')->persist($profile);
+			$user->setPlayerProfile($profile);
+			$this->get('doctrine.orm.entity_manager')->persist($user);
 			$this->get('doctrine.orm.entity_manager')->flush();
 			return $this->redirectToRoute('profile.index');
 		}
@@ -91,11 +91,11 @@ class ProfileController extends Controller
 		$user = $this->getUser();
 		$profile = $user->getPlayerProfile();
 		if (!$profile) {
-			$profile = new PlayerProfile();
-			$profile->setUser($user);
+			$profile = new PlayerMetadata();
 		}
 		$profile->setImage($filename);
-		$this->get('doctrine.orm.entity_manager')->persist($profile);
+		$user->setPlayerProfile($profile);
+		$this->get('doctrine.orm.entity_manager')->persist($user);
 		$this->get('doctrine.orm.entity_manager')->flush();
 		return $this->json($filename);
 	}
