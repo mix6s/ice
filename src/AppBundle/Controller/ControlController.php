@@ -15,7 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 /**
  * Class ControlController
  * @package AppBundle\Controller
- * @Route("/control")
+ * @Route("/control2")
  */
 class ControlController extends Controller
 {
