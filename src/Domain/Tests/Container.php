@@ -16,6 +16,7 @@ use Domain\Repository\SeasonRepositoryInterface;
 use Domain\Repository\SeasonTeamMemberRepositoryInterface;
 use Domain\Repository\SeasonTeamRepository;
 use Domain\Repository\TeamRepositoryInterface;
+use Domain\Tests\Repository\SeasonRepository;
 use Domain\Tests\Repository\TeamRepository;
 
 /**
@@ -25,13 +26,17 @@ use Domain\Tests\Repository\TeamRepository;
 class Container implements ContainerInterface
 {
 	private $teamRepository;
+	private $seasonRepository;
 
 	/**
 	 * @return SeasonRepositoryInterface
 	 */
 	public function getSeasonRepository(): SeasonRepositoryInterface
 	{
-		// TODO: Implement getSeasonRepository() method.
+		if (!$this->seasonRepository) {
+			$this->seasonRepository = new SeasonRepository();
+		}
+		return $this->seasonRepository;
 	}
 
 	/**

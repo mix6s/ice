@@ -32,7 +32,7 @@ class ControlController extends Controller
 	 */
 	public function seasonsAction()
 	{
-		$this->get('domain.container')->getTeamRepository();
+		return $this->render('control/seasons.html.twig');
 	}
 
 	/**

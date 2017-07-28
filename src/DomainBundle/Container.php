@@ -31,7 +31,7 @@ class Container implements ContainerInterface
 	 */
 	public function getSeasonRepository(): SeasonRepositoryInterface
 	{
-
+		return $this->container->get('domain.repository.season');
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Container implements ContainerInterface
 	 */
 	public function getPlayerRepository(): PlayerRepositoryInterface
 	{
-		// TODO: Implement getPlayerRepository() method.
+		return $this->container->get('domain.repository.player');
 	}
 
 	/**

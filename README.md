@@ -7,7 +7,7 @@ ICE
  
 `php bin/console fos:user:create admin`
 
-`php bin/console fos:user:promote admin ROLE_ADMIN`
+`php bin/console fos:user:promote dev@dev.ru ROLE_ADMIN`
 
 Обновление схемы бд
 
