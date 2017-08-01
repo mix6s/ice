@@ -14,7 +14,7 @@ use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
 use Domain\Repository\SeasonTeamMemberRepositoryInterface;
-use Domain\Repository\SeasonTeamRepository;
+use Domain\Repository\SeasonTeamRepositoryInterface;
 use Domain\Repository\TeamRepositoryInterface;
 use Domain\Tests\Repository\SeasonRepository;
 use Domain\Tests\Repository\TeamRepository;
@@ -51,9 +51,9 @@ class Container implements ContainerInterface
 	}
 
 	/**
-	 * @return SeasonTeamRepository
+	 * @return SeasonTeamRepositoryInterface
 	 */
-	public function getSeasonTeamRepository(): SeasonTeamRepository
+	public function getSeasonTeamRepository(): SeasonTeamRepositoryInterface
 	{
 
 	}

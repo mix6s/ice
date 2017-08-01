@@ -14,6 +14,7 @@ use Domain\DTO\Response\CreateSeasonResponse;
 use Domain\Entity\Season;
 use Domain\Exception\DomainException;
 use Domain\Exception\EntityNotFoundException;
+use Domain\Exception\SeasonAlreadyExistException;
 
 /**
  * Class CreateSeasonUseCase
@@ -26,14 +27,14 @@ class CreateSeasonUseCase
 	/**
 	 * @param CreateSeasonRequest $request
 	 * @return CreateSeasonResponse
-	 * @throws DomainException
+	 * @throws SeasonAlreadyExistException
 	 */
 	public function execute(CreateSeasonRequest $request): CreateSeasonResponse
 	{
 		$repository = $this->getContainer()->getSeasonRepository();
 		try {
 			$season = $repository->findByYear($request->getYear());
-			throw new DomainException(sprintf('Season for %d year already exist', $season->getYear()));
+			throw new SeasonAlreadyExistException(sprintf('Season for %d year already exist', $season->getYear()));
 		} catch (EntityNotFoundException $e) {}
 
 		$season = Season::create($repository->getNextId(), $request->getYear());

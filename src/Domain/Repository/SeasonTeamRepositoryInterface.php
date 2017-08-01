@@ -15,10 +15,10 @@ use Domain\Entity\Team;
 use Domain\Exception\EntityNotFoundException;
 
 /**
- * Interface SeasonTeamRepository
+ * Interface SeasonTeamRepositoryInterface
  * @package Domain\Repository
  */
-interface SeasonTeamRepository
+interface SeasonTeamRepositoryInterface
 {
 	/**
 	 * @return int

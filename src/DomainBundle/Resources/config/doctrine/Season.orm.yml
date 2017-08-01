@@ -1,6 +1,6 @@
 Domain\Entity\Season:
     type: entity
-    repositoryClass: DomainBundle\Repository\TeamRepository
+    repositoryClass: DomainBundle\Repository\SeasonRepository
     id:
         id:
             type: integer

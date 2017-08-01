@@ -12,7 +12,7 @@ namespace Domain\Entity;
  * Class Season
  * @package Domain\Entity
  */
-class Season
+class Season implements \JsonSerializable
 {
 	private $id;
 	private $year;
@@ -53,5 +53,20 @@ class Season
 	public function getId(): int
 	{
 		return $this->id;
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	function jsonSerialize()
+	{
+		return [
+			'id' => $this->getId(),
+			'year' => $this->getYear()
+		];
 	}
 }

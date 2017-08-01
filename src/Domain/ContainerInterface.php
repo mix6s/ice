@@ -13,7 +13,7 @@ use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
 use Domain\Repository\SeasonTeamMemberRepositoryInterface;
-use Domain\Repository\SeasonTeamRepository;
+use Domain\Repository\SeasonTeamRepositoryInterface;
 use Domain\Repository\TeamRepositoryInterface;
 
 /**
@@ -33,9 +33,9 @@ interface ContainerInterface
 	public function getTeamRepository(): TeamRepositoryInterface;
 
 	/**
-	 * @return SeasonTeamRepository
+	 * @return SeasonTeamRepositoryInterface
 	 */
-	public function getSeasonTeamRepository(): SeasonTeamRepository;
+	public function getSeasonTeamRepository(): SeasonTeamRepositoryInterface;
 
 	/**
 	 * @return PlayerRepositoryInterface

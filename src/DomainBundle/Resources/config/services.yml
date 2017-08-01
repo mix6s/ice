@@ -4,6 +4,7 @@ services:
         arguments:
             - '@service_container'
 
+    #repositories
     domain.repository.team:
         class: Doctrine\ORM\EntityRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -19,3 +20,13 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\Season
+    domain.repository.league:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\League
+
+    #usecases
+    domain.usecase.create_season_use_case:
+       class: Domain\UseCase\CreateSeasonUseCase
+       arguments: ['@domain.container']
