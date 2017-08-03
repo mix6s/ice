@@ -54,13 +54,15 @@
 			props: ['data'],
 			data: function () {
 				return {
-					team: null
+					team: null,
+					coach: null
 				}
 			},
 			computed:{
 				seasonteam: function () {
 					return {
 						season: this.data.season,
+						coach: this.coach,
 						team: this.team
 					}
 				}
@@ -68,6 +70,9 @@
 			methods: {
 				updateTeamInfo: function (team) {
 					this.team = team;
+				},
+				updateCoach: function (coach) {
+					this.coach = coach;
 				},
 				save: function () {
 					var $this = this;
@@ -110,6 +115,31 @@
 							}
 						},
 						title: 'Выберите команду'
+					});
+
+					$('#coach-select').editable({
+						mode: 'inline',
+						unsavedclass: '',
+						showbuttons: false,
+						value: '',
+						typeahead: {
+							autoSelect: false,
+							source: function (query, process) {
+								$.ajax({
+									url: '/control/typeahead?coach=' + query,
+									success: function (response) {
+										process(response);
+									}
+								});
+							},
+							onSelect: function (item) {
+								$this.updateCoach(item.coach);
+							}
+						},
+						display: function () {
+							return;
+						},
+						title: 'Выберите тренера'
 					});
 				}
 			},

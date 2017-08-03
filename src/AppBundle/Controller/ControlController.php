@@ -13,10 +13,12 @@ use Domain\DTO\Request\CreateSeasonRequest;
 use Domain\DTO\Request\CreateSeasonTeamRequest;
 use Domain\DTO\Request\CreateTeamRequest;
 use Domain\Entity\League;
+use Domain\Entity\Player;
 use Domain\Entity\Team;
 use Domain\Exception\DomainException;
 use Domain\Exception\SeasonAlreadyExistException;
 use DomainBundle\Entity\LeagueMetadata;
+use DomainBundle\Entity\PlayerMetadata;
 use DomainBundle\Entity\TeamMetadata;
 use DomainBundle\Repository\LeagueRepository;
 use DomainBundle\Repository\SeasonRepository;
@@ -96,7 +98,34 @@ class ControlController extends Controller
 				];
 			}
 			return $this->json($result);
+		}
 
+		$coachQuery = $request->get('coach');
+		if (!empty($coachQuery)) {
+			$em = $this->get('doctrine.orm.entity_manager');
+			$qb = $em->createQueryBuilder();
+			$players = $qb
+				->from('Domain:Player', 'p')
+				->join('p.metadata', 'm')
+				->select('p')
+				->where('m.surname like :query')
+				->orWhere('m.firstName like :query')
+				->orWhere('m.secondName like :query')
+				->setParameter('query', '%' . $coachQuery . '%')
+				->getQuery()
+				->getResult();
+			$result = [];
+			/** @var Player $player */
+			foreach ($players as $player) {
+				/** @var PlayerMetadata $meta */
+				$meta = $player->getMetadata();
+
+				$result[] = [
+					'name' => $meta->getSurname(),
+					'coach' => $player
+				];
+			}
+			return $this->json($result);
 		}
 	}
 
@@ -178,10 +207,11 @@ class ControlController extends Controller
 
 		$team = $this->saveTeam($seasonTeam['team']);
 		$seasonId = $seasonTeam['season']['id'] ?? 0;
+		$coachId = $seasonTeam['coach']['id'] ?? 0;
 		if (empty($seasonTeam['id'])) {
 			$response = $this
 				->get('domain.use_case.create_season_team_use_case')
-				->execute(new CreateSeasonTeamRequest($team->getId(), 1,$seasonId, 1));
+				->execute(new CreateSeasonTeamRequest($team->getId(), $coachId, $seasonId, 1));
 			$this->get('doctrine.orm.entity_manager')->flush();
 			return $this->json($response->getSeasonTeam());
 		}
