@@ -293,7 +293,8 @@ class PlayerMetadata implements \JsonSerializable
 	function jsonSerialize()
 	{
 		return [
-			'id' => $this->getId()
+			'id' => $this->getId(),
+			'surname' => $this->getSurname()
 		];
 	}
 }

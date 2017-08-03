@@ -51,6 +51,7 @@
 
 		Vue.component('seasonTeamModalContent', {
 			template: '{{ source('control/vue/season-team-modal.vue.twig')|escape('js') }}',
+			props: ['data'],
 			data: function () {
 				return {
 					team: null
@@ -59,6 +60,7 @@
 			computed:{
 				seasonteam: function () {
 					return {
+						season: this.data.season,
 						team: this.team
 					}
 				}
@@ -74,8 +76,7 @@
 						data: {seasonteam: $this.seasonteam},
 						type: 'post',
 						success: function (response) {
-							//$this.seasonteam = response;
-							$this.$emit('bus', {name: 'new-team', value: response});
+							$this.$emit('bus', {name: 'new-seasonteam', value: response});
 						},
 						error: function (jqXHR) {
 							$this.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
@@ -121,12 +122,14 @@
 			template: '{{ source('control/vue/modal-layout.vue.twig')|escape('js') }}',
 			data: function () {
 				return {
-					content: null
+					content: null,
+					data: {}
 				}
 			},
 			methods: {
-				show: function (data) {
-					this.content = data;
+				show: function (template, data) {
+					this.content = template;
+					this.data = data;
 					$('#modal').modal('show');
 				},
 				hide: function () {
@@ -140,7 +143,7 @@
 
 		Vue.component('season', {
 			template: '{{ source('control/vue/season.vue.twig')|escape('js') }}',
-			props: ['season', 'currentSeasonId', 'onSeasonTeamAddClick'],
+			props: ['season', 'currentSeasonId', 'seasonteams'],
 			data: function () {
 				return {
 
@@ -160,6 +163,9 @@
 
 						}
 					});
+				},
+				showNewTeamSeasonPopup: function () {
+					this.$emit('bus', {name: 'show-new-team-season-popup', value: this.season});
 				}
 			}
 		});
@@ -175,21 +181,16 @@
 			},
 			computed: {
 				sortedSeasons: function () {
-					var seasons = this.seasons.sort(function(a, b) {
+					return this.seasons.sort(function(a, b) {
 						return parseInt(b.year) - parseInt(a.year);
 					});
-					for (var i in seasons) {
-						seasons[i].seasonteams = this.getSeasonTeams(seasons[i]);
-					}
-					console.log(seasons);
-					return seasons;
 				}
 			},
 			methods: {
 				getSeasonTeams: function (season) {
 					var seasonteams = [];
 					for (var i in this.seasonteams) {
-						if (this.seasonteams[i] && this.seasonteams[i].season.id == season.id) {
+						if (this.seasonteams[i] && this.seasonteams[i].season.id === season.id) {
 							seasonteams.push(this.seasonteams[i]);
 						}
 					}
@@ -198,8 +199,10 @@
 				showAddSeasonPopup: function () {
 					this.$refs.modal.show('seasonModalContent');
 				},
-				showAddSeasonTeamPopup: function () {
-					this.$refs.modal.show('seasonTeamModalContent');
+				showAddSeasonTeamPopup: function (season) {
+					this.$refs.modal.show('seasonTeamModalContent', {
+						season: season
+					});
 				},
 				load: function () {
 					const $this = this;
@@ -228,9 +231,12 @@
 					this.seasons.push(season);
 					this.$refs.modal.hide();
 				});
-				this.$on('new-team', function (team) {
-					console.log(team);
+				this.$on('new-seasonteam', function (seasonteam) {
+					this.seasonteams.push(seasonteam);
 					this.$refs.modal.hide();
+				});
+				this.$on('show-new-team-season-popup', function (season) {
+					this.showAddSeasonTeamPopup(season);
 				});
 			},
 			mounted: function () {

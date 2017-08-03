@@ -177,11 +177,11 @@ class ControlController extends Controller
 		$seasonTeam = $request->request->get('seasonteam');
 
 		$team = $this->saveTeam($seasonTeam['team']);
-
+		$seasonId = $seasonTeam['season']['id'] ?? 0;
 		if (empty($seasonTeam['id'])) {
 			$response = $this
 				->get('domain.use_case.create_season_team_use_case')
-				->execute(new CreateSeasonTeamRequest($team->getId(), 1,30, 1));
+				->execute(new CreateSeasonTeamRequest($team->getId(), 1,$seasonId, 1));
 			$this->get('doctrine.orm.entity_manager')->flush();
 			return $this->json($response->getSeasonTeam());
 		}
