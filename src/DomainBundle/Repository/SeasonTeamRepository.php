@@ -66,6 +66,14 @@ class SeasonTeamRepository extends EntityRepository implements SeasonTeamReposit
 	 */
 	public function findByTeamAndSeason(Team $team, Season $season): SeasonTeam
 	{
-		// TODO: Implement findByTeamAndSeason() method.
+		$seasonteam = $this->createQueryBuilder('st')
+			->where('st.team = :team')
+			->andWhere('st.season = :season')
+			->setParameters(['team' => $team, 'season' => $season])
+			->getQuery()
+			->getOneOrNullResult();
+		if (empty($seasonteam)) {
+			throw new EntityNotFoundException('SeasonTeam not found');
+		}
 	}
 }

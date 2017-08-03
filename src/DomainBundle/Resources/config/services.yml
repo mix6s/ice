@@ -25,8 +25,21 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\League
+    domain.repository.seasonteam:
+            class: Doctrine\ORM\EntityRepository
+            factory: ['@doctrine.orm.default_entity_manager', getRepository]
+            arguments:
+                - Domain\Entity\SeasonTeam
 
     #usecases
-    domain.usecase.create_season_use_case:
+    domain.use_case.create_season_use_case:
        class: Domain\UseCase\CreateSeasonUseCase
        arguments: ['@domain.container']
+
+    domain.use_case.create_team_use_case:
+        class: Domain\UseCase\CreateTeamUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.create_season_team_use_case:
+        class: Domain\UseCase\CreateSeasonTeamUseCase
+        arguments: ['@domain.container']

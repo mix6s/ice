@@ -10,6 +10,13 @@ parameters:
     locale: ru
 
 framework:
+    cache:
+        # defaults to memcached://localhost
+        default_memcached_provider: "memcached://localhost:11211"
+        pools:
+            app.cache:
+                adapter: cache.adapter.memcached
+                public: true
     #esi: ~
     #translator: { fallbacks: ['%locale%'] }
     translator: ~

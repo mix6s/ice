@@ -13,7 +13,7 @@ namespace Domain\Entity;
  * Class SeasonTeam
  * @package Domain\Entity
  */
-class SeasonTeam
+class SeasonTeam implements \JsonSerializable
 {
 	private $id;
 	private $team;
@@ -81,5 +81,31 @@ class SeasonTeam
 	public function getSeason(): Season
 	{
 		return $this->season;
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	function jsonSerialize()
+	{
+		return [
+			'id' => $this->getId(),
+			'team' => $this->getTeam(),
+			'coach' => $this->getCoach(),
+			'season' => $this->getSeason(),
+			'league' => $this->getLeague(),
+		];
+	}
+
+	/**
+	 * @return League
+	 */
+	public function getLeague(): League
+	{
+		return $this->league;
 	}
 }

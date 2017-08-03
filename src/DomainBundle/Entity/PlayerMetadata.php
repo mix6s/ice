@@ -9,13 +9,12 @@
 namespace DomainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  */
-class PlayerMetadata
+class PlayerMetadata implements \JsonSerializable
 {
 	const POSITION_GK = 'goalkeeper';
 	const POSITION_LB = 'leftback';
@@ -282,5 +281,19 @@ class PlayerMetadata
 	public function setImage($image)
 	{
 		$this->image = $image;
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	function jsonSerialize()
+	{
+		return [
+			'id' => $this->getId()
+		];
 	}
 }

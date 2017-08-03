@@ -19,3 +19,7 @@ services:
         class: AppBundle\TwigAppExtension
         tags:
             - { name: twig.extension }
+
+    settings.manager:
+        class: AppBundle\SettingManager
+        arguments: ['@doctrine.orm.entity_manager', '@app.cache']

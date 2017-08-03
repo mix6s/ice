@@ -18,7 +18,7 @@ trait MetadataTrait
 	private $metadata;
 
 	/**
-	 * @return mixed
+	 * @return \JsonSerializable
 	 */
 	public function getMetadata()
 	{
@@ -26,9 +26,9 @@ trait MetadataTrait
 	}
 
 	/**
-	 * @param mixed $metadata
+	 * @param \JsonSerializable|null $metadata
 	 */
-	public function setMetadata($metadata)
+	public function setMetadata(\JsonSerializable $metadata = null)
 	{
 		$this->metadata = $metadata;
 	}

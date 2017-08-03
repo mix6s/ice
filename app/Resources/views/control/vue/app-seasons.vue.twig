@@ -5,46 +5,9 @@
         </div>
     </div>
     <div class="row">
-        <div v-for="(season, index) in sortedSeasons" class="col-xs-12 col-sm-12 col-md-6">
-            <div class="panel" v-bind:class="[index == 0 ? 'panel-primary' : 'panel-info']">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <h3 class="panel-title season-title">{{ season.year - 1 }}/{{ season.year }}</h3>
-                        </div>
-                        <div class="col-xs-6 text-right">
-                            <button class="btn btn-xs btn-default" title="Копировать"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Команда</th>
-                        <th>Тренер</th>
-                        <th>Лига</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Бешеный псы</td>
-                        <td><a>Пушкарев</a></td>
-                        <td><a></a></td>
-                        <td class="text-right">
-                            <button class="btn btn-xs btn-info" title="Редактировать"><i class="fa fa-edit" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="4"><button class="btn btn-xs btn-primary" v-on:click="showAddSeasonTeamPopup">Добавить команду в сезон</button></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
+        <div v-for="season in sortedSeasons" class="col-xs-12 col-sm-12 col-md-6">
+            <season @bus="handle" :season="season" :current-season-id="currentSeasonId" :on-season-team-add-click="showAddSeasonTeamPopup"></season>
         </div>
     </div>
-    <modal ref="modal"></modal>
+    <modal ref="modal" @bus="handle"></modal>
 </div>

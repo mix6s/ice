@@ -5,16 +5,25 @@
         <h4 class="modal-title">Новыая команда в сезоне</h4>
     </div>
     <div class="modal-body">
-        <form>
+        <div class="form-horizontal">
             <div class="form-group">
-                <label for="team">Команда</label>
-                <input type="text" class="form-control" id="team" placeholder="Команда">
+                <label class="col-sm-3 control-label">Команда</label>
+                <div class="col-sm-9">
+                    <a href="#" id="team-select" data-type="typeahead">{{ team ? team.metadata.title : 'Выбрать' }}</a>
+                </div>
             </div>
-
-        </form>
+        </div>
+        <div v-if="team" class="form-horizontal">
+            <div class="form-group">
+                <label for="title" class="col-sm-3 control-label">Название</label>
+                <div class="col-sm-6">
+                    <input class="form-control" id="title" placeholder="Название" :value="team.metadata.title">
+                </div>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
+        <button type="button" v-on:click="save" class="btn btn-primary">Сохранить</button>
     </div>
 </div>

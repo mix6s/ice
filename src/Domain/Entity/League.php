@@ -13,7 +13,7 @@ namespace Domain\Entity;
  * Class League
  * @package Domain\Entity
  */
-class League
+class League implements \JsonSerializable
 {
 	use MetadataTrait;
 
@@ -29,11 +29,11 @@ class League
 	}
 
 	/**
-	 * @param $metadata
+	 * @param \JsonSerializable $metadata
 	 * @param int $id
 	 * @return League
 	 */
-	public static function create(int $id, $metadata = null): League
+	public static function create(int $id, \JsonSerializable $metadata = null): League
 	{
 		$league = new League($id);
 		$league->setMetadata($metadata);
@@ -46,5 +46,20 @@ class League
 	public function getId(): int
 	{
 		return $this->id;
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	function jsonSerialize()
+	{
+		return [
+			'id' => $this->getId(),
+			'metadata' => $this->getMetadata()
+		];
 	}
 }

@@ -7,6 +7,10 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+		function typeahead()
+		{
+
+		}
 
 		Vue.component('seasonModalContent', {
 			template: '{{ source('control/vue/season-modal.vue.twig')|escape('js') }}',
@@ -35,7 +39,7 @@
 						data: {year: $this.year},
 						type: 'post',
 						success: function (response) {
-							app.$emit('new-season', response);
+							$this.$emit('bus', {name: 'new-season', value: response});
 						},
 						error: function (jqXHR) {
 							$this.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
@@ -49,27 +53,67 @@
 			template: '{{ source('control/vue/season-team-modal.vue.twig')|escape('js') }}',
 			data: function () {
 				return {
-					year: (new Date()).getFullYear(),
-					error: null
+					team: null
 				}
 			},
 			computed:{
-				years: function () {
-					return (this.year - 1) + '/' + (this.year)
+				seasonteam: function () {
+					return {
+						team: this.team
+					}
 				}
 			},
 			methods: {
-				initTypeHead: function () {
-					$('#team').typeahead({
-						source: [
-							'asd',
-							'asdds'
-						],
+				updateTeamInfo: function (team) {
+					this.team = team;
+				},
+				save: function () {
+					var $this = this;
+					$.ajax({
+						url: '/control/seasonteam/save',
+						data: {seasonteam: $this.seasonteam},
+						type: 'post',
+						success: function (response) {
+							//$this.seasonteam = response;
+							$this.$emit('bus', {name: 'new-team', value: response});
+						},
+						error: function (jqXHR) {
+							$this.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
+						}
+					});
+				},
+				init: function () {
+					var $this = this;
+					$('#team-select').editable({
+						mode: 'inline',
+						unsavedclass: '',
+						showbuttons: false,
+						value: '',
+						typeahead: {
+							autoSelect: false,
+							source: function (query, process) {
+								$.ajax({
+									url: '/control/typeahead?team=' + query,
+									success: function (response) {
+										process(response);
+									}
+								});
+							},
+							onSelect: function (item) {
+								$this.updateTeamInfo(item.team);
+							}
+						},
+						display: function (value) {
+							if (value !== '' && (!$this.team || $this.team.metadata.title !== value)) {
+								$this.updateTeamInfo({metadata: {title: value}});
+							}
+						},
+						title: 'Выберите команду'
 					});
 				}
 			},
 			mounted: function () {
-				this.initTypeHead();
+				this.init();
 			}
 		});
 
@@ -87,31 +131,70 @@
 				},
 				hide: function () {
 					$('#modal').modal('hide');
+				},
+				handle: function (data) {
+					this.$emit('bus', data);
+				}
+			}
+		});
+
+		Vue.component('season', {
+			template: '{{ source('control/vue/season.vue.twig')|escape('js') }}',
+			props: ['season', 'currentSeasonId', 'onSeasonTeamAddClick'],
+			data: function () {
+				return {
+
 				}
 			},
-			created: function () {
-				this.$on('new-season', function (season) {
-					this.hide();
-				});
+			methods: {
+				markCurrent: function () {
+					var $this = this;
+					$.ajax({
+						url: '/control/seasons/current',
+						type: 'post',
+						data: {id: $this.season.id},
+						success: function (response) {
+							$this.$emit('bus', {name: 'current-season-update', value: $this.season.id});
+						},
+						complete: function (response) {
+
+						}
+					});
+				}
 			}
 		});
 
 		var app = new Vue({
 			el: '#app',
 			data: {
+				currentSeasonId: 0,
 				seasons: [],
-				seasonCount: 0,
+				seasonteams: [],
 				teams: [],
 				leagues: []
 			},
 			computed: {
 				sortedSeasons: function () {
-					return this.seasons.sort(function(a, b) {
+					var seasons = this.seasons.sort(function(a, b) {
 						return parseInt(b.year) - parseInt(a.year);
 					});
+					for (var i in seasons) {
+						seasons[i].seasonteams = this.getSeasonTeams(seasons[i]);
+					}
+					console.log(seasons);
+					return seasons;
 				}
 			},
 			methods: {
+				getSeasonTeams: function (season) {
+					var seasonteams = [];
+					for (var i in this.seasonteams) {
+						if (this.seasonteams[i] && this.seasonteams[i].season.id == season.id) {
+							seasonteams.push(this.seasonteams[i]);
+						}
+					}
+					return seasonteams;
+				},
 				showAddSeasonPopup: function () {
 					this.$refs.modal.show('seasonModalContent');
 				},
@@ -124,17 +207,29 @@
 						url: '/control/seasons',
 						type: 'get',
 						success: function (response) {
-							$this.seasons = response;
+							$this.seasons = response.seasons;
+							$this.seasonteams = response.seasonteams;
+							$this.currentSeasonId = response.currentSeasonId;
 						},
 						complete: function (response) {
 
 						}
 					});
+				},
+				handle: function (data) {
+					this.$emit(data.name, data.value);
 				}
 			},
 			created: function () {
+				this.$on('current-season-update', function (id) {
+					this.currentSeasonId = id;
+				});
 				this.$on('new-season', function (season) {
 					this.seasons.push(season);
+					this.$refs.modal.hide();
+				});
+				this.$on('new-team', function (team) {
+					console.log(team);
 					this.$refs.modal.hide();
 				});
 			},

@@ -47,7 +47,7 @@ class Container implements ContainerInterface
 	 */
 	public function getSeasonTeamRepository(): SeasonTeamRepositoryInterface
 	{
-		// TODO: Implement getSeasonTeamRepository() method.
+		return $this->container->get('domain.repository.seasonteam');
 	}
 
 	/**
@@ -63,7 +63,7 @@ class Container implements ContainerInterface
 	 */
 	public function getLeagueRepository(): LeagueRepositoryInterface
 	{
-		// TODO: Implement getLeagueRepository() method.
+		return $this->container->get('domain.repository.league');
 	}
 
 	/**
