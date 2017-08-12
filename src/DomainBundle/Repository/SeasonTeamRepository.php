@@ -75,5 +75,6 @@ class SeasonTeamRepository extends EntityRepository implements SeasonTeamReposit
 		if (empty($seasonteam)) {
 			throw new EntityNotFoundException('SeasonTeam not found');
 		}
+		return $seasonteam;
 	}
 }

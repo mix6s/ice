@@ -9,11 +9,13 @@
 namespace AppBundle\Controller;
 
 
+use Domain\DTO\Request\CreateLeagueRequest;
 use Domain\DTO\Request\CreateSeasonRequest;
 use Domain\DTO\Request\CreateSeasonTeamRequest;
 use Domain\DTO\Request\CreateTeamRequest;
 use Domain\Entity\League;
 use Domain\Entity\Player;
+use Domain\Entity\Season;
 use Domain\Entity\Team;
 use Domain\Exception\DomainException;
 use Domain\Exception\SeasonAlreadyExistException;
@@ -22,9 +24,12 @@ use DomainBundle\Entity\PlayerMetadata;
 use DomainBundle\Entity\TeamMetadata;
 use DomainBundle\Repository\LeagueRepository;
 use DomainBundle\Repository\SeasonRepository;
+use DomainBundle\Repository\SeasonTeamRepository;
 use DomainBundle\Repository\TeamRepository;
+use Liip\ImagineBundle\Model\Binary;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -127,6 +132,32 @@ class ControlController extends Controller
 			}
 			return $this->json($result);
 		}
+
+		$leagueQuery = $request->get('league');
+		if (!empty($leagueQuery)) {
+			$em = $this->get('doctrine.orm.entity_manager');
+			$qb = $em->createQueryBuilder();
+			$leagues = $qb
+				->from('Domain:League', 'l')
+				->join('l.metadata', 'm')
+				->select('l')
+				->where('m.title like :query')
+				->setParameter('query', '%' . $leagueQuery . '%')
+				->getQuery()
+				->getResult();
+			$result = [];
+			/** @var League $league */
+			foreach ($leagues as $league) {
+				/** @var LeagueMetadata $meta */
+				$meta = $league->getMetadata();
+
+				$result[] = [
+					'name' => $meta->getTitle(),
+					'league' => $league
+				];
+			}
+			return $this->json($result);
+		}
 	}
 
 	/**
@@ -154,7 +185,7 @@ class ControlController extends Controller
 				->leftJoin('Domain:Team', 't', 'WITH', 'st.team = t.id')
 				->leftJoin('Domain:Player', 'c', 'WITH', 'st.coach = c.id')
 				->leftJoin('Domain:League', 'l', 'WITH', 'st.league = l.id')
-				->orderBy('s.year', 'desc');
+				->orderBy('s.year, st.id', 'desc');
 
 			/** @var SeasonRepository $seasonRepository */
 			$seasonRepository = $this->get('domain.repository.season');
@@ -206,17 +237,22 @@ class ControlController extends Controller
 		$seasonTeam = $request->request->get('seasonteam');
 
 		$team = $this->saveTeam($seasonTeam['team']);
+		$league = $this->saveLeague($seasonTeam['league']);
 		$seasonId = $seasonTeam['season']['id'] ?? 0;
 		$coachId = $seasonTeam['coach']['id'] ?? 0;
 		if (empty($seasonTeam['id'])) {
 			$response = $this
 				->get('domain.use_case.create_season_team_use_case')
-				->execute(new CreateSeasonTeamRequest($team->getId(), $coachId, $seasonId, 1));
+				->execute(new CreateSeasonTeamRequest($team->getId(), $coachId, $seasonId, $league->getId()));
 			$this->get('doctrine.orm.entity_manager')->flush();
-			return $this->json($response->getSeasonTeam());
+			$st = $response->getSeasonTeam();
+		} else {
+			/** @var SeasonTeamRepository $repository */
+			$repository = $this->get('domain.repository.seasonteam');
+			$st = $repository->findById($seasonTeam['id']);
 		}
-
 		$this->get('doctrine.orm.entity_manager')->flush();
+		return $this->json($st);
 	}
 
 	/**
@@ -236,9 +272,57 @@ class ControlController extends Controller
 		}
 		/** @var TeamMetadata $metadata */
 		$metadata = $team->getMetadata();
-		$metadata->setTitle($meta['title']);
+		$metadata->updateFromData($meta);
 		$this->get('doctrine.orm.entity_manager')->flush();
 		return $team;
+	}
+
+	/**
+	 * @param array $leagueRequestData
+	 * @return League
+	 */
+	private function saveLeague(array $leagueRequestData): League
+	{
+		$id = $leagueRequestData['id'] ?? null;
+		$meta = $leagueRequestData['metadata'];
+		if (empty($id)) {
+			$metadata = new LeagueMetadata();
+			$metadata->setTitle($meta['title']);
+			$league = $this->get('domain.use_case.create_league_use_case')->execute(new CreateLeagueRequest($metadata))->getLeague();
+		} else {
+			/** @var LeagueRepository $repository */
+			$repository = $this->get('domain.repository.league');
+			$league = $repository->findById($id);
+		}
+		/** @var LeagueMetadata $metadata */
+		$metadata = $league->getMetadata();
+		$metadata->setTitle($meta['title']);
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $league;
+	}
+
+	/**
+	 * @Route("/avatar/upload", name="control.team.avatar.upload")
+	 */
+	public function uploadTeamAvatarAction(Request $request)
+	{
+		/** @var UploadedFile $file */
+		$file = $request->files->get('file');
+		$tmpfilename = uniqid();
+		$file->move($this->getParameter('web_dir') . '/backend/img/upload/', $tmpfilename);
+		$binary = new Binary(file_get_contents($this->getParameter('web_dir') . '/backend/img/upload/' . $tmpfilename), 'image/png', 'png');
+		$filename = uniqid('t_avatar_', true) . '.png';
+
+		$response = $this->get('liip_imagine.filter.manager')->applyFilter($binary, 'avatar_mini');
+		$f = fopen($this->getParameter('web_dir') . '/avatar/mini/' . $filename, 'w');
+		fwrite($f, $response->getContent());
+		fclose($f);
+
+		$response = $this->get('liip_imagine.filter.manager')->applyFilter($binary, 'avatar_normal');
+		$f = fopen($this->getParameter('web_dir') . '/avatar/' . $filename, 'w');
+		fwrite($f, $response->getContent());
+		fclose($f);
+		return $this->json($filename);
 	}
 
 	/**

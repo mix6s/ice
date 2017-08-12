@@ -15,6 +15,10 @@ namespace Domain\Entity;
  */
 class SeasonTeamMember
 {
+	const TYPE_CAPTAIN = 'captain';
+	const TYPE_ASSISTANT = 'assistant';
+	const TYPE_DEFAULT = 'default';
+
 	private $id;
 	private $player;
 	private $type;
@@ -27,7 +31,7 @@ class SeasonTeamMember
 	 * @param Player $player
 	 * @param string $type
 	 */
-	private function __construct(int $id, SeasonTeam $seasonTeam, Player $player, string $type)
+	private function __construct(int $id, SeasonTeam $seasonTeam, Player $player, string $type = self::TYPE_DEFAULT)
 	{
 		$this->id = $id;
 		$this->seasonTeam = $seasonTeam;
@@ -42,7 +46,7 @@ class SeasonTeamMember
 	 * @param string $type
 	 * @return SeasonTeamMember
 	 */
-	public static function create(int $id, SeasonTeam $seasonTeam, Player $player, string $type): SeasonTeamMember
+	public static function create(int $id, SeasonTeam $seasonTeam, Player $player, string $type = self::TYPE_DEFAULT): SeasonTeamMember
 	{
 		return new SeasonTeamMember($id, $seasonTeam, $player, $type);
 	}

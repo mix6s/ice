@@ -84,6 +84,22 @@ class SeasonTeam implements \JsonSerializable
 	}
 
 	/**
+	 * @param Player $coach
+	 */
+	public function changeCoach(Player $coach)
+	{
+		$this->coach = $coach;
+	}
+
+	/**
+	 * @param League $league
+	 */
+	public function changeLeague(League $league)
+	{
+		$this->league = $league;
+	}
+
+	/**
 	 * Specify data which should be serialized to JSON
 	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
 	 * @return mixed data which can be serialized by <b>json_encode</b>,

@@ -35,6 +35,15 @@ class TeamMetadata implements \JsonSerializable
 	private $title;
 
 	/**
+	 * @ORM\Column(type="string", length=40, nullable=true)
+	 */
+	private $foundationDate;
+
+	/**
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 */
+	private $image;
+	/**
 	 * @return mixed
 	 */
 	public function getTitle()
@@ -59,6 +68,22 @@ class TeamMetadata implements \JsonSerializable
 	}
 
 	/**
+	 * @param $data
+	 */
+	public function updateFromData($data)
+	{
+		if (isset($data['title'])) {
+			$this->setTitle($data['title']);
+		}
+		if (isset($data['image'])) {
+			$this->setImage($data['image']);
+		}
+		if (isset($data['foundation_date'])) {
+			$this->setFoundationDate($data['foundation_date']);
+		}
+	}
+
+	/**
 	 * Specify data which should be serialized to JSON
 	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
 	 * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -69,7 +94,41 @@ class TeamMetadata implements \JsonSerializable
 	{
 		return [
 			'id' => $this->getId(),
-			'title' => $this->getTitle()
+			'title' => $this->getTitle(),
+			'image' => $this->getImage(),
+			'foundation_date' => $this->getFoundationDate()
 		];
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getFoundationDate()
+	{
+		return $this->foundationDate;
+	}
+
+	/**
+	 * @param mixed $foundationDate
+	 */
+	public function setFoundationDate($foundationDate)
+	{
+		$this->foundationDate = $foundationDate;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getImage()
+	{
+		return $this->image;
+	}
+
+	/**
+	 * @param mixed $image
+	 */
+	public function setImage($image)
+	{
+		$this->image = $image;
 	}
 }

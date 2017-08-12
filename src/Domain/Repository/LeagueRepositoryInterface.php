@@ -29,4 +29,9 @@ interface LeagueRepositoryInterface
 	 * @throws EntityNotFoundException
 	 */
 	public function findById(int $id): League;
+
+	/**
+	 * @param League $league
+	 */
+	public function save(League $league);
 }

@@ -23,15 +23,15 @@
         <tbody>
         <tr v-for="seasonteam in seasonteams">
             <td>{{ seasonteam.team.metadata.title }}</td>
-            <td><a>{{ seasonteam.coach.metadata.surname }}</a></td>
-            <td><a></a></td>
+            <td>{{ seasonteam.coach.metadata.surname }}</td>
+            <td>{{ seasonteam.league.metadata.title }}</td>
             <td class="text-right">
-                <button class="btn btn-xs btn-info" title="Редактировать"><i class="fa fa-edit" aria-hidden="true"></i></button>
+                <button v-on:click="showTeamSeasonPopup($event, seasonteam)" class="btn btn-xs btn-info" title="Редактировать"><i class="fa fa-edit" aria-hidden="true"></i></button>
                 <button class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
             </td>
         </tr>
         <tr>
-            <td colspan="4"><button class="btn btn-xs btn-primary" v-on:click="showNewTeamSeasonPopup">Добавить команду в сезон</button></td>
+            <td colspan="4"><button v-on:click="showTeamSeasonPopup" class="btn btn-xs btn-primary">Добавить команду в сезон</button></td>
         </tr>
         </tbody>
     </table>

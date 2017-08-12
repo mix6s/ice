@@ -2,22 +2,54 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Новыая команда в сезоне</h4>
+        <h4 class="modal-title">{{ isNew ? 'Новая команда в сезоне' : 'Редактирование команды в сезоне' }}</h4>
     </div>
     <div class="modal-body">
         <div class="form-horizontal">
             <div class="form-group">
                 <label class="col-sm-3 control-label">Команда</label>
                 <div class="col-sm-9">
-                    <a href="#" id="team-select" data-type="typeahead">{{ team ? team.metadata.title : 'Выбрать' }}</a>
+                    <a href="#" id="team-select" class="editable editable-click" data-type="typeahead">{{ team ? team.metadata.title : 'Выбрать' }}</a>
                 </div>
             </div>
         </div>
         <div v-if="team" class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-body bg-info">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Название</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="title" placeholder="Название" v-model="team.metadata.title">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dt" class="col-sm-3 control-label">Дата основания</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="dt" placeholder="Дата основания" v-model="team.metadata.foundation_date">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Лого</label>
+                        <div class="col-sm-9">
+                            <input ref="avatarFiles" type="file" id="upload" v-on:change="uploadAvatar" class="form-control" value="" accept="image/*">
+                        </div>
+
+                    </div>
+                    <div class="form-group" v-if="team.metadata.image">
+                        <div class="col-sm-9 col-sm-offset-3">
+                            <img  class="img-responsive" :src="'/avatar/'+team.metadata.image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-horizontal">
             <div class="form-group">
-                <label for="title" class="col-sm-3 control-label">Название</label>
-                <div class="col-sm-6">
-                    <input class="form-control" id="title" placeholder="Название" :value="team.metadata.title">
+                <label class="col-sm-3 control-label">Лига</label>
+                <div class="col-sm-9">
+                    <a href="#" id="league-select" class="editable editable-click" data-type="typeahead">{{ league ? league.metadata.title : 'Выбрать' }}</a>
                 </div>
             </div>
         </div>
@@ -25,9 +57,12 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">Тренер</label>
                 <div class="col-sm-9">
-                    <a href="#" id="coach-select" data-type="typeahead">{{ coach ? coach.metadata.surname : 'Выбрать' }}</a>
+                    <a href="#" id="coach-select" class="editable editable-click" data-type="typeahead">{{ coach ? coach.metadata.surname : 'Выбрать' }}</a>
                 </div>
             </div>
+        </div>
+        <div class="has-error" v-if="error">
+            <span class="help-block">{{ error }}</span>
         </div>
     </div>
     <div class="modal-footer">

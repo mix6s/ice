@@ -3,14 +3,14 @@
 {% block body %}
     {{ source('control/vue/app-seasons.vue.twig') }}
 {% endblock %}
-
+{% block ccs %}
+	{{ parent() }}
+	<link href="{{ asset('backend/css/dropzone.css') }}" rel="stylesheet">
+{% endblock %}
 {% block javascripts %}
     {{ parent() }}
+	<script src="{{ asset('backend/js/dropzone.js') }}"></script>
     <script>
-		function typeahead()
-		{
-
-		}
 
 		Vue.component('seasonModalContent', {
 			template: '{{ source('control/vue/season-modal.vue.twig')|escape('js') }}',
@@ -51,45 +51,89 @@
 
 		Vue.component('seasonTeamModalContent', {
 			template: '{{ source('control/vue/season-team-modal.vue.twig')|escape('js') }}',
-			props: ['data'],
+			props: ['props'],
 			data: function () {
 				return {
+					error: null,
+					id: null,
 					team: null,
-					coach: null
+					coach: null,
+					season: null,
+					league: null
 				}
 			},
 			computed:{
-				seasonteam: function () {
-					return {
-						season: this.data.season,
-						coach: this.coach,
-						team: this.team
+				isNew: function () {
+					if (!this.id) {
+						return true;
 					}
+					return false;
 				}
 			},
 			methods: {
+				uploadAvatar: function () {
+					var $this = this;
+					var files = this.$refs.avatarFiles.files;
+					var formData = new FormData();
+
+					formData.append("file", files[0]);
+					var request = new XMLHttpRequest();
+					request.onreadystatechange = function() {//Call a function when the state changes.
+						if(request.readyState == 4 && request.status == 200) {
+							$this.changeAvatar(JSON.parse(request.responseText));
+						}
+					};
+					request.open("POST", "/control/avatar/upload");
+					request.send(formData);
+				},
+				changeAvatar: function (url) {
+					console.log(url);
+					if (!this.team) {
+						this.team = {};
+					}
+					if (!this.team.metadata) {
+						this.team.metadata = {};
+					}
+					this.team.metadata.image = url;
+				},
 				updateTeamInfo: function (team) {
 					this.team = team;
 				},
 				updateCoach: function (coach) {
 					this.coach = coach;
 				},
+				updateLeague: function (league) {
+					this.league = league;
+				},
 				save: function () {
 					var $this = this;
+
 					$.ajax({
 						url: '/control/seasonteam/save',
-						data: {seasonteam: $this.seasonteam},
+						data: {seasonteam: {id: $this.id, team: $this.team, coach: $this.coach, league: $this.league, season: $this.season}},
 						type: 'post',
 						success: function (response) {
-							$this.$emit('bus', {name: 'new-seasonteam', value: response});
+							console.log(response);
+							$this.$emit('bus', {name: 'seasonteam-changed', value: response});
 						},
 						error: function (jqXHR) {
-							$this.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
+							$this.error = 'Ошибка сервера';
 						}
 					});
 				},
-				init: function () {
+				init: function (data) {
 					var $this = this;
+					if (!data) {
+						data = this.props;
+					}
+					if (data) {
+						$this.id = data.seasonTeam.id;
+						$this.team = data.seasonTeam.team;
+						$this.coach = data.seasonTeam.coach;
+						$this.season = data.season;
+						$this.league = data.seasonTeam.league;
+					}
+
 					$('#team-select').editable({
 						mode: 'inline',
 						unsavedclass: '',
@@ -116,6 +160,12 @@
 						},
 						title: 'Выберите команду'
 					});
+					if ($this.id) {
+						$('#team-select').editable('disable');
+					} else {
+						$('#team-select').editable('enable');
+					}
+
 
 					$('#coach-select').editable({
 						mode: 'inline',
@@ -141,6 +191,33 @@
 						},
 						title: 'Выберите тренера'
 					});
+
+					$('#league-select').editable({
+						mode: 'inline',
+						unsavedclass: '',
+						showbuttons: false,
+						value: '',
+						typeahead: {
+							autoSelect: false,
+							source: function (query, process) {
+								$.ajax({
+									url: '/control/typeahead?league=' + query,
+									success: function (response) {
+										process(response);
+									}
+								});
+							},
+							onSelect: function (item) {
+								$this.updateLeague(item.league);
+							}
+						},
+						display: function (value) {
+							if (value !== '' && (!$this.league || $this.league.metadata.title !== value)) {
+								$this.updateLeague({metadata: {title: value}});
+							}
+						},
+						title: 'Выберите лигу'
+					});
 				}
 			},
 			mounted: function () {
@@ -160,6 +237,9 @@
 				show: function (template, data) {
 					this.content = template;
 					this.data = data;
+					if (this.$refs.content && this.$refs.content.init) {
+						this.$refs.content.init(data);
+					}
 					$('#modal').modal('show');
 				},
 				hide: function () {
@@ -194,8 +274,11 @@
 						}
 					});
 				},
-				showNewTeamSeasonPopup: function () {
-					this.$emit('bus', {name: 'show-new-team-season-popup', value: this.season});
+				showTeamSeasonPopup: function (event, seasonTeam) {
+					if (!seasonTeam) {
+						seasonTeam = {};
+					}
+					this.$emit('bus', {name: 'show-team-season-popup', value: {season: this.season, seasonTeam: seasonTeam}});
 				}
 			}
 		});
@@ -229,10 +312,8 @@
 				showAddSeasonPopup: function () {
 					this.$refs.modal.show('seasonModalContent');
 				},
-				showAddSeasonTeamPopup: function (season) {
-					this.$refs.modal.show('seasonTeamModalContent', {
-						season: season
-					});
+				showAddSeasonTeamPopup: function (data) {
+					this.$refs.modal.show('seasonTeamModalContent', data);
 				},
 				load: function () {
 					const $this = this;
@@ -261,12 +342,23 @@
 					this.seasons.push(season);
 					this.$refs.modal.hide();
 				});
-				this.$on('new-seasonteam', function (seasonteam) {
-					this.seasonteams.push(seasonteam);
+				this.$on('seasonteam-changed', function (seasonteam) {
+					console.log(seasonteam, this.seasonteams);
+					var exist = false;
+					for (index in this.seasonteams) {
+						if (this.seasonteams[index] && this.seasonteams[index].id == seasonteam.id) {
+							this.seasonteams[index] = seasonteam;
+							exist = true;
+							break;
+						}
+					}
+					if (!exist) {
+						this.seasonteams.push(seasonteam);
+					}
 					this.$refs.modal.hide();
 				});
-				this.$on('show-new-team-season-popup', function (season) {
-					this.showAddSeasonTeamPopup(season);
+				this.$on('show-team-season-popup', function (data) {
+					this.showAddSeasonTeamPopup(data);
 				});
 			},
 			mounted: function () {

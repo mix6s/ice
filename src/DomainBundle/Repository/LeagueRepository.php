@@ -47,4 +47,12 @@ class LeagueRepository extends EntityRepository implements LeagueRepositoryInter
 		}
 		return $league;
 	}
+
+	/**
+	 * @param League $league
+	 */
+	public function save(League $league)
+	{
+		$this->getEntityManager()->persist($league);
+	}
 }

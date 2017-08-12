@@ -43,3 +43,7 @@ services:
     domain.use_case.create_season_team_use_case:
         class: Domain\UseCase\CreateSeasonTeamUseCase
         arguments: ['@domain.container']
+
+    domain.use_case.create_league_use_case:
+        class: Domain\UseCase\CreateLeagueUseCase
+        arguments: ['@domain.container']
