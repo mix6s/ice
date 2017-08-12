@@ -87,7 +87,6 @@
 					request.send(formData);
 				},
 				changeAvatar: function (url) {
-					console.log(url);
 					if (!this.team) {
 						this.team = {};
 					}
@@ -95,6 +94,7 @@
 						this.team.metadata = {};
 					}
 					this.team.metadata.image = url;
+					this.$forceUpdate();
 				},
 				updateTeamInfo: function (team) {
 					this.team = team;

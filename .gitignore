@@ -29,3 +29,5 @@
 /bin/symfony_requirements
 /bootstrap.sh
 /web/config.php
+/web/backend/img/upload/*
+!/web/backend/img/upload/.gitkeep
