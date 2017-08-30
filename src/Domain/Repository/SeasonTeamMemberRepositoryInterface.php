@@ -11,6 +11,7 @@ namespace Domain\Repository;
 
 use Domain\Entity\Player;
 use Domain\Entity\Season;
+use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
 use Domain\Exception\EntityNotFoundException;
 
@@ -37,4 +38,22 @@ interface SeasonTeamMemberRepositoryInterface
 	 * @param SeasonTeamMember $member
 	 */
 	public function save(SeasonTeamMember $member);
+
+	/**
+	 * @param SeasonTeamMember $member
+	 */
+	public function remove(SeasonTeamMember $member);
+
+	/**
+	 * @param int $id
+	 * @return SeasonTeamMember
+	 * @throws EntityNotFoundException
+	 */
+	public function findById(int $id): SeasonTeamMember;
+
+	/**
+	 * @param SeasonTeam $seasonTeam
+	 * @return SeasonTeamMember[]
+	 */
+	public function findBySeasonTeam(SeasonTeam $seasonTeam): array;
 }

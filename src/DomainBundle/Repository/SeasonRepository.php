@@ -72,4 +72,12 @@ class SeasonRepository extends EntityRepository implements SeasonRepositoryInter
 		}
 		return $season;
 	}
+
+	/**
+	 * @param Season $season
+	 */
+	public function remove(Season $season)
+	{
+		$this->getEntityManager()->remove($season);
+	}
 }

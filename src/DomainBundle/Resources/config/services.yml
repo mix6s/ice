@@ -26,11 +26,16 @@ services:
         arguments:
             - Domain\Entity\League
     domain.repository.seasonteam:
-            class: Doctrine\ORM\EntityRepository
-            factory: ['@doctrine.orm.default_entity_manager', getRepository]
-            arguments:
-                - Domain\Entity\SeasonTeam
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\SeasonTeam
 
+    domain.repository.seasonteammember:
+        class: DomainBundle\Repository\SeasonTeamMemberRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\SeasonTeamMember
     #usecases
     domain.use_case.create_season_use_case:
        class: Domain\UseCase\CreateSeasonUseCase
@@ -46,4 +51,24 @@ services:
 
     domain.use_case.create_league_use_case:
         class: Domain\UseCase\CreateLeagueUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.remove_season_team_members_use_case:
+        class: Domain\UseCase\RemoveSeasonTeamMembersUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.add_season_team_members_use_case:
+        class: Domain\UseCase\AddSeasonTeamMembersUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.remove_season_team_use_case:
+        class: Domain\UseCase\RemoveSeasonTeamUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.remove_season_use_case:
+        class: Domain\UseCase\RemoveSeasonUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.copy_season_use_case:
+        class: Domain\UseCase\CopySeasonUseCase
         arguments: ['@domain.container']

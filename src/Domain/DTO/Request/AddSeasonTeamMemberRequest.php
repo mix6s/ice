@@ -8,6 +8,8 @@
 
 namespace Domain\DTO\Request;
 
+use Domain\DTO\Member;
+
 
 /**
  * Class AddSeasonTeamMemberRequest
@@ -17,22 +19,27 @@ class AddSeasonTeamMemberRequest
 {
 	private $coachId;
 	private $seasonTeamId;
-	private $playerId;
-	private $type;
+	private $members = [];
 
 	/**
 	 * AddSeasonTeamMemberRequest constructor.
 	 * @param int $coachId
 	 * @param int $seasonTeamId
-	 * @param int $playerId
-	 * @param string $type
 	 */
-	public function __construct(int $coachId, int $seasonTeamId, int $playerId, string $type)
+	public function __construct(int $coachId, int $seasonTeamId)
 	{
 		$this->coachId = $coachId;
 		$this->seasonTeamId = $seasonTeamId;
-		$this->playerId = $playerId;
-		$this->type = $type;
+		$this->members = [];
+	}
+
+	/**
+	 * @param int $playerId
+	 * @param string $type
+	 */
+	public function addMember(int $playerId, string $type)
+	{
+		$this->members[] = new Member($playerId, $type);
 	}
 
 	/**
@@ -52,18 +59,10 @@ class AddSeasonTeamMemberRequest
 	}
 
 	/**
-	 * @return int
+	 * @return Member[]
 	 */
-	public function getPlayerId(): int
+	public function getMembers(): array
 	{
-		return $this->playerId;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getType(): string
-	{
-		return $this->type;
+		return $this->members;
 	}
 }

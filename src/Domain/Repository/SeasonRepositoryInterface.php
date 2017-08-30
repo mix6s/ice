@@ -41,4 +41,9 @@ interface SeasonRepositoryInterface
 	 * @param Season $season
 	 */
 	public function save(Season $season);
+
+	/**
+	 * @param Season $season
+	 */
+	public function remove(Season $season);
 }

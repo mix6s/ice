@@ -6,8 +6,8 @@
             </div>
             <div class="col-xs-6 text-right">
                 <button v-if="season.id != currentSeasonId" v-on:click="markCurrent" class="btn btn-xs btn-default" title="Сделать текущим сезоном"><i class="fa fa-check" aria-hidden="true"></i></button>
-                <button class="btn btn-xs btn-default" title="Копировать"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-                <button class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                <button v-on:click="showCopySeasonPopup(season)" class="btn btn-xs btn-default" title="Копировать"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+                <button v-on:click="removeSeason" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>
@@ -23,11 +23,11 @@
         <tbody>
         <tr v-for="seasonteam in seasonteams">
             <td>{{ seasonteam.team.metadata.title }}</td>
-            <td>{{ seasonteam.coach.metadata.surname }}</td>
+            <td>{{ seasonteam.coach.metadata.full_name }}</td>
             <td>{{ seasonteam.league.metadata.title }}</td>
             <td class="text-right">
                 <button v-on:click="showTeamSeasonPopup($event, seasonteam)" class="btn btn-xs btn-info" title="Редактировать"><i class="fa fa-edit" aria-hidden="true"></i></button>
-                <button class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                <button v-on:click="remove(seasonteam)"  :disabled="deleteInProgress" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
             </td>
         </tr>
         <tr>
