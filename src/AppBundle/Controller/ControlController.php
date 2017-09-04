@@ -9,6 +9,8 @@
 namespace AppBundle\Controller;
 
 
+use Domain\DTO\Request\AddSeasonTeamMemberRequest;
+use Domain\DTO\Request\CopySeasonRequest;
 use Domain\DTO\Request\CreateLeagueRequest;
 use Domain\DTO\Request\CreateSeasonRequest;
 use Domain\DTO\Request\CreateSeasonTeamRequest;
@@ -126,8 +128,36 @@ class ControlController extends Controller
 				$meta = $player->getMetadata();
 
 				$result[] = [
-					'name' => $meta->getSurname(),
+					'name' => $meta->getFullName(),
 					'coach' => $player
+				];
+			}
+			return $this->json($result);
+		}
+
+		$playerQuery = $request->get('player');
+		if (!empty($playerQuery)) {
+			$em = $this->get('doctrine.orm.entity_manager');
+			$qb = $em->createQueryBuilder();
+			$players = $qb
+				->from('Domain:Player', 'p')
+				->join('p.metadata', 'm')
+				->select('p')
+				->where('m.surname like :query')
+				->orWhere('m.firstName like :query')
+				->orWhere('m.secondName like :query')
+				->setParameter('query', '%' . $playerQuery . '%')
+				->getQuery()
+				->getResult();
+			$result = [];
+			/** @var Player $player */
+			foreach ($players as $player) {
+				/** @var PlayerMetadata $meta */
+				$meta = $player->getMetadata();
+
+				$result[] = [
+					'name' => $meta->getFullName(),
+					'player' => $player
 				];
 			}
 			return $this->json($result);
@@ -206,13 +236,20 @@ class ControlController extends Controller
 	public function seasonsNewAction(Request $request)
 	{
 		$year = $request->request->get('year');
+		$copyId = (int)$request->request->get('copy_season_id');
+		$seasonteams = [];
 		try {
-			$response = $this->get('domain.use_case.create_season_use_case')->execute(new CreateSeasonRequest($year));
+			if ($copyId) {
+				$response = $this->get('domain.use_case.copy_season_use_case')->execute(new CopySeasonRequest($copyId, $year));
+				$seasonteams = $response->getSeasonTeams();
+			} else {
+				$response = $this->get('domain.use_case.create_season_use_case')->execute(new CreateSeasonRequest($year));
+			}
 		} catch (SeasonAlreadyExistException $exception) {
 			return $this->json(['error' => 'Данный сезон уже существует'], 500);
 		}
 		$this->get('doctrine.orm.entity_manager')->flush();
-		return $this->json($response->getSeason());
+		return $this->json(['season' => $response->getSeason(), 'seasonteams' => $seasonteams]);
 	}
 
 	/**
@@ -230,6 +267,37 @@ class ControlController extends Controller
 	}
 
 	/**
+	 * @Route("/seasonteam/members/{id}", name="control.seasonteam.members.get")
+	 */
+	public function seasonTeamMembersGetAction($id, Request $request)
+	{
+		/** @var SeasonTeamRepository $seasonTeamRepository */
+		$seasonTeamRepository = $this->get('domain.repository.seasonteam');
+		$seasonTeam = $seasonTeamRepository->findById($id);
+		return $this->json($this->get('domain.repository.seasonteammember')->findBySeasonTeam($seasonTeam));
+	}
+
+	/**
+	 * @Route("/seasonteam/delete/{id}", name="control.seasonteam.delete")
+	 */
+	public function seasonTeamDeleteAction($id)
+	{
+		$this->get('domain.use_case.remove_season_team_use_case')->execute($id);
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $this->json([]);
+	}
+
+	/**
+	 * @Route("/season/delete/{id}", name="control.season.delete")
+	 */
+	public function seasonDeleteAction($id)
+	{
+		$this->get('domain.use_case.remove_season_use_case')->execute($id);
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $this->json([]);
+	}
+
+	/**
 	 * @Route("/seasonteam/save", name="control.seasonteam.save")
 	 */
 	public function seasonTeamSaveAction(Request $request)
@@ -240,6 +308,7 @@ class ControlController extends Controller
 		$league = $this->saveLeague($seasonTeam['league']);
 		$seasonId = $seasonTeam['season']['id'] ?? 0;
 		$coachId = $seasonTeam['coach']['id'] ?? 0;
+
 		if (empty($seasonTeam['id'])) {
 			$response = $this
 				->get('domain.use_case.create_season_team_use_case')
@@ -247,11 +316,26 @@ class ControlController extends Controller
 			$this->get('doctrine.orm.entity_manager')->flush();
 			$st = $response->getSeasonTeam();
 		} else {
-			/** @var SeasonTeamRepository $repository */
-			$repository = $this->get('domain.repository.seasonteam');
-			$st = $repository->findById($seasonTeam['id']);
+			$coach = $this->get('domain.container')->getPlayerRepository()->findById($coachId);
+			$st = $this->get('domain.container')->getSeasonTeamRepository()->findById($seasonTeam['id']);
+			$st->changeCoach($coach);
+			$st->changeLeague($league);
 		}
 		$this->get('doctrine.orm.entity_manager')->flush();
+		$this->get('domain.use_case.remove_season_team_members_use_case')->execute($st->getId());
+		$this->get('doctrine.orm.entity_manager')->flush();
+
+		$members = $seasonTeam['members'] ?? [];
+
+		$addRequest = new AddSeasonTeamMemberRequest($coachId, $st->getId());
+		foreach ($members as $member) {
+			$addRequest->addMember($member['player_id'], $member['type']);
+		}
+		$response = $this
+			->get('domain.use_case.add_season_team_members_use_case')
+			->execute($addRequest);
+		$this->get('doctrine.orm.entity_manager')->flush();
+
 		return $this->json($st);
 	}
 
@@ -330,7 +414,7 @@ class ControlController extends Controller
 	 */
 	public function leaguesAction()
 	{
-
+		//
 	}
 
 	/**

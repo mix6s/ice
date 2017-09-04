@@ -66,4 +66,12 @@ class CreateSeasonTeamRequest
 	{
 		return $this->teamId;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getMembers(): array
+	{
+		return $this->members;
+	}
 }

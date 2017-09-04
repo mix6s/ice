@@ -17,22 +17,22 @@ use Domain\Entity\SeasonTeamMember;
  */
 class AddSeasonTeamMemberResponse
 {
-	private $member;
+	private $members;
 
 	/**
 	 * AddSeasonTeamMemberResponse constructor.
-	 * @param SeasonTeamMember $member
+	 * @param SeasonTeamMember[] $members
 	 */
-	public function __construct(SeasonTeamMember $member)
+	public function __construct(array $members)
 	{
-		$this->member = $member;
+		$this->members = $members;
 	}
 
 	/**
-	 * @return SeasonTeamMember
+	 * @return SeasonTeamMember[]
 	 */
-	public function getMember(): SeasonTeamMember
+	public function getMembers(): array
 	{
-		return $this->member;
+		return $this->members;
 	}
 }

@@ -44,4 +44,15 @@ interface SeasonTeamRepositoryInterface
 	 * @throws EntityNotFoundException
 	 */
 	public function findById(int $id): SeasonTeam;
+
+	/**
+	 * @param Season $season
+	 * @return SeasonTeam[]
+	 */
+	public function findBySeason(Season $season): array;
+
+	/**
+	 * @param SeasonTeam $seasonTeam
+	 */
+	public function remove(SeasonTeam $seasonTeam);
 }

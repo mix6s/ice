@@ -71,6 +71,6 @@ class Container implements ContainerInterface
 	 */
 	public function getSeasonTeamMemberRepository(): SeasonTeamMemberRepositoryInterface
 	{
-		// TODO: Implement getSeasonTeamMemberRepository() method.
+		return $this->container->get('domain.repository.seasonteammember');
 	}
 }
