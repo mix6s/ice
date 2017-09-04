@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+  app:
+    container_name: ice.app
+    build: ./app/docker/php
+    depends_on:
+      - mysql
+      - memcached
+    volumes:
+      - .:/var/www/ice
+    # dns:
+      # - 172.18.45.11
+      # - 172.18.45.12
+
+  nginx:
+    container_name: ice.nginx
+    image: nginx:latest
+    volumes_from:
+      - app
+    volumes:
+      - ./app/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./app/docker/nginx/sites-enabled:/etc/nginx/sites-enabled
+    ports:
+      - "80:80"
+
+  mysql:
+    container_name: ice.db
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ice
+    ports:
+      - "3306:3306"
+
+  memcached:
+    container_name: ice.memcached
+    image: memcached
+    ports:
+      - "11211:11211"
+
+  node:
+    container_name: ice.node
+    image: node:4.8.4-slim
+    volumes_from:
+      - app
