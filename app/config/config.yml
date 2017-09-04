@@ -12,7 +12,7 @@ parameters:
 framework:
     cache:
         # defaults to memcached://localhost
-        default_memcached_provider: "memcached://localhost:11211"
+        default_memcached_provider: "memcached://memcached:11211"
         pools:
             app.cache:
                 adapter: cache.adapter.memcached

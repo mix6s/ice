@@ -15,9 +15,8 @@
     <section class="sidebar-table">
         <div class="sidebar-table__title">Таблица</div>
         <div class="sidebar-table__list">
-            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Конференция А'}} %}
-            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Конференция Б'}} %}
-            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Конференция С'}} %}
+            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Лига А', team1: 'Вольный', team2: 'Метеор', team3: 'Волки', team4: 'Молния'}} %}
+            {% include 'blocks/sidebar-item-table.twig' with {item: {header: 'Лига Б', team1: 'Молот', team2: 'Колдаис', team3: 'Локомотив', team4: 'Бессоновка'}} %}
         </div>
         <div class="sidebar-table__link">
             <a href="#">Вся статистика</a>
