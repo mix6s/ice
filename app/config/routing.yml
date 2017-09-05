@@ -2,6 +2,11 @@ app:
     resource: '@AppBundle/Controller/'
     type: annotation
 
+control:
+    resource: '@ControlBundle/Controller/'
+    type: annotation
+    prefix: /control
+
 fos_user_security_logout:
     path:     /logout
     defaults: { _controller: FOSUserBundle:Security:logout }

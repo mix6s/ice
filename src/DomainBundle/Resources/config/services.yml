@@ -6,7 +6,7 @@ services:
 
     #repositories
     domain.repository.team:
-        class: Doctrine\ORM\EntityRepository
+        class: DomainBundle\Repository\TeamRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\Team

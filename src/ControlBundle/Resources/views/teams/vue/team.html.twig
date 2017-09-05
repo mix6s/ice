@@ -1,0 +1,83 @@
+<template>
+{% block vue_template %}
+{% verbatim %}
+<div class="panel panel-default">
+    <div class="panel-heading mb-10">
+        <div class="row">
+            <div class="col-xs-6">
+                <h3 class="panel-title ">{{ team.metadata.title }}</h3>
+            </div>
+             <div class="col-xs-6 text-right">
+                <button v-on:click="remove" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+            </div>
+
+        </div>
+    </div>
+    <div class="row mb-10">
+        <div class="col-sm-3">
+             <div class="form-group">
+                                <div class="col-sm-12" v-if="team.metadata.image">
+                                    <img  class="img-responsive img-rounded" :src="'/avatar/'+team.metadata.image">
+                                </div>
+                                <div class="col-sm-12" v-if="!team.metadata.image">
+                                    <img  class="img-responsive img-rounded" src="http://via.placeholder.com/400/fff/ddd?text=none">
+                                </div>
+              </div>
+        </div>
+          <div class="col-sm-9">
+             <div class="form-group">
+                {{  team.metadata.title }}
+            </div>
+             <div class="form-group">
+                {{  team.metadata.foundation_date }}
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+    <div v-if="yearButtons.middle" class="btn-group " role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-default"><< {{ yearButtons.left != null ? (yearButtons.left.year-1) + '/' + yearButtons.left.year : '' }}</button>
+        <button type="button" class="btn btn-default"><strong>{{ (yearButtons.middle.year-1) + '/' + yearButtons.middle.year }}</strong></button>
+        <button type="button" class="btn btn-default">{{ yearButtons.right != null ? (yearButtons.right.year-1) + '/' + yearButtons.right.year : '' }} >></button>
+    </div>
+    </div>
+</div>
+{% endverbatim %}
+{% endblock %}
+</template>
+
+<script>
+	Vue.component('team', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['team', 'seasonteams'],
+		data: function () {
+			return {
+				currentYearIndex: 0
+            }
+		},
+        computed: {
+			yearButtons: function () {
+              return {
+              	left: this.seasons[this.currentYearIndex - 1] ? this.seasons[this.currentYearIndex - 1] : null,
+                  middle:  this.seasons[this.currentYearIndex] ? this.seasons[this.currentYearIndex] : null,
+                  right: this.seasons[this.currentYearIndex + 1] ? this.seasons[this.currentYearIndex + 1] : null
+              }
+			},
+			seasons: function () {
+				var seasons = [], ids = [];
+				for (i in this.seasonteams) {
+					if (ids.indexOf(this.seasonteams[i].season.id) >= 0) {
+						continue;
+                    }
+                    seasons.push(this.seasonteams[i].season);
+					ids.push(this.seasonteams[i].season.id);
+                }
+                return seasons;
+            }
+        },
+		methods: {
+            remove: function () {
+            	return;
+            },
+		}
+	});
+</script>

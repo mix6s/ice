@@ -71,8 +71,7 @@ class ControlController extends Controller
 	 */
 	public function indexAction()
 	{
-		return $this->render('control/index.html.twig', [
-		]);
+		return $this->redirectToRoute('control.seasons');
 	}
 
 
@@ -216,10 +215,6 @@ class ControlController extends Controller
 				->leftJoin('Domain:Player', 'c', 'WITH', 'st.coach = c.id')
 				->leftJoin('Domain:League', 'l', 'WITH', 'st.league = l.id')
 				->orderBy('s.year, st.id', 'desc');
-
-			/** @var SeasonRepository $seasonRepository */
-			$seasonRepository = $this->get('domain.repository.season');
-			$seasons = $seasonRepository->findBy([], ['year' => 'desc']);
 
 			return $this->json([
 				'seasons' => $qb->select('s')->getQuery()->getResult(),
@@ -415,13 +410,5 @@ class ControlController extends Controller
 	public function leaguesAction()
 	{
 		//
-	}
-
-	/**
-	 * @Route("/teams", name="control.teams")
-	 */
-	public function teamsAction()
-	{
-
 	}
 }

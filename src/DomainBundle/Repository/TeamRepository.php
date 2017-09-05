@@ -10,6 +10,8 @@ namespace DomainBundle\Repository;
 
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Domain\Entity\SeasonTeam;
 use Domain\Entity\Team;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\TeamRepositoryInterface;
@@ -21,6 +23,7 @@ use DomainBundle\Identity\TeamIdentity;
  */
 class TeamRepository extends EntityRepository implements TeamRepositoryInterface
 {
+	const DEFAULT_LIMIT = 20;
 
 	/**
 	 * @return int

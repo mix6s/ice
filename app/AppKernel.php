@@ -18,6 +18,7 @@ class AppKernel extends Kernel
 			new FOS\UserBundle\FOSUserBundle(),
 			new AppBundle\AppBundle(),
 			new DomainBundle\DomainBundle(),
+			new \ControlBundle\ControlBundle(),
 			new Liip\ImagineBundle\LiipImagineBundle(),
 		];
 

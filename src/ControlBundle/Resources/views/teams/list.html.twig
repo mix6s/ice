@@ -1,0 +1,68 @@
+{% extends 'ControlBundle::layout.html.twig' %}
+
+{% block body %}
+    <div class="container" id="app">
+        <div class="row">
+            <div v-for="team in teams" class="col-xs-12 col-sm-12 col-md-6">
+                <team @bus="handle" :team="team" :seasonteams="getSeasonTeamsForTeam(team)"></team>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+	{{ include('@Control/teams/vue/team.html.twig') }}
+    <script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				seasonteams: [],
+				teams: []
+			},
+			computed: {
+
+			},
+			methods: {
+				setTeams: function (teams) {
+					this.teams = teams.filter(function (t) {
+						return !!t;
+					})
+				},
+				setSeasonTeams: function (seasonteams) {
+					this.seasonteams = seasonteams.filter(function (t) {
+						return !!t;
+					})
+				},
+				load: function () {
+					const _this = this;
+					$.ajax({
+						url: '/control/teams',
+						type: 'get',
+						success: function (response) {
+							_this.setTeams(response.teams);
+							_this.setSeasonTeams(response.seasonteams);
+						},
+						complete: function (response) {
+
+						}
+					});
+				},
+				getSeasonTeamsForTeam: function (team) {
+					return this.seasonteams.filter(function (t) {
+						return t.team.id === team.id;
+					});
+				},
+				handle: function (data) {
+					this.$emit(data.name, data.value);
+				}
+			},
+			created: function () {
+
+			},
+			mounted: function () {
+				this.load();
+			}
+		});
+    </script>
+{% endblock %}
