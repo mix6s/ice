@@ -11,7 +11,7 @@ services:
         arguments:
             - Domain\Entity\Team
     domain.repository.player:
-        class: Doctrine\ORM\EntityRepository
+        class: DomainBundle\Repository\PlayerRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\Player

@@ -47,4 +47,30 @@ class PlayerRepository extends EntityRepository implements PlayerRepositoryInter
 		}
 		return $player;
 	}
+
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return Player[]
+     */
+	public function findPlayers(int $limit, int $offset)
+    {
+        return $this->createQueryBuilder('p')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function countPlayers()
+    {
+        return $this->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

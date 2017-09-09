@@ -16,3 +16,11 @@ ICE
 отправка писем:
 
 `php bin/console swiftmailer:spool:send --env=prod`
+
+
+build:
+
+`npm install`
+`bower install`
+`gulp rename`
+`gulp build`
