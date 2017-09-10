@@ -300,6 +300,16 @@
 					this.mode = 'league';
 				}
 
+				let typeaheadQuery = function (type, query, process) {
+					$.ajax({
+						url: '/control/typeahead?'+type + '=' + query,
+						success: function (response) {
+							process(response);
+						}
+					});
+				};
+				let throttledTypeaheadQuery = _.throttle(typeaheadQuery, 500);
+
 				$('#season-select').editable({
 					mode: 'inline',
 					unsavedclass: '',
@@ -308,12 +318,7 @@
 					typeahead: {
 						autoSelect: false,
 						source: function (query, process) {
-							$.ajax({
-								url: '/control/typeahead?season=' + query,
-								success: function (response) {
-									process(response);
-								}
-							});
+							throttledTypeaheadQuery('season', query, process);
 						},
 						onSelect: function (item) {
 							$this.updateSeason(item.season);
@@ -333,12 +338,7 @@
 					typeahead: {
 						autoSelect: false,
 						source: function (query, process) {
-							$.ajax({
-								url: '/control/typeahead?team=' + query,
-								success: function (response) {
-									process(response);
-								}
-							});
+							throttledTypeaheadQuery('team', query, process);
 						},
 						onSelect: function (item) {
 							$this.updateTeamInfo(item.team);
@@ -360,12 +360,7 @@
 					typeahead: {
 						autoSelect: false,
 						source: function (query, process) {
-							$.ajax({
-								url: '/control/typeahead?coach=' + query,
-								success: function (response) {
-									process(response);
-								}
-							});
+							throttledTypeaheadQuery('coach', query, process);
 						},
 						onSelect: function (item) {
 							$this.updateCoach(item.coach);
@@ -385,12 +380,7 @@
 					typeahead: {
 						autoSelect: false,
 						source: function (query, process) {
-							$.ajax({
-								url: '/control/typeahead?league=' + query,
-								success: function (response) {
-									process(response);
-								}
-							});
+							throttledTypeaheadQuery('league', query, process);
 						},
 						onSelect: function (item) {
 							$this.updateLeague(item.league);

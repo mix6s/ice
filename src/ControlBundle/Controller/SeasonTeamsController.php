@@ -77,7 +77,7 @@ class SeasonTeamsController extends Controller
 			$addRequest->addMember($member['player_id'], $member['type']);
 		}
 		$response = $this
-			->get('domain.use_case.add_season_team_members_use_case')
+			->get('domain.use_case.set_season_team_members_use_case')
 			->execute($addRequest);
 
 		$this->get('doctrine.orm.entity_manager')->flush();

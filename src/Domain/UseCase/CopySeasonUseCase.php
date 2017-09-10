@@ -43,7 +43,7 @@ class CopySeasonUseCase
 		$seasonTeams = $this->getContainer()->getSeasonTeamRepository()->findBySeason($seasonToCopy);
 
 		$createUseCase = new CreateSeasonTeamUseCase($this->getContainer());
-		$addMemberUseCase = new AddSeasonTeamMembersUseCase($this->getContainer());
+		$addMemberUseCase = new SetSeasonTeamMembersUseCase($this->getContainer());
 
 		$newSeasonTeams = [];
 		foreach ($seasonTeams as $seasonTeam) {

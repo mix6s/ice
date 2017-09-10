@@ -57,8 +57,8 @@ services:
         class: Domain\UseCase\RemoveSeasonTeamMembersUseCase
         arguments: ['@domain.container']
 
-    domain.use_case.add_season_team_members_use_case:
-        class: Domain\UseCase\AddSeasonTeamMembersUseCase
+    domain.use_case.set_season_team_members_use_case:
+        class: Domain\UseCase\SetSeasonTeamMembersUseCase
         arguments: ['@domain.container']
 
     domain.use_case.remove_season_team_use_case:
