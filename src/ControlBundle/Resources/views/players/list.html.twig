@@ -20,7 +20,8 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {{ include('control/pagination.html.twig', {pageCount: pagesCount, currentPage: currentPage, url: '?page='}) }}
     </div>
-    {{ include('control/pagination.html.twig', {pageCount: pagesCount, currentPage: currentPage, url: '?page='}) }}
 
 {% endblock %}
