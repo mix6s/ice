@@ -1,0 +1,127 @@
+{% extends 'ControlBundle::layout.html.twig' %}
+
+{% block body %}
+    <div class="container" id="app">
+        <div class="row mb-10">
+            <div class="col-md-12">
+                <button v-on:click="showAddLeaguePopup" class="btn btn-primary">Добавить лигу</button>
+            </div>
+        </div>
+        <div class="row">
+            <div v-for="league in leagues" class="col-xs-12 col-sm-12 col-md-6">
+                <league @bus="handle" :league="league" :seasonteams="getSeasonTeamsForLeague(league)"></league>
+            </div>
+        </div>
+        <modal ref="modal" @bus="handle"></modal>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ include('@Control/leagues/vue/league.html.twig') }}
+    {{ include('@Control/vue/modal-layout.vue.twig') }}
+    {{ include('@Control/leagues/vue/league-modal.vue.twig') }}
+    {{ include('@Control/vue/edit-modal.vue.twig') }}
+    {{ include('@Control/vue/member.vue.twig') }}
+    <script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				seasonteams: [],
+				leagues: []
+			},
+			computed: {
+
+			},
+			methods: {
+				setLeagues: function (leagues) {
+					this.leagues = leagues.filter(function (t) {
+						return !!t;
+					})
+				},
+				setSeasonTeams: function (seasonteams) {
+					this.seasonteams = seasonteams.filter(function (t) {
+						return !!t;
+					})
+				},
+				load: function () {
+					const _this = this;
+					$.ajax({
+						url: '/control/leagues',
+						type: 'get',
+						success: function (response) {
+							_this.setLeagues(response.leagues);
+							_this.setSeasonTeams(response.seasonteams);
+						},
+						complete: function (response) {
+
+						}
+					});
+				},
+				getSeasonTeamsForLeague: function (league) {
+					return this.seasonteams.filter(function (t) {
+						return t.league.id === league.id;
+					});
+				},
+				showAddLeaguePopup: function () {
+					this.$refs.modal.show('leagueModal', {}, 'modal-lg');
+				},
+				handle: function (data) {
+					this.$emit(data.name, data.value);
+				}
+			},
+			created: function () {
+				this
+					.$on('seasonteam-deleted', function (seasonteam) {
+						this.seasonteams = this.seasonteams.filter(function (st) {
+							return st && st.id !== seasonteam.id;
+						});
+					})
+					.$on('seasonteam-changed', function (response) {
+						const seasonteam = response.seasonteam;
+
+						var exist = false;
+						for (index in this.seasonteams) {
+							if (this.seasonteams[index] && this.seasonteams[index].id === seasonteam.id) {
+								this.seasonteams[index] = seasonteam;
+								exist = true;
+								break;
+							}
+						}
+						if (!exist) {
+							this.seasonteams.push(seasonteam);
+						}
+						//this.$forceUpdate();
+					})
+					.$on('show-edit-season-team-modal', function (data) {
+						this.$refs.modal.show('editModal', data, 'modal-lg');
+					})
+					.$on('show-edit-league-modal', function (league) {
+						this.$refs.modal.show('leagueModal', {league: league}, 'modal-lg');
+					})
+					.$on('league-saved', function (league) {
+						var exist = false;
+						for (index in this.leagues) {
+							if (this.leagues[index] && this.leagues[index].id == league.id) {
+								this.leagues[index] = league;
+								exist = true;
+								break;
+							}
+						}
+						if (!exist) {
+							this.leagues.push(league);
+						}
+					})
+					.$on('league-deleted', function (league) {
+						this.leagues = this.leagues.filter(function (st) {
+							return st && st.id !== league.id;
+						});
+					})
+				;
+			},
+			mounted: function () {
+				this.load();
+			}
+		});
+    </script>
+{% endblock %}

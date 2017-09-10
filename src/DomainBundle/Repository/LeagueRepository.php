@@ -55,4 +55,12 @@ class LeagueRepository extends EntityRepository implements LeagueRepositoryInter
 	{
 		$this->getEntityManager()->persist($league);
 	}
+
+	/**
+	 * @param League $league
+	 */
+	public function remove(League $league)
+	{
+		$this->getEntityManager()->remove($league);
+	}
 }

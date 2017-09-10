@@ -285,18 +285,20 @@
 
 				if (data) {
 					$this.id = data.seasonTeam.id ? data.seasonTeam.id : null;
-					$this.team = data.seasonTeam.team ? data.seasonTeam.team : data.team;
 					$this.coach = data.seasonTeam.coach ? data.seasonTeam.coach : null;
+					$this.team = data.seasonTeam.team ? data.seasonTeam.team : data.team;
 					$this.season = data.seasonTeam.season ? data.seasonTeam.season : data.season;
-					$this.league = data.seasonTeam.league ? data.seasonTeam.league : null;
+					$this.league = data.seasonTeam.league ? data.seasonTeam.league : data.league;
 					$this.id && $this.loadMembers();
 				}
 
 				if (data.team) {
 					this.mode = 'team';
-                }else if (data.season) {
+				} else if (data.season) {
 					this.mode = 'season';
-                }
+				} else if (data.league) {
+					this.mode = 'league';
+				}
 
 				$('#season-select').editable({
 					mode: 'inline',
@@ -350,14 +352,6 @@
 					title: 'Выберите команду'
 				});
 
-				$('#'+this.mode+'-select').editable('disable');
-
-				if ($this.id) {
-					$('#team-select').editable('disable');
-					$('#season-select').editable('disable');
-				}
-
-
 				$('#coach-select').editable({
 					mode: 'inline',
 					unsavedclass: '',
@@ -409,6 +403,14 @@
 					},
 					title: 'Выберите лигу'
 				});
+
+				$('#'+this.mode+'-select').editable('disable');
+
+				if ($this.id) {
+					$('#team-select').editable('disable');
+					$('#season-select').editable('disable');
+					$('#league-select').editable('disable');
+				}
 			}
 		},
 		mounted: function () {

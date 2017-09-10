@@ -10,7 +10,10 @@ namespace AppBundle;
 
 
 use Domain\DTO\Request\CreateTeamRequest;
+use Domain\DTO\Request\CreateLeagueRequest;
 use Domain\Entity\Team;
+use Domain\Entity\League;
+use DomainBundle\Entity\LeagueMetadata;
 use DomainBundle\Entity\TeamMetadata;
 use DomainBundle\Repository\TeamRepository;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -44,6 +47,28 @@ class TeamManager implements ContainerAwareInterface
 		$metadata->updateFromData($meta);
 		$this->get('doctrine.orm.entity_manager')->flush();
 		return $team;
+	}
+
+	/**
+	 * @param array $leagueRequestData
+	 * @return League
+	 */
+	public function saveLeague(array $leagueRequestData): League
+	{
+		$id = $leagueRequestData['id'] ?? null;
+		$meta = $leagueRequestData['metadata'];
+		if (empty($id)) {
+			$league = $this->get('domain.use_case.create_league_use_case')->execute(new CreateLeagueRequest(new LeagueMetadata()))->getLeague();
+		} else {
+			/** @var LeagueRepository $repository */
+			$repository = $this->get('domain.repository.league');
+			$league = $repository->findById($id);
+		}
+		/** @var LeagueMetadata $metadata */
+		$metadata = $league->getMetadata();
+		$metadata->updateFromData($meta);
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $league;
 	}
 
 	/**

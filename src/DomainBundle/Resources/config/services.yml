@@ -76,3 +76,7 @@ services:
     domain.use_case.remove_team_use_case:
         class: Domain\UseCase\RemoveTeamUseCase
         arguments: ['@domain.container']
+
+    domain.use_case.remove_league_use_case:
+            class: Domain\UseCase\RemoveLeagueUseCase
+            arguments: ['@domain.container']

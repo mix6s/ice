@@ -9,6 +9,7 @@
 namespace Domain\Repository;
 
 
+use Domain\Entity\League;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Entity\Team;
@@ -50,6 +51,12 @@ interface SeasonTeamRepositoryInterface
 	 * @return SeasonTeam[]
 	 */
 	public function findBySeason(Season $season): array;
+
+	/**
+	 * @param League $league
+	 * @return SeasonTeam[]
+	 */
+	public function findByLeague(League $league): array;
 
 	/**
 	 * @param Team $team

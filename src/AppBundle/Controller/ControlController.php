@@ -42,31 +42,6 @@ use Symfony\Component\HttpFoundation\Request;
 class ControlController extends Controller
 {
 	/**
-	 * @Route("/test", name="control.test")
-	 */
-	public function testAction()
-	{
-		$this->get('settings.manager')->set('currentSeason', 4);
-		$season = $this->get('settings.manager')->get('currentSeason');
-
-		return $this->json([
-			$season
-		]);
-		/** @var TeamRepository $teamRepository */
-		$teamRepository = $this->get('domain.repository.team');
-
-		/** @var LeagueRepository $leagueRepository */
-		$leagueRepository = $this->get('domain.repository.league');
-		$leagueMeta = new LeagueMetadata();
-		$id = $leagueRepository->getNextId();
-		$leagueMeta->setTitle('League ' . $id);
-		$league = League::create($id, $leagueMeta);
-		//$this->get('doctrine.orm.entity_manager')->persist($league);
-		//$this->get('doctrine.orm.entity_manager')->flush();
-		$this->get('app.cache');
-	}
-
-	/**
 	 * @Route("", name="control.index")
 	 */
 	public function indexAction()
@@ -322,7 +297,7 @@ class ControlController extends Controller
 		$seasonTeam = $request->request->get('seasonteam');
 
 		$team = $this->get('app.team_manager')->saveTeam($seasonTeam['team']);
-		$league = $this->saveLeague($seasonTeam['league']);
+		$league = $this->get('app.team_manager')->saveLeague($seasonTeam['league']);
 		$seasonId = $seasonTeam['season']['id'] ?? 0;
 		$coachId = $seasonTeam['coach']['id'] ?? 0;
 
@@ -357,30 +332,6 @@ class ControlController extends Controller
 	}
 
 	/**
-	 * @param array $leagueRequestData
-	 * @return League
-	 */
-	private function saveLeague(array $leagueRequestData): League
-	{
-		$id = $leagueRequestData['id'] ?? null;
-		$meta = $leagueRequestData['metadata'];
-		if (empty($id)) {
-			$metadata = new LeagueMetadata();
-			$metadata->setTitle($meta['title']);
-			$league = $this->get('domain.use_case.create_league_use_case')->execute(new CreateLeagueRequest($metadata))->getLeague();
-		} else {
-			/** @var LeagueRepository $repository */
-			$repository = $this->get('domain.repository.league');
-			$league = $repository->findById($id);
-		}
-		/** @var LeagueMetadata $metadata */
-		$metadata = $league->getMetadata();
-		$metadata->setTitle($meta['title']);
-		$this->get('doctrine.orm.entity_manager')->flush();
-		return $league;
-	}
-
-	/**
 	 * @Route("/avatar/upload", name="control.team.avatar.upload")
 	 */
 	public function uploadTeamAvatarAction(Request $request)
@@ -402,13 +353,5 @@ class ControlController extends Controller
 		fwrite($f, $response->getContent());
 		fclose($f);
 		return $this->json($filename);
-	}
-
-	/**
-	 * @Route("/leagues", name="control.leagues")
-	 */
-	public function leaguesAction()
-	{
-		//
 	}
 }

@@ -51,6 +51,16 @@ class LeagueMetadata implements \JsonSerializable
 	}
 
 	/**
+	 * @param $data
+	 */
+	public function updateFromData($data)
+	{
+		if (isset($data['title'])) {
+			$this->setTitle($data['title']);
+		}
+	}
+
+	/**
 	 * @return mixed
 	 */
 	public function getId()

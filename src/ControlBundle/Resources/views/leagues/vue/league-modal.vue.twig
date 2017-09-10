@@ -1,0 +1,87 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
+<div class="modal-content" id="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Новая лига</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Название</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="title" placeholder="Название" v-model="league.metadata.title">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="has-error" v-if="error">
+            <div class="alert alert-danger text-center" role="alert">{{ error }}</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('leagueModal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['props'],
+		data: function () {
+			return {
+				saveInProgress: false,
+				league: {
+					metadata: {
+						title: null,
+					}
+				},
+				error: null
+			}
+		},
+		computed: {
+		},
+		methods: {
+			init: function () {
+				const props = this.props ? this.props : {};
+				if (!!props.league) {
+					this.league = props.league;
+				}
+			},
+			handle: function (data) {
+				this.$emit('bus', data);
+			},
+			save: function () {
+				const self = this;
+				self.saveInProgress = true;
+				$.ajax({
+					url: '/control/leagues/save',
+					data: {league: self.league},
+					type: 'post',
+					success: function (league) {
+						self.$emit('bus', {name: 'league-saved', value: league});
+						self.$parent.hide();
+					},
+					error: function (jqXHR) {
+						self.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
+					},
+					complete: function () {
+						self.saveInProgress = false;
+					}
+				});
+			}
+		},
+		mounted: function () {
+			this.init();
+		}
+	});
+</script>

@@ -1,7 +1,19 @@
 {% extends 'control/layout.html.twig' %}
 
 {% block body %}
-    {{ source('control/vue/app-seasons.vue.twig') }}
+	<div class="container" id="app">
+		<div class="row mb-10">
+			<div class="col-md-12">
+				<button v-on:click="showAddSeasonPopup" class="btn btn-primary">Добавить сезон</button>
+			</div>
+		</div>
+		<div class="row">
+			<div v-for="season in sortedSeasons" class="col-xs-12 col-sm-12 col-md-6">
+				<season @bus="handle" :season="season" :seasonteams="getSeasonTeams(season)" :current-season-id="currentSeasonId"></season>
+			</div>
+		</div>
+		<modal ref="modal" @bus="handle"></modal>
+	</div>
 {% endblock %}
 {% block ccs %}
     {{ parent() }}

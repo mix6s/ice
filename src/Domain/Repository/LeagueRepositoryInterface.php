@@ -34,4 +34,9 @@ interface LeagueRepositoryInterface
 	 * @param League $league
 	 */
 	public function save(League $league);
+
+	/**
+	 * @param League $league
+	 */
+	public function remove(League $league);
 }

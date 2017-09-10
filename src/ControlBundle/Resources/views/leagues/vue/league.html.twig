@@ -1,0 +1,103 @@
+<template>
+{% block vue_template %}
+    {% verbatim %}
+<div class="panel panel-info">
+    <div class="panel-heading mb-10">
+        <div class="row">
+            <div class="col-xs-6">
+                <h3 class="panel-title ">{{ league.metadata.title }}</h3>
+            </div>
+             <div class="col-xs-6 text-right">
+                <button v-on:click="edit" title="Редактировать" class="btn btn-xs btn-info"><i aria-hidden="true" class="fa fa-edit"></i></button>
+                <button v-on:click="remove" :disabled="deleteInProgress" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+            </div>
+
+        </div>
+    </div>
+   <table class="table">
+        <thead>
+        <tr>
+            <th>Команда</th>
+            <th>Тренер</th>
+            <th>Сезон</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="seasonteam in seasonteams">
+            <td>{{ seasonteam.team.metadata.title }}</td>
+            <td>{{ seasonteam.coach.metadata.full_name }}</td>
+            <td>{{ seasonteam.season.year - 1 }}/{{ seasonteam.season.year }}</td>
+            <td class="text-right">
+                <button v-on:click="editSeasonTeam(seasonteam)" class="btn btn-xs btn-info" title="Редактировать"><i class="fa fa-edit" aria-hidden="true"></i></button>
+                <button v-on:click="removeSeasonTeam(seasonteam)"  :disabled="deleteInProgress" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><button v-on:click="newSeasonTeam" class="btn btn-xs btn-primary">Добавить команду в сезон</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endverbatim %}
+{% endblock %}
+</template>
+
+<script>
+	Vue.component('league', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['league', 'seasonteams'],
+		data: function () {
+			return {
+				deleteInProgress: false
+			}
+		},
+		computed: {
+
+		},
+		methods: {
+            edit: function () {
+				this.$emit('bus', {name: 'show-edit-league-modal', value: this.league});
+			},
+			newSeasonTeam: function () {
+				this.$emit('bus', {name: 'show-edit-season-team-modal', value: {league: this.league, seasonTeam: {}}});
+			},
+			editSeasonTeam: function (seasonTeam) {
+				this.$emit('bus', {name: 'show-edit-season-team-modal', value: {league: this.league, seasonTeam: seasonTeam}});
+			},
+			removeSeasonTeam: function (seasonTeam) {
+				var self = this;
+				self.deleteInProgress = true;
+				$.ajax({
+					url: '/control/seasonteam/delete/' + seasonTeam.id,
+					type: 'get',
+					success: function (response) {
+						self.$emit('bus', {name: 'seasonteam-deleted', value: seasonTeam});
+					},
+					error: function (jqXHR) {
+					},
+					complete: function () {
+						self.deleteInProgress = false;
+					}
+				});
+			},
+			remove: function () {
+				const self = this;
+				self.deleteInProgress = true;
+				$.ajax({
+					url: '/control/leagues/delete/' + self.league.id,
+					type: 'get',
+					success: function (response) {
+						self.$emit('bus', {name: 'league-deleted', value: self.league});
+					},
+					error: function (error) {
+						console.log(error);
+					},
+					complete: function () {
+						self.deleteInProgress = false;
+					}
+				});
+			}
+		}
+	});
+</script>
