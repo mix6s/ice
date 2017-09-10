@@ -1,0 +1,78 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
+<div class="modal-content" id="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Новый сезон</h4>
+    </div>
+    <div class="modal-body text-center">
+        <div class="input-group" style="width: 200px; margin: auto;">
+            <div class="input-group-btn"><button v-on:click="decYear" class="btn btn-info"><<</button></div>
+            <div class="input-group-addon">{{ years }}</div>
+            <div class="input-group-btn"><button v-on:click="incYear" class="btn btn-info">>></button></div>
+        </div>
+        <div class="has-error" v-if="error">
+            <span class="help-block">{{ error }}</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('seasonModal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		data: function () {
+			return {
+				year: (new Date()).getFullYear(),
+				error: null,
+				seasonToCopy: null,
+				saveInProgress: false,
+			}
+		},
+		computed:{
+			years: function () {
+				return (this.year - 1) + '/' + (this.year)
+			}
+		},
+		methods: {
+			incYear: function (data) {
+				this.year++;
+			},
+			decYear: function () {
+				this.year--;
+			},
+			save: function () {
+				var $this = this;
+				$this.saveInProgress = true;
+				$.ajax({
+					url: '/control/seasons/new',
+					data: {year: $this.year, copy_season_id: $this.seasonToCopy},
+					type: 'post',
+					success: function (response) {
+						$this.$emit('bus', {name: 'new-season', value: response});
+					},
+					error: function (jqXHR) {
+						$this.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
+					},
+					complete: function () {
+						$this.saveInProgress = false;
+					}
+				});
+			},
+			init: function (season) {
+				this.seasonToCopy = season ? season.id : undefined;
+			}
+		},
+		mounted: function () {
+			this.init(this.$parent.data);
+		}
+	});
+</script>

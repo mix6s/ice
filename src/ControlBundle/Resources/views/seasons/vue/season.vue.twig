@@ -1,3 +1,6 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
 <div class="panel" v-bind:class="[season.id == currentSeasonId ? 'panel-primary' : 'panel-info']">
     <div class="panel-heading">
         <div class="row">
@@ -36,3 +39,75 @@
         </tbody>
     </table>
 </div>
+{% endverbatim %}
+{% endblock %}
+</template>
+
+<script>
+	Vue.component('season', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['season', 'currentSeasonId', 'seasonteams'],
+		data: function () {
+			return {
+				deleteInProgress: false
+			}
+		},
+		methods: {
+			markCurrent: function () {
+				var $this = this;
+				$.ajax({
+					url: '/control/seasons/current',
+					type: 'post',
+					data: {id: $this.season.id},
+					success: function (response) {
+						$this.$emit('bus', {name: 'current-season-update', value: $this.season.id});
+					},
+					complete: function (response) {
+
+					}
+				});
+			},
+			showTeamSeasonPopup: function (event, seasonTeam) {
+				if (!seasonTeam) {
+					seasonTeam = {};
+				}
+				this.$emit('bus', {name: 'show-team-season-popup', value: {season: this.season, seasonTeam: seasonTeam}});
+			},
+			showCopySeasonPopup: function (season) {
+				this.$emit('bus', {name: 'show-copy-season-popup', value: this.season});
+			},
+			removeSeason: function () {
+				var $this = this;
+				$this.deleteInProgress = true;
+				$.ajax({
+					url: '/control/season/delete/' + $this.season.id,
+					type: 'get',
+					success: function (response) {
+						$this.$emit('bus', {name: 'season-deleted', value: $this.season});
+					},
+					error: function (jqXHR) {
+					},
+					complete: function () {
+						$this.deleteInProgress = false;
+					}
+				});
+			},
+			remove: function (seasonTeam) {
+				var $this = this;
+				$this.deleteInProgress = true;
+				$.ajax({
+					url: '/control/seasonteam/delete/' + seasonTeam.id,
+					type: 'get',
+					success: function (response) {
+						$this.$emit('bus', {name: 'seasonteam-deleted', value: seasonTeam});
+					},
+					error: function (jqXHR) {
+					},
+					complete: function () {
+						$this.deleteInProgress = false;
+					}
+				});
+			}
+		}
+	});
+</script>

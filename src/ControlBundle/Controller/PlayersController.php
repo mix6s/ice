@@ -24,16 +24,18 @@ class PlayersController extends Controller
 	 */
 	public function listAction(Request $request)
 	{
-	    $page = $request->get('page', 1);
-	    $limit = 20;
-	    $offset = ($page - 1) * $limit;
-	    $players = $this->get('domain.repository.player')->findPlayers($limit, $offset);
-	    $count = $this->get('domain.repository.player')->countPlayers();
-        return $this->render('@Control/players/list.html.twig', [
-            'players' => $players,
-            'currentPage' => $page,
-            'pagesCount' => ceil($count / $limit)
-
-        ]);
+		$page = $request->get('page', 1);
+		$limit = 20;
+		$offset = ($page - 1) * $limit;
+		$players = $this->get('domain.repository.player')->findPlayers($limit, $offset);
+		$count = $this->get('domain.repository.player')->countPlayers();
+		return $this->render(
+			'@Control/players/list.html.twig',
+			[
+				'players' => $players,
+				'currentPage' => $page,
+				'pagesCount' => ceil($count / $limit)
+			]
+		);
 	}
 }

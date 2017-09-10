@@ -21,7 +21,7 @@
             </tbody>
         </table>
 
-        {{ include('control/pagination.html.twig', {pageCount: pagesCount, currentPage: currentPage, url: '?page='}) }}
+        {{ include('@Control/pagination.html.twig', {pageCount: pagesCount, currentPage: currentPage, url: '?page='}) }}
     </div>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'control/layout.html.twig' %}
+{% extends '@Control/layout.html.twig' %}
 
 {% block body %}
 	<div class="container" id="app">
@@ -25,124 +25,9 @@
     {{ include('@Control/vue/modal-layout.vue.twig') }}
     {{ include('@Control/vue/edit-modal.vue.twig') }}
     {{ include('@Control/vue/member.vue.twig') }}
+    {{ include('@Control/seasons/vue/season.vue.twig') }}
+    {{ include('@Control/seasons/vue/season-modal.vue.twig') }}
     <script>
-		Vue.component('seasonModalContent', {
-			template: '{{ source('control/vue/season-modal.vue.twig')|escape('js') }}',
-			data: function () {
-				return {
-					year: (new Date()).getFullYear(),
-					error: null,
-					seasonToCopy: null,
-					saveInProgress: false,
-				}
-			},
-			computed:{
-				years: function () {
-					return (this.year - 1) + '/' + (this.year)
-				}
-			},
-			methods: {
-				incYear: function (data) {
-					this.year++;
-				},
-				decYear: function () {
-					this.year--;
-				},
-				save: function () {
-					var $this = this;
-					$this.saveInProgress = true;
-					$.ajax({
-						url: '/control/seasons/new',
-						data: {year: $this.year, copy_season_id: $this.seasonToCopy},
-						type: 'post',
-						success: function (response) {
-							$this.$emit('bus', {name: 'new-season', value: response});
-						},
-						error: function (jqXHR) {
-							$this.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
-						},
-						complete: function () {
-							$this.saveInProgress = false;
-						}
-					});
-				},
-				init: function (season) {
-					this.seasonToCopy = season ? season.id : undefined;
-				}
-			},
-			mounted: function () {
-				this.init(this.$parent.data);
-			}
-		});
-
-
-		Vue.component('season', {
-			template: '{{ source('control/vue/season.vue.twig')|escape('js') }}',
-			props: ['season', 'currentSeasonId', 'seasonteams'],
-			data: function () {
-				return {
-					deleteInProgress: false
-				}
-			},
-			methods: {
-				markCurrent: function () {
-					var $this = this;
-					$.ajax({
-						url: '/control/seasons/current',
-						type: 'post',
-						data: {id: $this.season.id},
-						success: function (response) {
-							$this.$emit('bus', {name: 'current-season-update', value: $this.season.id});
-						},
-						complete: function (response) {
-
-						}
-					});
-				},
-				showTeamSeasonPopup: function (event, seasonTeam) {
-					if (!seasonTeam) {
-						seasonTeam = {};
-					}
-					this.$emit('bus', {name: 'show-team-season-popup', value: {season: this.season, seasonTeam: seasonTeam}});
-				},
-				showCopySeasonPopup: function (season) {
-					this.$emit('bus', {name: 'show-copy-season-popup', value: this.season});
-				},
-				removeSeason: function () {
-					var $this = this;
-					$this.deleteInProgress = true;
-					$.ajax({
-						url: '/control/season/delete/' + $this.season.id,
-						type: 'get',
-						success: function (response) {
-							$this.$emit('bus', {name: 'season-deleted', value: $this.season});
-						},
-						error: function (jqXHR) {
-						},
-						complete: function () {
-							$this.deleteInProgress = false;
-						}
-					});
-				},
-				remove: function (seasonTeam) {
-					var $this = this;
-					$this.deleteInProgress = true;
-					$.ajax({
-						url: '/control/seasonteam/delete/' + seasonTeam.id,
-						type: 'get',
-						success: function (response) {
-							$this.$emit('bus', {name: 'seasonteam-deleted', value: seasonTeam});
-						},
-						error: function (jqXHR) {
-						},
-						complete: function () {
-							$this.deleteInProgress = false;
-						}
-					});
-				}
-			}
-		});
-
 		var app = new Vue({
 			el: '#app',
 			data: {
@@ -170,7 +55,7 @@
 					return seasonteams;
 				},
 				showAddSeasonPopup: function (season) {
-					this.$refs.modal.show('seasonModalContent', season);
+					this.$refs.modal.show('seasonModal', season);
 				},
 				showAddSeasonTeamPopup: function (data) {
 					this.$refs.modal.show('editModal', data, 'modal-lg');
@@ -211,7 +96,7 @@
 				this.$on('new-season', function (data) {
 					this.seasons.push(data.season);
 					for (i in data.seasonteams) {
-						this.$emit('seasonteam-changed', data.seasonteams[i]);
+						this.$emit('seasonteam-changed', {seasonteam: data.seasonteams[i]});
 					}
 					this.$refs.modal.hide();
 				});
