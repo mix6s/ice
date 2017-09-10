@@ -34,4 +34,9 @@ interface TeamRepositoryInterface
 	 * @param Team $team
 	 */
 	public function save(Team $team);
+
+	/**
+	 * @param Team $team
+	 */
+	public function remove(Team $team);
 }

@@ -72,3 +72,7 @@ services:
     domain.use_case.copy_season_use_case:
         class: Domain\UseCase\CopySeasonUseCase
         arguments: ['@domain.container']
+
+    domain.use_case.remove_team_use_case:
+        class: Domain\UseCase\RemoveTeamUseCase
+        arguments: ['@domain.container']

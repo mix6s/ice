@@ -58,4 +58,12 @@ class TeamRepository extends EntityRepository implements TeamRepositoryInterface
 	{
 		$this->getEntityManager()->persist($team);
 	}
+
+	/**
+	 * @param Team $team
+	 */
+	public function remove(Team $team)
+	{
+		$this->getEntityManager()->remove($team);
+	}
 }

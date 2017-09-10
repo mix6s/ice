@@ -41,4 +41,12 @@ class TeamRepository implements TeamRepositoryInterface
 	{
 		$this->storeEntity($team, $team->getId());
 	}
+
+	/**
+	 * @param Team $team
+	 */
+	public function remove(Team $team)
+	{
+		;
+	}
 }

@@ -1,0 +1,48 @@
+<template>
+{% block vue_template %}
+{% verbatim %}
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div :class="modalClass" role="document">
+        <div ref="content" :is="content" @bus="handle" :props="data"></div>
+    </div>
+</div>
+{% endverbatim %}
+{% endblock %}
+</template>
+
+<script>
+	Vue.component('modal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		data: function () {
+			return {
+				size: '',
+				content: null,
+				data: {}
+			}
+		},
+		computed: {
+			modalClass: function () {
+				return 'modal-dialog ' + this.size
+			}
+		},
+		methods: {
+			show: function (template, data, size) {
+				const self = this;
+				this.content = template;
+				this.data = data;
+				this.size = !!size ? size : '';
+				$('#modal')
+                    .on('hidden.bs.modal', function () {
+						self.content = null;
+					})
+                    .modal('show');
+			},
+			hide: function () {
+				$('#modal').modal('hide');
+			},
+			handle: function (data) {
+				this.$emit('bus', data);
+			}
+		}
+	});
+</script>

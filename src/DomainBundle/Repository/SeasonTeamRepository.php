@@ -64,6 +64,19 @@ class SeasonTeamRepository extends EntityRepository implements SeasonTeamReposit
 	}
 
 	/**
+	 * @param Team $team
+	 * @return SeasonTeam[]
+	 */
+	public function findByTeam(Team $team): array
+	{
+		return $this->createQueryBuilder('st')
+			->where('st.team = :team')
+			->setParameters(['team' => $team])
+			->getQuery()
+			->getResult();
+	}
+
+	/**
 	 * @param SeasonTeam $seasonTeam
 	 */
 	public function remove(SeasonTeam $seasonTeam)

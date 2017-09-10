@@ -1,14 +1,15 @@
 <template>
 {% block vue_template %}
-{% verbatim %}
-<div class="panel panel-default">
+    {% verbatim %}
+<div class="panel panel-info">
     <div class="panel-heading mb-10">
         <div class="row">
             <div class="col-xs-6">
                 <h3 class="panel-title ">{{ team.metadata.title }}</h3>
             </div>
              <div class="col-xs-6 text-right">
-                <button v-on:click="remove" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                <button v-on:click="edit" title="Редактировать" class="btn btn-xs btn-info"><i aria-hidden="true" class="fa fa-edit"></i></button>
+                <button v-on:click="remove" :disabled="deleteInProgress" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
             </div>
 
         </div>
@@ -26,19 +27,73 @@
         </div>
           <div class="col-sm-9">
              <div class="form-group">
+                <label class="control-label">Название:</label>
                 {{  team.metadata.title }}
             </div>
              <div class="form-group">
+              <label class="control-label">Дата основания:</label>
                 {{  team.metadata.foundation_date }}
             </div>
         </div>
     </div>
-    <div class="text-center">
-    <div v-if="yearButtons.middle" class="btn-group " role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-default"><< {{ yearButtons.left != null ? (yearButtons.left.year-1) + '/' + yearButtons.left.year : '' }}</button>
-        <button type="button" class="btn btn-default"><strong>{{ (yearButtons.middle.year-1) + '/' + yearButtons.middle.year }}</strong></button>
-        <button type="button" class="btn btn-default">{{ yearButtons.right != null ? (yearButtons.right.year-1) + '/' + yearButtons.right.year : '' }} >></button>
+    <div class="row mb-10">
+        <div class="col-md-12 text-center">
+        <div style="margin: 0 15px;">
+            <button v-on:click="newSeasonTeam" class="btn-block btn btn-default btn-sm">Добавить команду в сезон</button>
+        </div>
+
+         </div>
     </div>
+    <div v-if="yearButtons.middle" class="panel panel-default" style="    margin: 15px;">
+        <div class="panel-body bg-info">
+         <div class="row mb-10">
+            <div class="col-md-12">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-9 ">
+                          <div class="btn-group btn-group-xs" role="group">
+                                <button  v-on:click="prevSeasonTeam" type="button" class="btn btn-default" :disabled="!yearButtons.left"><<</button>
+                                <button type="button" class="btn btn-default"><strong>{{ (yearButtons.middle.year-1) + '/' + yearButtons.middle.year }}</strong></button>
+                                <button  v-on:click="nextSeasonTeam" type="button" class="btn  btn-default" :disabled="!yearButtons.right">>></button>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 text-right">
+                            <button title="Редактировать состав на сезон" v-on:click="editSeasonTeam" class="btn  btn-xs btn-info"><i aria-hidden="true" class="fa fa-edit"></i></button>
+                            <button title="Удалить состав на сезон" v-on:click="removeSeasonTeam"  :disabled="deleteInProgress"  class="btn  btn-xs btn-danger"><i aria-hidden="true" class="fa fa-trash-o"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Лига</label>
+                       <span class="col-sm-9 control-label" style="text-align: left">{{currentSeasonTeam.league.metadata.title}}</span>
+
+                    </div>
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Тренер</label>
+                         <span class="col-sm-9 control-label" style="text-align: left">{{currentSeasonTeam.coach.metadata.full_name}}</span>
+                    </div>
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Состав</label>
+                        <div class="col-sm-9">
+                            <div v-for="member in currentSeasonTeamMembers" class="row">
+                                <div class="col-md-12 control-label" style="text-align: left">
+                                    <span>{{ member.player.metadata.full_name}}</span>
+                                    <span v-if="member.type == 'captain'" title="Капитан" class="label label-primary">К</span>
+                                    <span v-if="member.type == 'assistant'" title="Ассистент" class="label label-info">А</span>
+                                </div>
+                            </div>
+
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+        </div>
     </div>
 </div>
 {% endverbatim %}
@@ -48,36 +103,89 @@
 <script>
 	Vue.component('team', {
 		template: '{{ block('vue_template')|escape('js') }}',
-		props: ['team', 'seasonteams'],
+		props: ['team', 'seasonteams', 'members'],
 		data: function () {
 			return {
-				currentYearIndex: 0
-            }
+				currentSeasonTeamIndex: 0,
+				deleteInProgress: false
+			}
 		},
-        computed: {
+		computed: {
 			yearButtons: function () {
-              return {
-              	left: this.seasons[this.currentYearIndex - 1] ? this.seasons[this.currentYearIndex - 1] : null,
-                  middle:  this.seasons[this.currentYearIndex] ? this.seasons[this.currentYearIndex] : null,
-                  right: this.seasons[this.currentYearIndex + 1] ? this.seasons[this.currentYearIndex + 1] : null
-              }
+				return {
+					left: this.seasonTeamsSorted[this.currentSeasonTeamIndex - 1] ? this.seasonTeamsSorted[this.currentSeasonTeamIndex - 1].season : null,
+					middle: this.seasonTeamsSorted[this.currentSeasonTeamIndex] ? this.currentSeasonTeam.season : null,
+					right: this.seasonTeamsSorted[this.currentSeasonTeamIndex + 1] ? this.seasonTeamsSorted[this.currentSeasonTeamIndex + 1].season : null
+				}
 			},
-			seasons: function () {
-				var seasons = [], ids = [];
-				for (i in this.seasonteams) {
-					if (ids.indexOf(this.seasonteams[i].season.id) >= 0) {
-						continue;
-                    }
-                    seasons.push(this.seasonteams[i].season);
-					ids.push(this.seasonteams[i].season.id);
-                }
-                return seasons;
-            }
-        },
+			currentSeasonTeam: function () {
+                return this.seasonTeamsSorted[this.currentSeasonTeamIndex];
+			},
+			currentSeasonTeamMembers: function () {
+				const id = this.currentSeasonTeam.id;
+				return this.members.filter(function (member) {
+				    return member.seasonteam.id === id;
+                })
+			},
+			seasonTeamsSorted: function () {
+				return this.seasonteams.sort(function (st1, st2) {
+                    return st1.season.year < st2.season.year
+				})
+			}
+		},
 		methods: {
-            remove: function () {
-            	return;
+			getSeasonTeamMembersForSeasonTeam: function (seasonteam) {
+
+			},
+			nextSeasonTeam: function () {
+				this.seasonTeamsSorted[this.currentSeasonTeamIndex + 1] && this.currentSeasonTeamIndex++;
             },
+			prevSeasonTeam: function () {
+				this.seasonTeamsSorted[this.currentSeasonTeamIndex - 1] && this.currentSeasonTeamIndex--;
+			},
+			newSeasonTeam: function () {
+				this.$emit('bus', {name: 'show-edit-season-team-modal', value: {team: this.team, seasonTeam: {}}});
+			},
+            editSeasonTeam: function () {
+				this.$emit('bus', {name: 'show-edit-season-team-modal', value: {team: this.team, seasonTeam: this.currentSeasonTeam}});
+			},
+            edit: function () {
+				this.$emit('bus', {name: 'show-edit-team-modal', value: this.team});
+			},
+            removeSeasonTeam: function (seasonTeam) {
+				var self = this;
+				self.deleteInProgress = true;
+				$.ajax({
+					url: '/control/seasonteam/delete/' + self.currentSeasonTeam.id,
+					type: 'get',
+					success: function (response) {
+						self.currentSeasonTeamIndex = 0;
+						self.$emit('bus', {name: 'seasonteam-deleted', value: self.currentSeasonTeam});
+					},
+					error: function (jqXHR) {
+					},
+					complete: function () {
+						self.deleteInProgress = false;
+					}
+				});
+            },
+			remove: function () {
+				const self = this;
+				self.deleteInProgress = true;
+				$.ajax({
+					url: '/control/teams/delete/' + self.team.id,
+					type: 'get',
+					success: function (response) {
+						self.$emit('bus', {name: 'team-deleted', value: self.team});
+					},
+					error: function (error) {
+						console.log(error);
+					},
+					complete: function () {
+						self.deleteInProgress = false;
+					}
+				});
+			}
 		}
 	});
 </script>

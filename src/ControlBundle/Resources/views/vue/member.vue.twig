@@ -1,0 +1,83 @@
+<template>
+    {% block vue_template %}
+{% verbatim %}
+<div class="row">
+    <div class="col-sm-7 ">
+        <a href="#" :id="idSelector" class="editable editable-click " data-type="typeahead">{{ member.player ? member.player.metadata.full_name : 'Выбрать' }}</a>
+    </div>
+    <div class="col-sm-5 mb-10 text-right">
+        <button title="Капитан" :class="[member.type == 'captain' ? 'btn btn-primary' : 'btn btn-default']" v-on:click="onCaptainClick" type="button">К</button>
+        <button title="Ассистент" :class="[member.type == 'assistant' ? 'btn btn-info mr-20' : 'btn btn-default mr-20']" v-on:click="onAssistantClick" type="button">А</button>
+        <button title="Удалить" v-on:click="remove" class="btn btn-danger"><i aria-hidden="true" class="fa fa-close"></i></button>
+    </div>
+</div>
+
+            {% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('member', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['member'],
+		data: function () {
+			return {
+
+			}
+		},
+		computed: {
+			idSelector: function () {
+				return 'member-select-' + this.member.id;
+			}
+		},
+		methods: {
+			remove: function () {
+				this.$emit('season-team-modal-bus', {name: 'member-remove', value: this.member});
+			},
+			onCaptainClick: function () {
+				if (this.member.type === 'captain') {
+					this.makeDefault()
+				} else {
+					this.$emit('season-team-modal-bus', {name: 'member-captain', value: this.member});
+				}
+			},
+			onAssistantClick: function () {
+				if (this.member.type === 'assistant') {
+					this.makeDefault()
+				} else {
+					this.$emit('season-team-modal-bus', {name: 'member-assistant', value: this.member});
+				}
+			},
+			makeDefault: function () {
+				this.$emit('season-team-modal-bus', {name: 'member-default', value: this.member});
+			}
+		},
+		mounted: function () {
+			var _this = this;
+			$('#' + _this.idSelector).editable({
+				mode: 'inline',
+				unsavedclass: '',
+				showbuttons: false,
+				value: '',
+				typeahead: {
+					autoSelect: false,
+					source: function (query, process) {
+						$.ajax({
+							url: '/control/typeahead?player=' + query,
+							success: function (response) {
+								process(response);
+							}
+						});
+					},
+					onSelect: function (item) {
+						_this.member.player = item.player;
+					}
+				},
+				display: function () {
+					return;
+				},
+				title: 'Выберите игрока'
+			});
+		}
+	});
+</script>

@@ -23,3 +23,8 @@ services:
     settings.manager:
         class: AppBundle\SettingManager
         arguments: ['@doctrine.orm.entity_manager', '@app.cache']
+
+    app.team_manager:
+        class: AppBundle\TeamManager
+        calls:
+            - [setContainer, ['@service_container']]

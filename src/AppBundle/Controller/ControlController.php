@@ -80,6 +80,28 @@ class ControlController extends Controller
 	 */
 	public function typeaheadAction(Request $request)
 	{
+		$seasonQuery = $request->get('season');
+		if (!empty($seasonQuery)) {
+			$em = $this->get('doctrine.orm.entity_manager');
+			$qb = $em->createQueryBuilder();
+			$seasons = $qb
+				->from('Domain:Season', 's')
+				->select('s')
+				->where('s.year like :query ')
+				->setParameter('query', '%' . $seasonQuery . '%')
+				->getQuery()
+				->getResult();
+			$result = [];
+			/** @var Season $season */
+			foreach ($seasons as $season) {
+				$result[] = [
+					'name' => ($season->getYear() - 1) . '/' . $season->getYear(),
+					'season' => $season
+				];
+			}
+			return $this->json($result);
+		}
+
 		$teamQuery = $request->get('team');
 		if (!empty($teamQuery)) {
 			$em = $this->get('doctrine.orm.entity_manager');
@@ -299,7 +321,7 @@ class ControlController extends Controller
 	{
 		$seasonTeam = $request->request->get('seasonteam');
 
-		$team = $this->saveTeam($seasonTeam['team']);
+		$team = $this->get('app.team_manager')->saveTeam($seasonTeam['team']);
 		$league = $this->saveLeague($seasonTeam['league']);
 		$seasonId = $seasonTeam['season']['id'] ?? 0;
 		$coachId = $seasonTeam['coach']['id'] ?? 0;
@@ -331,29 +353,7 @@ class ControlController extends Controller
 			->execute($addRequest);
 		$this->get('doctrine.orm.entity_manager')->flush();
 
-		return $this->json($st);
-	}
-
-	/**
-	 * @param array $teamRequestData
-	 * @return Team
-	 */
-	private function saveTeam(array $teamRequestData): Team
-	{
-		$id = $teamRequestData['id'] ?? null;
-		$meta = $teamRequestData['metadata'];
-		if (empty($id)) {
-			$team = $this->get('domain.use_case.create_team_use_case')->execute(new CreateTeamRequest(new TeamMetadata()))->getTeam();
-		} else {
-			/** @var TeamRepository $repository */
-			$repository = $this->get('domain.repository.team');
-			$team = $repository->findById($id);
-		}
-		/** @var TeamMetadata $metadata */
-		$metadata = $team->getMetadata();
-		$metadata->updateFromData($meta);
-		$this->get('doctrine.orm.entity_manager')->flush();
-		return $team;
+		return $this->json(['seasonteam' => $st, 'members' => $response->getMembers()]);
 	}
 
 	/**

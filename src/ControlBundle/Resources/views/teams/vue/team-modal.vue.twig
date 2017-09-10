@@ -1,0 +1,125 @@
+<template>
+    {% block vue_template %}
+{% verbatim %}
+<div class="modal-content" id="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Новая команда</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Название</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="title" placeholder="Название" v-model="team.metadata.title">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dt" class="col-sm-3 control-label">Дата основания</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="dt" placeholder="Дата основания" v-model="team.metadata.foundation_date">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Лого</label>
+                        <div class="col-sm-9">
+                            <input ref="avatarFiles" type="file" id="upload" v-on:change="uploadAvatar" class="form-control" value="" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group" v-if="team.metadata.image">
+                        <div class="col-sm-12">
+                            <img  class="img-responsive img-rounded" :src="'/avatar/'+team.metadata.image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="has-error" v-if="error">
+            <div class="alert alert-danger text-center" role="alert">{{ error }}</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('teamModal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['props'],
+		data: function () {
+			return {
+				saveInProgress: false,
+				team: {
+					metadata: {
+						title: null,
+						foundation_date: null
+                    }
+                },
+                error: null
+			}
+		},
+		computed: {
+		},
+		methods: {
+            init: function () {
+				const props = this.props ? this.props : {};
+				if (!!props.team) {
+					this.team = props.team;
+                }
+			},
+			handle: function (data) {
+				this.$emit('bus', data);
+			},
+			uploadAvatar: function () {
+				const self = this;
+				let files = self.$refs.avatarFiles.files;
+				let formData = new FormData();
+
+				formData.append("file", files[0]);
+				let request = new XMLHttpRequest();
+				request.onreadystatechange = function() {//Call a function when the state changes.
+					if(request.readyState == 4 && request.status == 200) {
+						self.team.metadata.image = JSON.parse(request.responseText);
+						self.$forceUpdate();
+					}
+				};
+				request.open("POST", "/control/avatar/upload");
+				request.send(formData);
+			},
+            save: function () {
+				const self = this;
+				self.saveInProgress = true;
+				$.ajax({
+					url: '/control/teams/save',
+					data: {team: self.team},
+					type: 'post',
+					success: function (team) {
+						self.$emit('bus', {name: 'team-saved', value: team});
+						self.$parent.hide();
+					},
+					error: function (jqXHR) {
+						self.error = jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'Ошибка сервера';
+					},
+					complete: function () {
+						self.saveInProgress = false;
+					}
+				});
+			}
+		},
+		mounted: function () {
+			this.init();
+		}
+	});
+</script>

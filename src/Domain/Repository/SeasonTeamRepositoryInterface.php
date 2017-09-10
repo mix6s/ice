@@ -52,6 +52,12 @@ interface SeasonTeamRepositoryInterface
 	public function findBySeason(Season $season): array;
 
 	/**
+	 * @param Team $team
+	 * @return SeasonTeam[]
+	 */
+	public function findByTeam(Team $team): array;
+
+	/**
 	 * @param SeasonTeam $seasonTeam
 	 */
 	public function remove(SeasonTeam $seasonTeam);

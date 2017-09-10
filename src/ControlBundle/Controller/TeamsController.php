@@ -9,6 +9,7 @@
 namespace ControlBundle\Controller;
 
 
+use DomainBundle\Entity\TeamMetadata;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,11 +34,33 @@ class TeamsController extends Controller
 		$qb
 			->from('Domain:Team', 't')
 			->leftJoin('Domain:SeasonTeam', 'st', 'WITH', 'st.team = t.id')
+			->leftJoin('Domain:SeasonTeamMember', 'stm', 'WITH', 'stm.seasonTeam = st.id')
 			->orderBy('t.id, st.id', 'desc');
 
 		return $this->json([
 			'teams' => $qb->select('t')->getQuery()->getResult(),
 			'seasonteams' => $qb->select('st')->getQuery()->getResult(),
+			'seasonteam_members' => $qb->select('stm')->getQuery()->getResult(),
 		]);
+	}
+
+	/**
+	 * @Route("/teams/delete/{id}", name="control.teams.delete")
+	 */
+	public function deleteAction($id)
+	{
+		$this->get('domain.use_case.remove_team_use_case')->execute($id);
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $this->json([]);
+	}
+
+	/**
+	 * @Route("/teams/save", name="control.teams.save")
+	 */
+	public function saveAction(Request $request)
+	{
+		$teamRequestData = $request->request->get('team', []);
+		$team = $this->get('app.team_manager')->saveTeam($teamRequestData);
+		return $this->json($team);
 	}
 }

@@ -2,28 +2,44 @@
 
 {% block body %}
     <div class="container" id="app">
+		<div class="row mb-10">
+			<div class="col-md-12">
+				<button v-on:click="showAddTeamPopup" class="btn btn-primary">Добавить команду</button>
+			</div>
+		</div>
         <div class="row">
             <div v-for="team in teams" class="col-xs-12 col-sm-12 col-md-6">
-                <team @bus="handle" :team="team" :seasonteams="getSeasonTeamsForTeam(team)"></team>
+                <team @bus="handle" :team="team" :seasonteams="getSeasonTeamsForTeam(team)" :members="getSeasonTeamMembersForTeam(team)"></team>
             </div>
         </div>
+		<modal ref="modal" @bus="handle"></modal>
     </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 	{{ include('@Control/teams/vue/team.html.twig') }}
+	{{ include('@Control/vue/modal-layout.vue.twig') }}
+	{{ include('@Control/teams/vue/team-modal.vue.twig') }}
+    {{ include('@Control/vue/edit-modal.vue.twig') }}
+    {{ include('@Control/vue/member.vue.twig') }}
     <script>
 		var app = new Vue({
 			el: '#app',
 			data: {
 				seasonteams: [],
-				teams: []
+				teams: [],
+				seasonteam_members: []
 			},
 			computed: {
 
 			},
 			methods: {
+				setSeasonTeamMembers: function (members) {
+					this.seasonteam_members = members.filter(function (t) {
+						return !!t;
+					})
+				},
 				setTeams: function (teams) {
 					this.teams = teams.filter(function (t) {
 						return !!t;
@@ -42,6 +58,7 @@
 						success: function (response) {
 							_this.setTeams(response.teams);
 							_this.setSeasonTeams(response.seasonteams);
+							_this.setSeasonTeamMembers(response.seasonteam_members);
 						},
 						complete: function (response) {
 
@@ -53,12 +70,75 @@
 						return t.team.id === team.id;
 					});
 				},
+				getSeasonTeamMembersForTeam: function (team) {
+					return this.seasonteam_members.filter(function (t) {
+						return t.seasonteam.team.id === team.id;
+					});
+				},
+				showAddTeamPopup: function () {
+					this.$refs.modal.show('teamModal', {}, 'modal-lg');
+				},
 				handle: function (data) {
 					this.$emit(data.name, data.value);
 				}
 			},
 			created: function () {
+				this.$on('seasonteam-deleted', function (seasonteam) {
+					this.seasonteams = this.seasonteams.filter(function (st) {
+						return st && st.id !== seasonteam.id;
+					});
+					this.seasonteam_members = this.seasonteam_members.filter(function (st) {
+						return st && st.seasonteam.id !== seasonteam.id;
+					});
+				});
+				this.$on('seasonteam-changed', function (response) {
+					const seasonteam = response.seasonteam;
 
+					var exist = false;
+					for (index in this.seasonteams) {
+						if (this.seasonteams[index] && this.seasonteams[index].id === seasonteam.id) {
+							this.seasonteams[index] = seasonteam;
+							exist = true;
+							break;
+						}
+					}
+					if (!exist) {
+						this.seasonteams.push(seasonteam);
+					}
+
+					const members = response.members;
+					this.seasonteam_members = this.seasonteam_members.filter(function (st) {
+						return st && st.seasonteam.id !== seasonteam.id;
+					});
+					for (i in members) {
+						this.seasonteam_members.push(members[i]);
+					}
+					this.$forceUpdate();
+				});
+				this.$on('show-edit-season-team-modal', function (data) {
+					this.$refs.modal.show('editModal', data, 'modal-lg');
+				});
+				this.$on('show-edit-team-modal', function (team) {
+					this.$refs.modal.show('teamModal', {team: team}, 'modal-lg');
+				});
+				this.$on('team-saved', function (team) {
+					var exist = false;
+					for (index in this.teams) {
+						if (this.teams[index] && this.teams[index].id == team.id) {
+							this.teams[index] = team;
+							exist = true;
+							break;
+						}
+					}
+					if (!exist) {
+						this.teams.push(team);
+					}
+				});
+				this.$on('team-deleted', function (team) {
+					this.teams = this.teams.filter(function (st) {
+						return st && st.id !== team.id;
+					})
+				});
 			},
 			mounted: function () {
 				this.load();

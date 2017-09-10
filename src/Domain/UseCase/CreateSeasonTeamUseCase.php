@@ -49,7 +49,7 @@ class CreateSeasonTeamUseCase
 		}
 
 		try {
-			$league = $this->getContainer()->getLeagueRepository()->findById($request->getCoachId());
+			$league = $this->getContainer()->getLeagueRepository()->findById($request->getLeagueId());
 		} catch (EntityNotFoundException $e) {
 			throw new DomainException('League not found with id ' . $request->getLeagueId());
 		}
