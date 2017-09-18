@@ -31,3 +31,5 @@
 /web/config.php
 /web/backend/img/upload/*
 !/web/backend/img/upload/.gitkeep
+/web/uploads/post_images/*
+!/web/uploads/post_images/.gitkeep

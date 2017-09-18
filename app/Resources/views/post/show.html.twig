@@ -1,0 +1,23 @@
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="page wrapper">
+        {% set currentUrl = url('blog_post_show', {id: post.id}) %}
+        {% set currentTitle = post.title %}
+        {% set current = {'url': currentUrl, 'title': currentTitle} %}
+        {% set parentUrl = url('blog_index') %}
+        {% set parentTitle = 'Новости' %}
+        {% set parent = {'url': parentUrl, 'title': parentTitle} %}
+        {% include 'blocks/breadcrumbs.twig' with {current: current, parent: parent} %}
+        <h1 class="title">Новости</h1>
+        <div class="news-page__wrapper">
+            <div class="news-page__img-wrapper">
+                <img src="{{ asset('/uploads/post_images/' ~ post.imageUrl) }}" alt="" class="news-page__img">
+            </div>
+            <div class="news-page__title">{{ post.title }}</div>
+            <p>
+                {{ post.description | raw}}
+            </p>
+        </div>
+    </section>
+{% endblock %}

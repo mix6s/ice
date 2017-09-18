@@ -4,12 +4,12 @@
     <section class="news wrapper">
         <div class="news__title">
             Новости
-            <a href="#" class="news__title-link">Все новости</a>
+            <a href="{{ url('blog_index')}}" class="news__title-link">Все новости</a>
         </div>
         <div class="news__list">
-            {% include 'blocks/news-item.twig' with {item: {src: '/assets/img/news/n-1.jpg', title: 'Практически все время занято хоккеем', desc: 'В преддверии очередного хоккейного сезона представляем большое интервью с руководителем ПЛХЛ Дмитрием Лосевым'}} %}
-            {% include 'blocks/news-item.twig' with {item: {src: '/assets/img/news/n-2.jpg', title: 'Сборная ПЛХЛ заняла почётное 3-е место!', desc: 'В последнем матче, наша команда в упорнейшей борьбе одолела соперников из города Чебоксары.'}} %}
-            {% include 'blocks/news-item.twig' with {item: {src: '/assets/img/news/n-3.jpg', title: 'Друзья, завершился первый кубок Победы.', desc: 'Результаты турнира'}} %}
+            {% for post in posts %}
+                {% include 'blocks/news-item.twig' with {post: post} %}
+            {% endfor %}
         </div>
     </section>
     <section class="media wrapper">

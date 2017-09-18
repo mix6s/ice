@@ -3,6 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
     - { resource: '@DomainBundle/Resources/config/services.yml' }
+    - { resource: "@BlogBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -46,6 +47,8 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
+    form_themes:
+        - 'bootstrap_3_layout.html.twig'
 
 # Doctrine Configuration
 doctrine:
@@ -85,6 +88,10 @@ doctrine:
                 dir: '%kernel.project_dir%/src/DomainBundle/Resources/config/doctrine'
                 prefix: Domain\Entity
                 is_bundle: false
+            BlogBundle:
+                type: annotation
+                prefix: BlogBundle\Entity
+
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -118,3 +125,15 @@ liip_imagine:
             format: png
             filters:
                 thumbnail: { size: [48, 48], mode: outbound }
+        post_255x166:
+            format: png
+            filters:
+                thumbnail: { size: [255, 166], mode: outbound }
+        post_255x160:
+            format: png
+            filters:
+                thumbnail: { size: [255, 160], mode: outbound }
+        post_400x250:
+            format: png
+            filters:
+                thumbnail: { size: [400, 250], mode: outbound }

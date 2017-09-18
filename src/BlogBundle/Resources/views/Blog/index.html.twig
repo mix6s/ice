@@ -1,0 +1,18 @@
+
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="page wrapper">
+
+        {% set parentUrl = url('blog_index') %}
+        {% set parentTitle = 'Новости' %}
+        {% set parent = {'url': parentUrl, 'title': parentTitle} %}
+        {% include 'blocks/breadcrumbs.twig' with {parent: parent} %}
+        <h1 class="title">Новости</h1>
+        <div class="all-news__list">
+            {% for post in posts %}
+                {% include 'blocks/all-news-item.twig' with { post: post } %}
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

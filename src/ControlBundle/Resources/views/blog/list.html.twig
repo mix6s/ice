@@ -1,0 +1,46 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <a href="{{ url('control.blog.new') }}">Добавить новость</a>
+            <h1>Новости</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Дата</th>
+                    <th>Заголовок</th>
+                    <th>Короткое описание</th>
+                    <th>ссылка на картинку</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>{% if post.postedAt %}{{ post.postedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{{ post.title }}</td>
+                        <td>{{ post.shortDescription }}</td>
+                        <td>{{ post.imageUrl }}</td>
+                        <td>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('control.blog.show', { 'id': post.id }) }}">Показать</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('control.blog.edit', { 'id': post.id }) }}">Редактировать</a>
+                                <li>
+                                    <a href="{{ path('control.blog.delete', { 'id': post.id }) }}">Удалить</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

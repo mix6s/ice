@@ -20,7 +20,8 @@ class AppKernel extends Kernel
 			new DomainBundle\DomainBundle(),
 			new \ControlBundle\ControlBundle(),
 			new Liip\ImagineBundle\LiipImagineBundle(),
-		];
+            new BlogBundle\BlogBundle(),
+        ];
 
 		if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
 			$bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();

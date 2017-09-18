@@ -1,5 +1,9 @@
 <div class="breadcrumbs">
-    <a href="#" class="breadcrumbs__link">Главная</a>
-    <a href="#" class="breadcrumbs__link">Новости</a>
-    <a href="#" class="breadcrumbs__link">Как "Братина" в "Марьино" побывала</a>
+    <a href="/" class="breadcrumbs__link">Главная</a>
+    {% if parent is defined %}
+        <a href="{{ parent.url }}" class="breadcrumbs__link">{{ parent.title }}</a>
+    {% endif %}
+    {% if current is defined %}
+        <a href="{{ current.url }}" class="breadcrumbs__link">{{ current.title }}</a>
+    {% endif %}
 </div>
