@@ -22,3 +22,11 @@ registration:
 login:
     path:     /login
     defaults: { _controller: AppBundle:Security:login }
+
+blog:
+    resource: "@BlogBundle/Controller/"
+    type:     annotation
+    prefix:   /blog
+
+_liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.xml"

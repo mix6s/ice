@@ -42,5 +42,7 @@ RUN apt-get update \
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
+WORKDIR /var/www/ice
+
 EXPOSE 9000
 CMD ["php-fpm7.0"]

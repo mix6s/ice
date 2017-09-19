@@ -28,3 +28,7 @@ services:
         class: AppBundle\TeamManager
         calls:
             - [setContainer, ['@service_container']]
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }

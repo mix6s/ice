@@ -1,0 +1,15 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+    <strong>id</strong><p>{{ post.id }}</p>
+    <strong>Заголовок</strong><p>{{ post.title }}</p>
+    <strong>Короткое описание</strong><p>{{ post.shortDescription }}</p>
+    <strong>Описание</strong><p>{{ post.description }}</p>
+    <strong>Дата</strong><p>{{ post.postedAt | date}}</p>
+    <strong>Ссылка на изображение</strong><p>/uploads/post_images/{{ post.imageUrl }}</p>
+    </div>
+</div>
+{% endblock %}
+

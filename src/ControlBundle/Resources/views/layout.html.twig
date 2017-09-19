@@ -35,7 +35,14 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                {% set menuUrls = {'control.games.list': 'Игры', 'control.seasons.list': 'Сезоны', 'control.teams.list': 'Команды', 'control.leagues.list': 'Лиги' , 'control.players.list': 'Игроки'} %}
+                {% set menuUrls = {
+                'control.games.list': 'Игры',
+                'control.seasons.list': 'Сезоны',
+                'control.teams.list': 'Команды',
+                'control.leagues.list': 'Лиги' ,
+                'control.players.list': 'Игроки',
+                'control.posts.list' : 'Новости'
+                } %}
                 {% for route, title in menuUrls %}
                     <li class="{{ route == app.request.get('_route') ? 'active' : '' }}"><a href="{{ url(route) }}">{{ title }}</a></li>
                 {% endfor %}

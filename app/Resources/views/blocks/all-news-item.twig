@@ -1,17 +1,18 @@
 <div class="all-news__item">
     <div class="all-news__img-wrapper">
-        <img src="{{ item.src }}" alt="" class="all-news__img">
+        <img src="{{ asset('/uploads/post_images/' ~ post.imageUrl) }}" style="width: 250px;" />
+        {#<img src="{{ asset('/uploads/post_images/' ~ post.imageUrl) }}" />#}
+        {#todo liip_imagine filter#}
     </div>
     <div class="all-news__content">
         <div class="all-news__title">
-            <a href="#" class="all-news__title-link">Как "Братина" в "Марьино" побывала</a>
+            <a href="{{ url('blog_post_show', { id: post.id }) }}" class="all-news__title-link">{{ post.title }}</a>
         </div>
         <div class="all-news__decs">
-            Иван Бочаров и Андрей Алексеев свозили главную нагрду ВХЛ туда, где начинал свой хоккейный путь.
-            Иван Бочаров и Андрей Алексеев свозили главную нагрду ВХЛ туда, где начинал свой хоккейный путь.
+            {{ post.shortDescription }}
         </div>
         <div class="all-news__link-wrapper">
-            <a href="#" class="all-news__link">Продолжение</a>
+            <a href="{{ url('blog_post_show', {id:post.id}) }}" class="all-news__link">Продолжение</a>
         </div>
     </div>
 </div>
