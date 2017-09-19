@@ -54,4 +54,15 @@ class GamesController extends Controller
 
 		return $this->json(['game' => $game]);
 	}
+
+	/**
+	 * @Route("/delete/{id}", name="control.games.delete")
+	 */
+	public function deleteAction($id)
+	{
+		$game = $this->get('domain.repository.game')->findById($id);
+		$this->get('domain.repository.game')->remove($game);
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $this->json([]);
+	}
 }

@@ -22,7 +22,7 @@
                <div class="form-group">
                    <label for="date" class="col-sm-3 control-label">Дата и время игры</label>
                    <div class="col-sm-4">
-                        <input id="date" ref="datePicker" v-model="game.datetime" placeholder="Дата и время игры" class="form-control">
+                        <input id="date" ref="datePicker" v-model="datetimeFormatted" placeholder="Дата и время игры" class="form-control">
                    </div>
                </div>
             </div>
@@ -131,6 +131,7 @@
 				saveInProgress: false,
 				game: {
 					id: null,
+					datetime: undefined,
 					season: {},
 					seasonteamA: {},
 					seasonteamB: {},
@@ -142,6 +143,9 @@
 			datetimeMoment: function () {
 				return moment(this.game.datetime);
 			},
+			datetimeFormatted: function () {
+                return this.datetimeMoment.format('DD.MM.YYYY HH:mm')
+			}
 		},
 		methods: {
 			save: function () {
@@ -153,6 +157,7 @@
 					data: this.game,
 					success: function (response) {
 						self.$emit('bus', {name: 'gameSaved', value: response.game});
+						self.$parent.hide();
 					},
 					error: function () {
 						self.error = 'Ошибка сервера';
@@ -169,7 +174,11 @@
 			if (!!props.game) {
 				this.game = props.game;
 			}
-			$(this.$refs.typeSelectpicker).selectpicker('val', this.game.type);
+			$(this.$refs.typeSelectpicker)
+                .selectpicker('val', this.game.type);
+			$(this.$refs.typeSelectpicker).on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+				self.game.type = $(self.$refs.typeSelectpicker).selectpicker('val');
+			});
 			var $season = $(this.$refs.seasonSelectpicker)
 				.selectpicker({
 					liveSearch: true,
@@ -249,12 +258,19 @@
 
 			$(this.$refs.datePicker)
 				.datetimepicker({
-					defaultDate: moment(this.datetimeMoment, "YYYY-MM-DD HH:mm"),
+					defaultDate: this.datetimeMoment,
 					locale: 'ru',
 				})
 				.on('dp.change', function (e) {
-					self.game.datetime = e.date.format("YYYY-MM-DD HH:mm");
+					if (!self.game.datetime) {
+						self.game.datetime = moment().format('YYYY-MM-DD HH:mm');
+                    } else if (e.date) {
+						self.game.datetime = e.date.format("YYYY-MM-DD HH:mm");
+                    }
+
 				})
+                .trigger('dp.change')
+            ;
 		}
 	});
 </script>

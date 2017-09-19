@@ -38,6 +38,7 @@ class SaveGameUseCase
 		$seasonteamB = $this->getContainer()->getSeasonTeamRepository()->findById($seasonteamBId);
 		try {
 			$game = $this->getContainer()->getGameRepository()->findById((int)$id);
+			$game->change(new \DateTime($datetime), GameType::resolve($type), $place, $season, $seasonteamA, $seasonteamB);
 		} catch (EntityNotFoundException $e) {
 			$id = $this->getContainer()->getGameRepository()->getNextId();
 			$game = Game::create($id, new \DateTime($datetime), GameType::resolve($type), $place, $season, $seasonteamA, $seasonteamB);

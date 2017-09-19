@@ -79,10 +79,10 @@
 				const self = this;
 				self.deleteInProgress = true;
 				$.ajax({
-					url: '/control/leagues/delete/' + self.league.id,
+					url: '/control/games/delete/' + self.game.id,
 					type: 'get',
 					success: function (response) {
-						self.$emit('bus', {name: 'league-deleted', value: self.league});
+						self.$emit('bus', {name: 'gameDeleted', value: self.game});
 					},
 					error: function (error) {
 						console.log(error);

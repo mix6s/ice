@@ -42,17 +42,40 @@
 					this.$refs.modal.show('gameModal', {}, 'modal-lg');
 				},
 				setGames: function (games) {
-					this.games = games;
+					this.games = games.filter(function (game) {
+						return !!game;
+					})
 				},
 				handle: function (data) {
 					this.$emit(data.name, data.value);
 				}
 			},
 			created: function () {
-				this
+				var self = this;
+				self
+					.$on('gameDeleted', function (game) {
+						this.games = this.games.filter(function (gameA) {
+							return gameA && gameA.id !== game.id;
+						});
+					})
+					.$on('gameSaved', function (game) {
+						var exist = false;
+						for (index in self.games) {
+							if (self.games[index] && self.games[index].id == game.id) {
+								self.games[index] = game;
+								exist = true;
+								self.$forceUpdate();
+								return;
+							}
+						}
+						if (!exist) {
+							self.games.push(game);
+						}
+					})
 					.$on('showEditGameModal', function (game) {
-					this.$refs.modal.show('gameModal', {game: game}, 'modal-lg');
-				})
+						this.$refs.modal.show('gameModal', {game: game}, 'modal-lg');
+					})
+				;
 			},
 			mounted: function () {
 				const self = this;

@@ -47,6 +47,8 @@ class Game implements \JsonSerializable
 		SeasonTeam $seasonTeamA,
 		SeasonTeam $seasonTeamB
 	) {
+		$this->id = $id;
+		$this->change($datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB);
 		if ($season->getId() != $seasonTeamA->getSeason()->getId()
 			|| $season->getId() != $seasonTeamB->getSeason()->getId()) {
 			throw new DomainException("seasonteams seasons dont equal season");
@@ -84,6 +86,39 @@ class Game implements \JsonSerializable
 		SeasonTeam $seasonTeamB
 	) {
 		return new self($id, $datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB);
+	}
+
+	/**
+	 * @param \DateTime $datetime
+	 * @param GameType $type
+	 * @param string $place
+	 * @param Season $season
+	 * @param SeasonTeam $seasonTeamA
+	 * @param SeasonTeam $seasonTeamB
+	 * @throws DomainException
+	 */
+	public function change(
+		\DateTime $datetime,
+		GameType $type,
+		string $place,
+		Season $season,
+		SeasonTeam $seasonTeamA,
+		SeasonTeam $seasonTeamB
+	) {
+		if ($season->getId() != $seasonTeamA->getSeason()->getId()
+			|| $season->getId() != $seasonTeamB->getSeason()->getId()) {
+			throw new DomainException("seasonteams seasons dont equal season");
+		}
+
+		if ($seasonTeamA->getId() === $seasonTeamB->getId()) {
+			throw new DomainException("seasonteams equal");
+		}
+		$this->datetime = $datetime;
+		$this->type = $type;
+		$this->place = $place;
+		$this->season = $season;
+		$this->seasonTeamA = $seasonTeamA;
+		$this->seasonTeamB = $seasonTeamB;
 	}
 
 	/**
