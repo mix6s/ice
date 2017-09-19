@@ -36,9 +36,13 @@ class PostType extends AbstractType
             ->add('imageUrl', FileType::class, [
                 'label' => 'Изображение',
                 'data_class' => null
-
             ])
-            ->add('submit', SubmitType::class)
+            ->add('submit', SubmitType::class, [
+                'label' => 'Сохранить',
+                'attr' => [
+                    'class' => 'btn btn-primary'
+                ]
+            ])
         ;
     }
 

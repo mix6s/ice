@@ -39,7 +39,7 @@ class Post
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=5000)
+     * @ORM\Column(name="description", type="text")
      */
     private $description;
 
@@ -54,7 +54,7 @@ class Post
      * @ORM\Column(type="string")
      *
      * @Assert\NotBlank(message="Please, upload the post image as png file.")
-     * @Assert\File(mimeTypes={ "image/png" })
+     * @Assert\File(mimeTypes={ "image/png", "image/jpeg" })
      */
     private $imageUrl;
 
