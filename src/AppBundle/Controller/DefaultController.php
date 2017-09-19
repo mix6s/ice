@@ -26,6 +26,16 @@ class DefaultController extends Controller
     }
 
 	/**
+	 * @Route("/game/{id}", name="game")
+	 */
+	public function gameAction($id, Request $request)
+	{
+		return $this->render('game.twig', [
+			'game' => $this->get('domain.repository.game')->findById($id)
+		]);
+	}
+
+	/**
 	 * @Route("/about", name="about")
 	 */
 	public function aboutAction(Request $request)

@@ -17,16 +17,10 @@
 		<div class="container">
 			<div class="swiper-container">
 				<div class="games__list swiper-wrapper">
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
-					{% include 'blocks/games-item.twig' with {item: {date: '19.09.2017', pointsHosts: '2', teamHosts: 'Молния-2', pointsGuests: '2', teamGuests: 'Молния'}} %}
+					{% dump(global.calendarGames) %}
+					{% for game in global.calendarGames %}
+					{% include 'blocks/games-item.twig' with {item: {url: url('game', {id: game.id}), place: game.place, date: game.datetime|date('d.m.Y H:i'), pointsHosts: '0', teamHosts: game.seasonTeamA.team.metadata.title, pointsGuests: '0', teamGuests: game.seasonTeamB.team.metadata.title}} %}
+					{% endfor %}
 				</div>
 			</div>
 			<div class="games__controls">

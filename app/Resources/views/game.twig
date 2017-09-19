@@ -2,32 +2,32 @@
 
 {% block content %}
     <section class="game wrapper">
-        <div class="game__title">Кубок победы, любитель</div>
+        <div class="game__title">{{ game.place }}</div>
         <div class="game__info">
             <div class="game__date-wrapper">
-                <div class="game__date">09 сентября 2017 17:45</div>
-                <div class="game__playoff game__playoff--final">Финал</div>
+                <div class="game__date">{{ game.datetime|gameDatetime }}</div>
+                <div class="game__playoff {{ {final: 'game__playoff--final', playoff: 'game__playoff', regular: 'game__playoff'}[game.type.__toString] }}">{{ {final: 'Финал', playoff: 'Плей-офф', regular: 'Регулярный чемпионат'}[game.type.__toString] }}</div>
             </div>
             <div class="game__content">
                 <div class="game__team game__team--hosts">
                     <div class="game__team-info">
                         <div class="game__team-img">
-                            <img src="/assets/img/team/t-1.jpg" alt="">
+                            <img src="{{ asset('/avatar/' ~ game.seasonTeamA.team.metadata.image)}}" alt="">
                         </div>
-                        <a href="#" class="game__team-name">СибКом</a>
+                        <a href="#" class="game__team-name">{{ game.seasonTeamA.team.metadata.title }}</a>
                         <div class="game__team-city">Саранск</div>
                     </div>
-                    <div class="game__points">6</div>
+                    <div class="game__points">0</div>
                 </div>
                 <div class="game__team game__team--guests">
                     <div class="game__team-info">
                         <div class="game__team-img">
-                            <img src="/assets/img/team/t-2.jpg" alt="">
+                            <img src="{{ asset('/avatar/' ~ game.seasonTeamB.team.metadata.image)}}" alt="">
                         </div>
-                        <a href="#" class="game__team-name">Торпедо</a>
+                        <a href="#" class="game__team-name">{{ game.seasonTeamB.team.metadata.title }}</a>
                         <div class="game__team-city">Саранск</div>
                     </div>
-                    <div class="game__points game__points--dots">5</div>
+                    <div class="game__points game__points--dots">0</div>
                 </div>
             </div>
         </div>

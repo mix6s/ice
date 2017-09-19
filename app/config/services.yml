@@ -20,6 +20,11 @@ services:
         tags:
             - { name: twig.extension }
 
+    app.twig_app_global:
+        class: AppBundle\TwigAppGlobal
+        calls:
+            - [setContainer, ['@service_container']]
+
     settings.manager:
         class: AppBundle\SettingManager
         arguments: ['@doctrine.orm.entity_manager', '@app.cache']

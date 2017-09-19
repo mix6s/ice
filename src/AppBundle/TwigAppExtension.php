@@ -21,6 +21,7 @@ class TwigAppExtension extends \Twig_Extension
 			new \Twig_SimpleFilter('position', [$this, 'positionFilter']),
 			new \Twig_SimpleFilter('stick', [$this, 'stickFilter']),
 			new \Twig_SimpleFilter('pager', [$this, 'pagerFilter'], ['is_safe' => ['html']]),
+			new \Twig_SimpleFilter('gameDatetime', [$this, 'gameDatetimeFilter']),
 		];
 	}
 
@@ -46,6 +47,29 @@ class TwigAppExtension extends \Twig_Extension
 			default:
 				return '';
 		}
+	}
+
+	/**
+	 * @param \DateTime $date
+	 * @return string
+	 */
+	public function gameDatetimeFilter(\DateTime $date)
+	{
+		$months = [
+			'января',
+			'февраля',
+			'марта',
+			'апреля',
+			'мая',
+			'июня',
+			'июля',
+			'августа',
+			'сентября',
+			'октября',
+			'ноября',
+			'декабря'
+		];
+		return sprintf($date->format('d ' . $months[$date->format('n') - 1]. ' Y H:i'));
 	}
 
 	/**
