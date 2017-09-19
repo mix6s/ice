@@ -17,7 +17,6 @@
 		<div class="container">
 			<div class="swiper-container">
 				<div class="games__list swiper-wrapper">
-					{% dump(global.calendarGames) %}
 					{% for game in global.calendarGames %}
 					{% include 'blocks/games-item.twig' with {item: {url: url('game', {id: game.id}), place: game.place, date: game.datetime|date('d.m.Y H:i'), pointsHosts: '0', teamHosts: game.seasonTeamA.team.metadata.title, pointsGuests: '0', teamGuests: game.seasonTeamB.team.metadata.title}} %}
 					{% endfor %}
