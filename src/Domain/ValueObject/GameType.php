@@ -17,9 +17,9 @@ use Domain\Exception\DomainException;
  */
 final class GameType
 {
-	private const TYPE_PLAYOFF = 'playoff';
-	private const TYPE_FINAL = 'final';
-	private const TYPE_REGULAR = 'regular';
+	const TYPE_PLAYOFF = 'playoff';
+	const TYPE_FINAL = 'final';
+	const TYPE_REGULAR = 'regular';
 
 	private $type;
 
