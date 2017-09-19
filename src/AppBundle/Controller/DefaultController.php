@@ -52,14 +52,6 @@ class DefaultController extends Controller
 	}
 
 	/**
-	 * @Route("/news", name="news")
-	 */
-	public function newsAction(Request $request)
-	{
-		return $this->render('news.twig');
-	}
-
-	/**
 	 * @Route("/media", name="media")
 	 */
 	public function mediaAction(Request $request)
