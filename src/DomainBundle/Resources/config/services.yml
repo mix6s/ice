@@ -15,8 +15,13 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\Player
+    domain.repository.game:
+        class: DomainBundle\Repository\GameRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\Game
     domain.repository.season:
-        class: Doctrine\ORM\EntityRepository
+        class: DomainBundle\Repository\SeasonRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\Season
@@ -78,5 +83,9 @@ services:
         arguments: ['@domain.container']
 
     domain.use_case.remove_league_use_case:
-            class: Domain\UseCase\RemoveLeagueUseCase
-            arguments: ['@domain.container']
+        class: Domain\UseCase\RemoveLeagueUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.save_game_use_case:
+        class: Domain\UseCase\SaveGameUseCase
+        arguments: ['@domain.container']

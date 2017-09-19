@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use Domain\Entity\Player;
 use DomainBundle\Entity\PlayerMetadata;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\PlayerProfileFormType;
@@ -24,9 +25,9 @@ use Symfony\Component\HttpFoundation\Request;
 class ProfileController extends Controller
 {
 	/**
-	 * @Route("", name="profile.index")
+	 * @Route("", name="profile.current")
 	 */
-	public function indexAction()
+	public function currentAction()
 	{
 		/** @var User $user */
 		$user = $this->getUser();
@@ -34,9 +35,7 @@ class ProfileController extends Controller
 			/** @var PlayerMetadata $profile */
 			$profile = $user->getPlayerProfile();
 			if ($profile) {
-				return $this->render('profile.twig', [
-					'profile' => $profile
-				]);
+				return $this->forward("AppBundle:Profile:index", ['id' => $user->getPlayer()->getId()]);
 			}
 			return $this->redirectToRoute('profile.player.edit');
 		}
@@ -59,11 +58,26 @@ class ProfileController extends Controller
 			$user->setPlayerProfile($profile);
 			$this->get('doctrine.orm.entity_manager')->persist($user);
 			$this->get('doctrine.orm.entity_manager')->flush();
-			return $this->redirectToRoute('profile.index');
+			return $this->redirectToRoute('profile.current');
 		}
 		return $this->render('profile-empty.twig', [
 			'form' => $form->createView(),
 			'profile' => $profile,
+		]);
+	}
+
+	/**
+	 * @Route("/{id}", name="profile.index")
+	 */
+	public function indexAction($id)
+	{
+		/** @var Player|null $player */
+		$player = $this->get('domain.repository.player')->find($id);
+		if (!$player) {
+			throw $this->createNotFoundException();
+		}
+		return $this->render('profile.twig', [
+			'profile' => $player->getMetadata()
 		]);
 	}
 

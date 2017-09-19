@@ -16,6 +16,7 @@
                         <td>{{ player.metadata.surname }}</td>
                         <td>{{ player.metadata.firstName }}</td>
                         <td>{{ player.metadata.secondName }}</td>
+                        <td><a target="_blank" href="{{ url('profile.index', {id: player.id}) }}">Профиль</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

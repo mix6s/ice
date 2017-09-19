@@ -1,0 +1,260 @@
+<template>
+    {% block vue_template_picker %}
+        {% verbatim %}
+<div>
+    <div ref="picker"></div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+
+    {% block vue_template %}
+        {% verbatim %}
+<div class="modal-content" id="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Новая игра</h4>
+    </div>
+    <div class="modal-body">
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-xs-12 ">
+               <div class="form-group">
+                   <label for="date" class="col-sm-3 control-label">Дата и время игры</label>
+                   <div class="col-sm-4">
+                        <input id="date" ref="datePicker" v-model="game.datetime" placeholder="Дата и время игры" class="form-control">
+                   </div>
+               </div>
+            </div>
+        </div>
+         <div class="row">
+            <div class="col-xs-12 ">
+               <div class="form-group">
+                   <label class="col-sm-3 control-label">Стадион</label>
+                   <div class="col-sm-9">
+                        <input placeholder="Стадион" v-model="game.place" class="form-control">
+                   </div>
+               </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 ">
+               <div class="form-group">
+                   <label class="col-sm-3 control-label">Тип игры</label>
+                   <div class="col-sm-9">
+                        <select ref="typeSelectpicker" class="form-control" title="Выбрать">
+                            <option value="regular">Регулярный чемпионат</option>
+                            <option value="playoff">Плей-офф</option>
+                            <option value="final">Финал</option>
+                        </select>
+                   </div>
+               </div>
+            </div>
+        </div>
+         <div class="row">
+            <div class="col-xs-12 ">
+               <div class="form-group">
+                   <label class="col-sm-3 control-label">Сезон</label>
+                   <div class="col-sm-4">
+                        <select ref="seasonSelectpicker"  class="form-control" title="Выбрать">
+                               <option v-if="props.game" selected="selected" :value="props.game.season.id">{{(props.game.season.year - 1) + '/' + props.game.season.year}}</option>
+                        </select>
+                   </div>
+               </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+               <div class="form-group">
+                    <div class="col-sm-12">
+                        <select ref="teamASelectpicker"  class="form-control" title="Команда хозяева">
+                            <option v-if="props.game" selected="selected" :value="props.game.seasonteamA.id">{{props.game.seasonteamA.team.metadata.title }}</option>
+                        </select>
+                    </div>
+               </div>
+            </div>
+            <div class="col-xs-6">
+               <div class="form-group">
+                  <div class="col-sm-12">
+                        <select ref="teamBSelectpicker"  class="form-control" title="Команда гости">
+                        <option v-if="props.game" selected="selected" :value="props.game.seasonteamB.id">{{props.game.seasonteamB.team.metadata.title }}</option>
+                        </select>
+                    </div>
+               </div>
+            </div>
+        </div>
+    </div>
+
+         <div class="has-error" v-if="error">
+            <div class="alert alert-danger text-center" role="alert">{{ error }}</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+</template>
+
+
+<script>
+	Vue.component('picker', {
+		props: ['datetime'],
+		template: '{{ block('vue_template_picker')|escape('js') }}',
+		data: function () {
+			return {}
+		},
+		computed: {},
+		methods: {},
+		mounted: function () {
+			$(this.$refs.picker)
+				.datetimepicker({
+					defaultDate: moment(this.datetime, "YYYY-MM-DD HH:mm"),
+					locale: 'ru',
+					inline: true,
+					sideBySide: true
+				})
+				.on('dp.change', function (e) {
+				})
+			;
+		}
+	});
+
+	Vue.component('gameModal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['props'],
+		data: function () {
+			return {
+				isDateEdit: false,
+				saveInProgress: false,
+				game: {
+					id: null,
+					season: {},
+					seasonteamA: {},
+					seasonteamB: {},
+				},
+				error: null,
+			}
+		},
+		computed: {
+			datetimeMoment: function () {
+				return moment(this.game.datetime);
+			},
+		},
+		methods: {
+			save: function () {
+				var self = this;
+				self.saveInProgress = true;
+				$.ajax({
+					url: '/control/games/save',
+					type: 'post',
+					data: this.game,
+					success: function (response) {
+						self.$emit('bus', {name: 'gameSaved', value: response.game});
+					},
+					error: function () {
+						self.error = 'Ошибка сервера';
+					},
+					complete: function () {
+						self.saveInProgress = false;
+					}
+				});
+			}
+		},
+		mounted: function () {
+			var self = this;
+			const props = this.props ? this.props : {};
+			if (!!props.game) {
+				this.game = props.game;
+			}
+			$(this.$refs.typeSelectpicker).selectpicker('val', this.game.type);
+			var $season = $(this.$refs.seasonSelectpicker)
+				.selectpicker({
+					liveSearch: true,
+				})
+				.ajaxSelectPicker({
+					ajax: {
+						url: '/control/typeahead',
+						data: function () {
+							return {
+								season: {% raw %}'{{{q}}}'{% endraw %}
+							};
+						}
+					},
+					locale: {
+						emptyTitle: 'Выбрать'
+					},
+					preprocessData: function (data) {
+						return data.map(function (item) {
+							return {
+								'value': item.season.id,
+								'text': item.name,
+								'disabled': false
+							}
+						});
+					},
+					preserveSelected: false
+				})
+				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					self.game.season.id = $season.selectpicker('val');
+				})
+			;
+
+			var pickers = [this.$refs.teamASelectpicker, this.$refs.teamBSelectpicker];
+			for (teamIndex in pickers) {
+				$(pickers[teamIndex])
+					.selectpicker({
+						liveSearch: true
+					})
+					.ajaxSelectPicker({
+						cache: false,
+						ajax: {
+							url: '/control/typeahead',
+							data: function () {
+								return {
+									seasonteam: {% raw %}'{{{q}}}'{% endraw %},
+									options: {seasonId: self.game.season.id ? self.game.season.id : ''}
+								};
+							}
+						},
+						locale: {
+							emptyTitle: 'Выбрать'
+						},
+						preprocessData: function (data) {
+							return data.map(function (item) {
+								return {
+									'value': item.seasonteam.id,
+									'text': item.name,
+									'disabled': false,
+									'data': {
+										'subtext': (item.seasonteam.season.year - 1) + '/' + item.seasonteam.season.year
+									},
+								}
+							});
+						},
+						preserveSelected: false
+					})
+				;
+			}
+			$(this.$refs.teamASelectpicker)
+				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					self.game.seasonteamA.id = $(self.$refs.teamASelectpicker).selectpicker('val');
+				});
+			$(this.$refs.teamBSelectpicker)
+				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					self.game.seasonteamB.id = $(self.$refs.teamBSelectpicker).selectpicker('val');
+				});
+
+			$(this.$refs.datePicker)
+				.datetimepicker({
+					defaultDate: moment(this.datetimeMoment, "YYYY-MM-DD HH:mm"),
+					locale: 'ru',
+				})
+				.on('dp.change', function (e) {
+					self.game.datetime = e.date.format("YYYY-MM-DD HH:mm");
+				})
+		}
+	});
+</script>

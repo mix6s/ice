@@ -12,6 +12,7 @@ namespace ControlBundle\Controller;
 use Domain\Entity\League;
 use Domain\Entity\Player;
 use Domain\Entity\Season;
+use Domain\Entity\SeasonTeam;
 use Domain\Entity\Team;
 use DomainBundle\Entity\LeagueMetadata;
 use DomainBundle\Entity\PlayerMetadata;
@@ -42,6 +43,7 @@ class ControlController extends Controller
 	 */
 	public function typeaheadAction(Request $request)
 	{
+		$options = $request->get('options', []);
 		$seasonQuery = $request->get('season');
 		if (!empty($seasonQuery)) {
 			$em = $this->get('doctrine.orm.entity_manager');
@@ -59,6 +61,42 @@ class ControlController extends Controller
 				$result[] = [
 					'name' => ($season->getYear() - 1) . '/' . $season->getYear(),
 					'season' => $season
+				];
+			}
+			return $this->json($result);
+		}
+
+		$seasonteamQuery = $request->get('seasonteam');
+		if (!empty($seasonteamQuery)) {
+
+
+
+			$em = $this->get('doctrine.orm.entity_manager');
+			$qb = $em->createQueryBuilder();
+			$qb
+				->from('Domain:SeasonTeam', 'st')
+				->join('Domain:Team', 't', 'WITH', 't.id = st.team')
+				->join('t.metadata', 'm')
+				->select('st')
+				->where('m.title like :query ')
+				->setParameter('query', '%' . $seasonteamQuery . '%')
+				;
+
+			if (!empty($options['seasonId'])) {
+				$qb->andWhere('st.season = :seasonId')->setParameter('seasonId', $options['seasonId']);
+			}
+
+			$teams = $qb
+				->getQuery()
+				->getResult();
+			$result = [];
+			/** @var SeasonTeam $seasonteam */
+			foreach ($teams as $seasonteam) {
+				/** @var TeamMetadata $metadata */
+				$metadata = $seasonteam->getTeam()->getMetadata();
+				$result[] = [
+					'name' => $metadata->getTitle(),
+					'seasonteam' => $seasonteam
 				];
 			}
 			return $this->json($result);

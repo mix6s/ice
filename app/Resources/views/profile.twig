@@ -3,6 +3,7 @@
 {% block content %}
     <section class="profile wrapper page">
         <div class="profile__info">
+            {% if profile %}
             <div class="profile__img-wrapper">
                 <img src="{{ asset('avatar/' ~ profile.image) }}" alt="" class="profile__img">
             </div>
@@ -43,6 +44,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         <div class="profile__table">
             <div class="profile__table-header">Статистика игрока</div>
             <table class="table">

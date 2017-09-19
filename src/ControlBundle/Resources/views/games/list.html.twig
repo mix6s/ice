@@ -1,0 +1,72 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+    <div class="container" id="app">
+        <div class="row mb-10">
+            <div class="col-md-12">
+                <button v-on:click="showAddGamePopup" class="btn btn-primary">Создать игру</button>
+            </div>
+        </div>
+        <div class="row">
+            <div v-for="game in games" class="col-sm-6">
+				<game @bus="handle" :game="game"></game>
+            </div>
+        </div>
+        <modal ref="modal" @bus="handle"></modal>
+    </div>
+{% endblock %}
+{% block css %}
+    {{ parent() }}
+	<link href="{{ asset('backend/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('backend/css/bootstrap-select.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('backend/css/ajax-bootstrap-select.min.css') }}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+	<script src="{{ asset('backend/js/moment-with-locales.js') }}"></script>
+	<script src="{{ asset('backend/js/bootstrap-datetimepicker.min.js') }}"></script>
+	<script src="{{ asset('backend/js/bootstrap-select.min.js') }}"></script>
+	<script src="{{ asset('backend/js/ajax-bootstrap-select.min.js') }}"></script>
+    {{ include('@Control/vue/modal-layout.vue.twig') }}
+    {{ include('@Control/games/vue/game.vue.twig') }}
+    {{ include('@Control/games/vue/game-modal.vue.twig') }}
+    <script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				games: []
+			},
+			computed: {},
+			methods: {
+				showAddGamePopup: function () {
+					this.$refs.modal.show('gameModal', {}, 'modal-lg');
+				},
+				setGames: function (games) {
+					this.games = games;
+				},
+				handle: function (data) {
+					this.$emit(data.name, data.value);
+				}
+			},
+			created: function () {
+				this
+					.$on('showEditGameModal', function (game) {
+					this.$refs.modal.show('gameModal', {game: game}, 'modal-lg');
+				})
+			},
+			mounted: function () {
+				const self = this;
+				$.ajax({
+					url: '/control/games',
+					type: 'get',
+					success: function (response) {
+						self.setGames(response.games);
+					},
+					complete: function (response) {
+
+					}
+				});
+			}
+		});
+    </script>
+{% endblock %}

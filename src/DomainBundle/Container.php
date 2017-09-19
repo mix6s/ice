@@ -10,6 +10,7 @@ namespace DomainBundle;
 
 
 use Domain\ContainerInterface;
+use Domain\Repository\GameRepositoryInterface;
 use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
@@ -72,5 +73,13 @@ class Container implements ContainerInterface
 	public function getSeasonTeamMemberRepository(): SeasonTeamMemberRepositoryInterface
 	{
 		return $this->container->get('domain.repository.seasonteammember');
+	}
+
+	/**
+	 * @return GameRepositoryInterface
+	 */
+	public function getGameRepository(): GameRepositoryInterface
+	{
+		return $this->container->get('domain.repository.game');
 	}
 }

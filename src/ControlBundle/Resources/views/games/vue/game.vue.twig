@@ -1,0 +1,97 @@
+<template>
+{% block vue_template %}
+    {% verbatim %}
+<div class="panel panel-info ">
+ <div class="panel-heading mb-10">
+        <div class="row">
+            <div class="col-xs-6">
+                <h3 class="panel-title "></h3>
+            </div>
+             <div class="col-xs-6 text-right">
+                <button v-on:click="edit" title="Редактировать" class="btn btn-xs btn-info"><i aria-hidden="true" class="fa fa-edit"></i></button>
+                <button v-on:click="remove" :disabled="deleteInProgress" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+            </div>
+
+        </div>
+    </div>
+     <div class="row" style="margin-top: 10px">
+        <div class="col-sm-12 text-center"><strong>{{ datetimeFormatted }}</strong></div>
+    </div>
+      <div class="row" style="">
+        <div class="col-sm-12 text-center">{{ game.place }}</div>
+    </div>
+    <div class="row mb-10">
+        <div class="col-sm-12 text-center"><span class="label" :class="{final:'label-danger', regular: 'label-info', playoff: 'label-primary'}[game.type]">{{ {final:'Финал', regular: 'Регулярный чемпионат', playoff: 'Плей-офф'}[game.type] }}</span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 text-center"><strong>{{ game.seasonteamA.team.metadata.title}}</strong></div>
+        <div class="col-sm-6 text-center"><strong>{{ game.seasonteamB.team.metadata.title}}</strong></div>
+    </div>
+    <div class="row mb-10">
+        <div class="col-sm-6">
+             <div class="form-group text-center">
+                                <div class="col-sm-12" v-if=" game.seasonteamA.team.metadata.image">
+                                    <img style="    margin: 0 auto;max-width: 100px;" class="img-responsive img-rounded" :src="'/avatar/'+ game.seasonteamA.team.metadata.image">
+                                </div>
+                                <div class="col-sm-12" v-if="! game.seasonteamA.team.metadata.image">
+                                    <img style="    margin: 0 auto;max-width: 100px;"  class="img-responsive img-rounded" src="http://via.placeholder.com/400/fff/ddd?text=none">
+                                </div>
+              </div>
+        </div>
+         <div class="col-sm-6">
+             <div class="form-group text-center">
+                                <div class="col-sm-12" v-if=" game.seasonteamB.team.metadata.image">
+                                    <img style="    margin: 0 auto;max-width: 100px;"  class="img-responsive img-rounded" :src="'/avatar/'+ game.seasonteamB.team.metadata.image">
+                                </div>
+                                <div class="col-sm-12" v-if="! game.seasonteamB.team.metadata.image">
+                                    <img style="    margin: 0 auto;max-width: 100px;"  class="img-responsive img-rounded" src="http://via.placeholder.com/400/fff/ddd?text=none">
+                                </div>
+              </div>
+        </div>
+
+    </div>
+
+</div>
+{% endverbatim %}
+{% endblock %}
+</template>
+
+<script>
+	Vue.component('game', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['game'],
+		data: function () {
+			return {
+				deleteInProgress: false
+			}
+		},
+		computed: {
+            datetimeFormatted: function () {
+                return (moment(this.game.datetime)).format('DD.MM.YYYY HH:mm')
+			}
+		},
+		methods: {
+            edit: function () {
+				this.$emit('bus', {name: 'showEditGameModal', value: this.game});
+			},
+			remove: function () {
+				const self = this;
+				self.deleteInProgress = true;
+				$.ajax({
+					url: '/control/leagues/delete/' + self.league.id,
+					type: 'get',
+					success: function (response) {
+						self.$emit('bus', {name: 'league-deleted', value: self.league});
+					},
+					error: function (error) {
+						console.log(error);
+					},
+					complete: function () {
+						self.deleteInProgress = false;
+					}
+				});
+			}
+		}
+	});
+</script>

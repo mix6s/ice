@@ -64,7 +64,7 @@
 				{% block headerUser %}
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                     <div class="header__user">
-                        <a href="{{ path('profile.index') }}" class="btn btn--action">Личный кабинет</a>
+                        <a href="{{ path('profile.current') }}" class="btn btn--action">Личный кабинет</a>
                     </div>
                     {% else %}
                     <div class="header__user">

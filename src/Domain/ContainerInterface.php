@@ -9,6 +9,7 @@
 namespace Domain;
 
 
+use Domain\Repository\GameRepositoryInterface;
 use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
@@ -51,4 +52,9 @@ interface ContainerInterface
 	 * @return SeasonTeamMemberRepositoryInterface
 	 */
 	public function getSeasonTeamMemberRepository(): SeasonTeamMemberRepositoryInterface;
+
+	/**
+	 * @return GameRepositoryInterface
+	 */
+	public function getGameRepository(): GameRepositoryInterface;
 }

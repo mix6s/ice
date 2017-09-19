@@ -10,6 +10,7 @@ namespace Domain\Tests;
 
 
 use Domain\ContainerInterface;
+use Domain\Repository\GameRepositoryInterface;
 use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
@@ -80,5 +81,13 @@ class Container implements ContainerInterface
 	public function getSeasonTeamMemberRepository(): SeasonTeamMemberRepositoryInterface
 	{
 		// TODO: Implement getSeasonTeamMemberRepository() method.
+	}
+
+	/**
+	 * @return GameRepositoryInterface
+	 */
+	public function getGameRepository(): GameRepositoryInterface
+	{
+		// TODO: Implement getGameRepository() method.
 	}
 }
