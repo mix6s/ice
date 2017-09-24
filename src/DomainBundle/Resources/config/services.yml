@@ -35,6 +35,10 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\SeasonTeam
+    domain.repository.game.events:
+        class: DomainBundle\Repository\GameEventRepository
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
 
     domain.repository.seasonteammember:
         class: DomainBundle\Repository\SeasonTeamMemberRepository
@@ -88,4 +92,7 @@ services:
 
     domain.use_case.save_game_use_case:
         class: Domain\UseCase\SaveGameUseCase
+        arguments: ['@domain.container']
+    domain.use_case.save_game_events_use_case:
+        class: Domain\UseCase\SaveGameEventsUseCase
         arguments: ['@domain.container']

@@ -170,6 +170,22 @@ class PlayerMetadata implements \JsonSerializable
 	/**
 	 * @return string
 	 */
+	public function getPlayerName()
+	{
+		$nameParts = [];
+		if (!empty($this->surname)) {
+			$nameParts[] = ucfirst($this->surname);
+		}
+
+		if (!empty($this->firstName)) {
+			$nameParts[] = ucfirst($this->firstName);
+		}
+		return implode(' ', $nameParts);
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getFullName()
 	{
 		$nameParts = [];
@@ -297,7 +313,8 @@ class PlayerMetadata implements \JsonSerializable
 			'surname' => $this->getSurname(),
 			'first_name' => $this->getFirstName(),
 			'second_name' => $this->getSecondName(),
-			'full_name' => $this->getFullName()
+			'full_name' => $this->getFullName(),
+			'player_name' => $this->getPlayerName(),
 		];
 	}
 }

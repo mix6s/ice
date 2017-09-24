@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Domain\Entity\GoalEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,8 +31,36 @@ class DefaultController extends Controller
 	 */
 	public function gameAction($id, Request $request)
 	{
+		$game = $this->get('domain.repository.game')->findById($id);
+		$events = $this->get('domain.repository.game.events')->findByGame($game);
+		$scoreA = 0;
+		$scoreB = 0;
+		$scoreMap = [];
+		$eventsByPeriod = [];
+		foreach ($events as $event) {
+			$num = (int)($event->getSecondsFromStart() / (20 * 60));
+			$num = $num > 4 ? 4 : $num;
+			if (empty($eventsByPeriod[$num])) {
+				$eventsByPeriod[$num] = [];
+			}
+			$eventsByPeriod[$num][] = $event;
+			if ($event instanceof GoalEvent) {
+				if ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamA()->getId()) {
+					$scoreA++;
+				} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
+					$scoreB++;
+				}
+				$scoreMap[$event->getId()] = $scoreA . ':' . $scoreB;
+			}
+		}
 		return $this->render('game.twig', [
-			'game' => $this->get('domain.repository.game')->findById($id)
+			'game' => $game,
+			'events' => $events,
+			'eventsByPeriod' => $eventsByPeriod,
+			'scoreA' => $scoreA,
+			'scoreB' => $scoreB,
+			'scoreMap' => $scoreMap,
+			'isStarted' => $game->getDatetime()->getTimestamp() <= (new\DateTime())->getTimestamp()
 		]);
 	}
 
