@@ -33,3 +33,4 @@
 !/web/backend/img/upload/.gitkeep
 /web/uploads/post_images/*
 !/web/uploads/post_images/.gitkeep
+/web/bower_components/*
