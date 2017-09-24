@@ -83,6 +83,31 @@
                </div>
             </div>
         </div>
+
+
+         <div class="row" v-for="event in events" :key="event._id">
+            <div class="" :class="(event._seasonteam.id == game.seasonteamA.id) ? 'col-sm-6 ' : 'col-sm-6  col-sm-offset-6'">
+                <event @bus="handle" :event="event"></event>
+             </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+               <div class="form-group">
+                    <div class="col-sm-12">
+                         <button class="btn btn-primary" v-on:click="addEvent({type: 'goal'}, game.seasonteamA, membersA)">Гол</button>
+                         <button class="btn btn-danger" v-on:click="addEvent({type: 'penalty'}, game.seasonteamA, membersA)">Удаление</button>
+                    </div>
+               </div>
+            </div>
+             <div class="col-xs-6">
+               <div class="form-group">
+                    <div class="col-sm-12">
+                         <button class="btn btn-primary" v-on:click="addEvent({type: 'goal'}, game.seasonteamB, membersB)">Гол</button>
+                         <button class="btn btn-danger" v-on:click="addEvent({type: 'penalty'}, game.seasonteamB, membersB)">Удаление</button>
+                    </div>
+               </div>
+            </div>
+        </div>
     </div>
 
          <div class="has-error" v-if="error">
@@ -127,8 +152,10 @@
 		props: ['props'],
 		data: function () {
 			return {
+				eventId: 0,
 				isDateEdit: false,
 				saveInProgress: false,
+				events: [],
 				game: {
 					id: null,
 					datetime: undefined,
@@ -136,6 +163,8 @@
 					seasonteamA: {},
 					seasonteamB: {},
 				},
+                membersA: [],
+                membersB: [],
 				error: null,
 			}
 		},
@@ -145,16 +174,84 @@
 			},
 			datetimeFormatted: function () {
                 return this.datetimeMoment.format('DD.MM.YYYY HH:mm')
+			},
+            saveData: function () {
+                return {game: this.game, events: this.events}
 			}
 		},
 		methods: {
+			handle: function (data) {
+				this.$emit(data.name, data.value);
+			},
+			getNextEventId: function () {
+				return this.eventId++;
+            },
+			addEvent: function (event, seasonteam, members) {
+				let self = this;
+				let secondsInterval = event.seconds_from_start ? event.seconds_from_start : 0;
+				let minutes = parseInt(secondsInterval / 60);
+				let seconds = secondsInterval - minutes * 60;
+				let time = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+				if (!event.assistant_a) {
+					event.assistant_a = {};
+                }
+				if (!event.assistant_b) {
+					event.assistant_b = {};
+				}
+				self.events.push($.extend({
+                    member: {},
+					assistant_a: {},
+					assistant_b: {},
+					_members: members,
+					_seasonteam: seasonteam,
+					_timeFormatted: time,
+					_id: self.getNextEventId()
+				}, event));
+			},
+            loadEvents: function () {
+				let self = this;
+				self.game.id && $.when(
+					$.ajax({
+						url: '/control/games/events/' + self.game.id,
+						success: function(data) {
+							self.events = [];
+							for (i in data) {
+								let seasonteam = data[i].member.seasonteam.id == self.game.seasonteamA.id ?  self.game.seasonteamA : self.game.seasonteamB;
+								let members = data[i].member.seasonteam.id == self.game.seasonteamA.id ? self.membersA : self.membersB;
+								self.addEvent(data[i], seasonteam, members);
+                            }
+						}
+					}),
+				).then( function(){
+
+				});
+			},
+            loadMembers: function(seasonteamA, seasonteamB) {
+				var self = this;
+				$.when(
+					seasonteamA.id && $.ajax({
+						url: '/control/seasonteam/members/' + seasonteamA.id,
+						success: function(data) {
+							self.membersA = data;
+						}
+					}),
+					seasonteamB.id && $.ajax({
+						url: '/control/seasonteam/members/' + seasonteamB.id,
+						success: function(data) {
+							self.membersB = data;
+						}
+					})
+				).then( function(){
+					self.loadEvents();
+				});
+            },
 			save: function () {
 				var self = this;
 				self.saveInProgress = true;
 				$.ajax({
 					url: '/control/games/save',
 					type: 'post',
-					data: this.game,
+					data: this.saveData,
 					success: function (response) {
 						self.$emit('bus', {name: 'gameSaved', value: response.game});
 						self.$parent.hide();
@@ -168,8 +265,17 @@
 				});
 			}
 		},
+		created: function () {
+			let self = this;
+			self
+				.$on('eventRemoved', function (event) {
+					this.events = this.events.filter(function (eventI) {
+						return eventI && eventI._id !== event._id;
+					});
+				})
+		},
 		mounted: function () {
-			var self = this;
+			let self = this;
 			const props = this.props ? this.props : {};
 			if (!!props.game) {
 				this.game = props.game;
@@ -179,7 +285,7 @@
 			$(this.$refs.typeSelectpicker).on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
 				self.game.type = $(self.$refs.typeSelectpicker).selectpicker('val');
 			});
-			var $season = $(this.$refs.seasonSelectpicker)
+			let $season = $(this.$refs.seasonSelectpicker)
 				.selectpicker({
 					liveSearch: true,
 				})
@@ -211,7 +317,7 @@
 				})
 			;
 
-			var pickers = [this.$refs.teamASelectpicker, this.$refs.teamBSelectpicker];
+			let pickers = [this.$refs.teamASelectpicker, this.$refs.teamBSelectpicker];
 			for (teamIndex in pickers) {
 				$(pickers[teamIndex])
 					.selectpicker({
@@ -250,10 +356,12 @@
 			$(this.$refs.teamASelectpicker)
 				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
 					self.game.seasonteamA.id = $(self.$refs.teamASelectpicker).selectpicker('val');
+					self.loadMembers(self.game.seasonteamA, {})
 				});
 			$(this.$refs.teamBSelectpicker)
 				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
 					self.game.seasonteamB.id = $(self.$refs.teamBSelectpicker).selectpicker('val');
+					self.loadMembers({}, self.game.seasonteamB)
 				});
 
 			$(this.$refs.datePicker)
@@ -271,6 +379,8 @@
 				})
                 .trigger('dp.change')
             ;
+
+			self.loadMembers(self.game.seasonteamA, self.game.seasonteamB)
 		}
 	});
 </script>

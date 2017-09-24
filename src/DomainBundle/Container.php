@@ -10,6 +10,7 @@ namespace DomainBundle;
 
 
 use Domain\ContainerInterface;
+use Domain\Repository\GameEventRepositoryInterface;
 use Domain\Repository\GameRepositoryInterface;
 use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
@@ -81,5 +82,13 @@ class Container implements ContainerInterface
 	public function getGameRepository(): GameRepositoryInterface
 	{
 		return $this->container->get('domain.repository.game');
+	}
+
+	/**
+	 * @return GameEventRepositoryInterface
+	 */
+	public function getGameEventRepository(): GameEventRepositoryInterface
+	{
+		return $this->container->get('domain.repository.game.events');
 	}
 }
