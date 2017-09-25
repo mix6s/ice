@@ -24,6 +24,29 @@ class TwigAppGlobal implements ContainerAwareInterface
 	use ContainerAwareTrait;
 
 	/**
+	 * @return array
+	 */
+	public function getCurrentSeasonTeams()
+	{
+		$currentSeasonId = $this->container->get('settings.manager')->getCurrentSeasonId();
+		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
+		$teams = $this->container->get('domain.repository.seasonteam')->findBySeason($season);
+		$byLeague = [];
+		$stats = [];
+		foreach ($teams as $seasonTeam) {
+			$stats[$seasonTeam->getId()] = [0,0,0];
+			if (!array_key_exists($seasonTeam->getLeague()->getId(), $byLeague)) {
+				$byLeague[$seasonTeam->getLeague()->getId()] = ['league' => $seasonTeam->getLeague(), 'seasonteams' => []];
+			}
+			$byLeague[$seasonTeam->getLeague()->getId()]['seasonteams'][] = $seasonTeam;
+		}
+		return [
+			'byLeague' => $byLeague,
+			'stats' => $stats
+		];
+	}
+
+	/**
 	 * @return Game[]
 	 */
 	public function getCalendarGames()

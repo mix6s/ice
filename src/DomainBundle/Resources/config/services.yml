@@ -31,7 +31,7 @@ services:
         arguments:
             - Domain\Entity\League
     domain.repository.seasonteam:
-        class: Doctrine\ORM\EntityRepository
+        class: DomainBundle\Repository\SeasonTeamRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\SeasonTeam
