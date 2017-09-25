@@ -34,6 +34,21 @@ gulp.task('styles', function () {
 		.pipe(server.reload({stream: true}));
 });
 
+gulp.task('rename', function () {
+
+	gulp.src("./web/bower_components/swiper/dist/css/swiper.css")
+		.pipe(rename("web/bower_components/swiper/dist/css/swiper.scss"))
+		.pipe(gulp.dest("./"));
+
+	gulp.src("./web/bower_components/fancybox/dist/jquery.fancybox.css")
+		.pipe(rename("web/bower_components/fancybox/dist/jquery.fancybox.scss"))
+		.pipe(gulp.dest("./"));
+
+	gulp.src("./web/bower_components/croppie/croppie.css")
+		.pipe(rename("web/bower_components/croppie/croppie.scss"))
+		.pipe(gulp.dest("./"));
+});
+
 gulp.task('images', function () {
 	return gulp.src('app/Resources/assets/img/**/*')
 		.pipe(imagemin({
