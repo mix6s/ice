@@ -2,6 +2,7 @@
 
 namespace AppBundle;
 
+use Domain\Entity\PenaltyEvent;
 use DomainBundle\Entity\PlayerMetadata;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,6 +22,9 @@ class TwigAppExtension extends \Twig_Extension
 			new \Twig_SimpleFilter('position', [$this, 'positionFilter']),
 			new \Twig_SimpleFilter('stick', [$this, 'stickFilter']),
 			new \Twig_SimpleFilter('pager', [$this, 'pagerFilter'], ['is_safe' => ['html']]),
+			new \Twig_SimpleFilter('eventPeriod', [$this, 'eventPeriod']),
+			new \Twig_SimpleFilter('penaltyPeriod', [$this, 'penaltyPeriod']),
+			new \Twig_SimpleFilter('eventPeriodType', [$this, 'eventPeriodType']),
 			new \Twig_SimpleFilter('gameDatetime', [$this, 'gameDatetimeFilter']),
 		];
 	}
@@ -105,5 +109,45 @@ class TwigAppExtension extends \Twig_Extension
 			$url = '?' . http_build_query($qsVars) . '&' . $pageParamName . '=' . $page;
 		}
 		return $url;
+	}
+
+	/**
+	 * @param int $secondsInterval
+	 * @return string
+	 */
+	public function eventPeriod(int $secondsInterval)
+	{
+		$minutes = (int)($secondsInterval / 60);
+		$seconds = $secondsInterval - $minutes * 60;
+		return ($minutes < 10 ? '0' . $minutes : $minutes) . ':' . ($seconds < 10 ? '0' . $seconds : $seconds);
+	}
+
+	/**
+	 * @param string $type
+	 * @return string
+	 */
+	public function penaltyPeriod(string $type)
+	{
+		switch ($type) {
+			case PenaltyEvent::PENALTY_TIME_TYPE_2:
+				return '2 мин';
+			case PenaltyEvent::PENALTY_TIME_TYPE_2_2:
+				return '2 + 2 мин';
+			case PenaltyEvent::PENALTY_TIME_TYPE_10:
+				return '10 мин';
+			case PenaltyEvent::PENALTY_TIME_TYPE_5_20:
+				return '5 + 20 мин';
+		}
+		return '';
+	}
+
+	/**
+	 * @param int $secondsInterval
+	 * @return int
+	 */
+	public function eventPeriodType(int $secondsInterval)
+	{
+		$num = (int)($secondsInterval / (20 * 60));
+		return $num > 4 ? 4 : $num;
 	}
 }

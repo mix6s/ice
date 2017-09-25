@@ -1,0 +1,105 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
+         <div v-if="event.type == 'goal'" class="form-group">
+             <div class="col-sm-12">
+                <div class="panel panel-primary">
+                 <div class="panel-heading">
+                 <div class="row">
+                     <div class="col-sm-6"><input class="form-control input-sm" style="width: 60px" placeholder="Время" v-model="event._timeFormatted"/></div>
+                    <div class="col-sm-6 text-right">
+                        <button title="Удалить"  v-on:click="remove" class="btn btn-danger btn-sm"><i aria-hidden="true" class="fa fa-close"></i></button>
+                    </div>
+                </div>
+
+                </div>
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select ref="memberSelectpicker"  v-model="event.member.id" class="form-control" title="Автор гола">
+
+                                <option v-for="member in event._members" :value="member.id" :selected="event.member.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                            </select>
+                        </div>
+                         <div class="col-sm-6">
+                            <select ref="assistantASelectpicker"  v-model="event.assistant_a.id" class="form-control" title="Ассистент">
+                                <option>Не указано</option>
+                                <option v-for="member in event._members" :value="member.id" :selected="event.assistant_a.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="row">
+                         <div class="col-sm-6 col-sm-offset-6">
+                            <select ref="assistantBSelectpicker"   v-model="event.assistant_b.id" class="form-control" title="Ассистент">
+                                <option>Не указано</option>
+                                <option v-for="member in event._members" :value="member.id" :selected="event.assistant_b.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+        </div>
+          <div v-else class="form-group">
+             <div class="col-sm-12">
+                <div class="panel panel-danger">
+                 <div class="panel-heading">
+                 <div class="row">
+                     <div class="col-sm-6"><input class="form-control input-sm" style="width: 60px" placeholder="Время"  v-model="event._timeFormatted"/></div>
+                    <div class="col-sm-6 text-right">
+                        <button title="Удалить" class="btn btn-danger btn-sm" v-on:click="remove"><i aria-hidden="true" class="fa fa-close"></i></button>
+                    </div>
+                </div>
+
+                </div>
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select ref="memberSelectpicker"  v-model="event.member.id" class="form-control" title="Игрок">
+                                <option v-for="member in event._members" :selected="event.member.id == member.id" :value="member.id">{{ member.player.metadata.full_name}}</option>
+                            </select>
+                        </div>
+                         <div class="col-sm-6">
+                            <select ref="timeSelectpicker"  class="form-control" v-model="event.penalty_time_type" title="Штрафное время">
+                            <option value="2">2 минуты</option>
+                            <option value="2_2">2 + 2 минуты</option>
+                            <option value="5_20">5 + 20 минут (до конца матча)</option>
+                            <option value="10">10 минуты (дисциплинарный штраф)</option>
+                            </select>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+        </div>
+{% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('event', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['event'],
+		data: function () {
+			return {
+				deleteInProgress: false
+			}
+		},
+		computed: {
+		},
+		methods: {
+			remove: function () {
+				this.$emit('bus', {name: 'eventRemoved', value: this.event});
+			}
+		},
+        created: function () {
+
+		},
+        mounted: function () {
+			$(this.$refs.memberSelectpicker).selectpicker('val', this.event.member.id);
+			$(this.$refs.assistantASelectpicker).selectpicker('val', this.event.assistant_a.id);
+			$(this.$refs.assistantBSelectpicker).selectpicker('val', this.event.assistant_b.id);
+			$(this.$refs.timeSelectpicker).selectpicker('val', this.event.penalty_time_type);
+		}
+	});
+</script>

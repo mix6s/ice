@@ -5,7 +5,7 @@
         <div class="game__title">{{ game.place }}</div>
         <div class="game__info">
             <div class="game__date-wrapper">
-                <div class="game__date">{{ game.datetime|gameDatetime }}</div>
+                <div class="game__date">{{ game.datetime|localizeddate('none', 'none', 'ru_RU', null, "d MMMM Y H:m") }}</div>
                 <div class="game__playoff {{ {final: 'game__playoff--final', playoff: 'game__playoff', regular: 'game__playoff'}[game.type.__toString] }}">{{ {final: 'Финал', playoff: 'Плей-офф', regular: 'Регулярный чемпионат'}[game.type.__toString] }}</div>
             </div>
             <div class="game__content">
@@ -17,7 +17,7 @@
                         <a href="#" class="game__team-name">{{ game.seasonTeamA.team.metadata.title }}</a>
                         <div class="game__team-city">Саранск</div>
                     </div>
-                    <div class="game__points">0</div>
+                    <div class="game__points">{{ isStarted ? scoreA : '-' }}</div>
                 </div>
                 <div class="game__team game__team--guests">
                     <div class="game__team-info">
@@ -27,200 +27,67 @@
                         <a href="#" class="game__team-name">{{ game.seasonTeamB.team.metadata.title }}</a>
                         <div class="game__team-city">Саранск</div>
                     </div>
-                    <div class="game__points game__points--dots">0</div>
+                    <div class="game__points game__points--dots">{{ isStarted ? scoreB : '-' }}</div>
                 </div>
             </div>
         </div>
         <div class="game__statistics">
+            {% set periods = {0: '1-й период', 1: '2-й период', 2: '3-й период', 3: 'Овертайм', 4: 'Броски'} %}
+            {% for num, period in eventsByPeriod %}
             <div class="game__period">
-                <div class="game__period-header">1-й период</div>
+                <div class="game__period-header">{{ periods[num]  }}</div>
                 <div class="game__table">
                     <div class="game__table-header">Голы</div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">1:0</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
+                    {% for event in eventsByPeriod[num] %}
+                        {% if event.type == 'goal' %}
+                            <div class="game__table-row">
+                                {% if game.seasonTeamB.id == event.member.seasonTeam.id %}
+                                    <div class="game__table-cell"></div>
+                                {% endif %}
+                                <div class="game__table-cell">
+                                    <div class="game__table-time">{{ event.secondsFromStart|eventPeriod }}</div>
+                                    <div class="game__table-score">{{ scoreMap[event.id] }}</div>
+                                    <div class="game__table-players">
+                                        <a href="#" class="game__table-link">{{ event.member.player.metadata.playerName }}</a>
+                                        {% if event.assistantA %}
+                                            <a href="#" class="game__table-link game__table-link--assist">{{ event.assistantA.player.metadata.playerName }}</a>
+                                        {% endif %}
+                                        {% if event.assistantB %}
+                                            <a href="#" class="game__table-link game__table-link--assist">{{ event.assistantB.player.metadata.playerName }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if game.seasonTeamA.id == event.member.seasonTeam.id %}
+                                <div class="game__table-cell"></div>
+                                {% endif %}
                             </div>
-                        </div>
-                        <div class="game__table-cell"></div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:0</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                        <div class="game__table-cell"></div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:1</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:2</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                    </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
                 <div class="game__table">
                     <div class="game__table-header">Удаления</div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score game__table-score--foul">2 мин</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
+                    {% for event in eventsByPeriod[num] %}
+                        {% if event.type == 'penalty'%}
+                            <div class="game__table-row">
+                                {% if game.seasonTeamB.id == event.member.seasonTeam.id %}
+                                    <div class="game__table-cell"></div>
+                                {% endif %}
+                                <div class="game__table-cell">
+                                    <div class="game__table-time">{{ event.secondsFromStart|eventPeriod }}</div>
+                                    <div class="game__table-score game__table-score--foul">{{ event.penaltyTimeType|penaltyPeriod }}</div>
+                                    <div class="game__table-players">
+                                        <a href="#" class="game__table-link">{{ event.member.player.metadata.playerName }}</a>
+                                    </div>
+                                </div>
+                                {% if game.seasonTeamA.id == event.member.seasonTeam.id %}
+                                    <div class="game__table-cell"></div>
+                                {% endif %}
                             </div>
-                        </div>
-                    </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-            <div class="game__period">
-                <div class="game__period-header">2-й период</div>
-                <div class="game__table">
-                    <div class="game__table-header">Голы</div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">1:0</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                        <div class="game__table-cell"></div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:0</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                        <div class="game__table-cell"></div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:1</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:2</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="game__table">
-                    <div class="game__table-header">Удаления</div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score game__table-score--foul">2 мин</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="game__period">
-                <div class="game__period-header">3-й период</div>
-                <div class="game__table">
-                    <div class="game__table-header">Голы</div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">1:0</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                        <div class="game__table-cell"></div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:0</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                        <div class="game__table-cell"></div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:1</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score">2:2</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                                <a href="#" class="game__table-link game__table-link--assist">#42 Карманов Булат</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="game__table">
-                    <div class="game__table-header">Удаления</div>
-                    <div class="game__table-row">
-                        <div class="game__table-cell"></div>
-                        <div class="game__table-cell">
-                            <div class="game__table-time">02:13</div>
-                            <div class="game__table-score game__table-score--foul">2 мин</div>
-                            <div class="game__table-players">
-                                <a href="#" class="game__table-link">#15 Исаев Семён</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
             <div class="game__summary">
                 <div class="game__summary-header">Общая статистика</div>
                 <table class="table table--summary">

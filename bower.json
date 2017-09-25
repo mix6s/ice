@@ -1,13 +1,14 @@
 {
-	"name": "initial-project",
-	"version": "0.0.1",
-	"dependencies": {
-		"modernizr1": "~2.8.3",
-		"jquery": "~2.2.3",
-		"normalize-scss": "~3.0.3",
-		"fancybox": "^3.1.20",
-		"croppie": "2.5.0",
-		"swiper": "3.4.2"
-	},
-	"private": true
+  "name": "initial-project",
+  "version": "0.0.1",
+  "dependencies": {
+    "modernizr1": "~2.8.3",
+    "jquery": "3.2.1",
+    "normalize-scss": "~3.0.3",
+    "fancybox": "^3.1.20",
+    "croppie": "2.5.0",
+    "swiper": "3.4.2",
+    "summernote": "^0.8.8"
+  },
+  "private": true
 }

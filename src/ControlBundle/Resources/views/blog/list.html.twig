@@ -22,6 +22,7 @@
                         <td>{{ post.id }}</td>
                         <td>{% if post.postedAt %}{{ post.postedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
                         <td>{{ post.title }}</td>
+                        <td>{{ post.description | raw }}</td>
                         <td>{{ post.shortDescription }}</td>
                         <td>{{ post.imageUrl }}</td>
                         <td>
