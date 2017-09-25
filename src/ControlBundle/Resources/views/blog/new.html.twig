@@ -1,10 +1,9 @@
 {% extends '@Control/layout.html.twig' %}
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
-{% block head %}
+{% block css %}
     {{ parent() }}
     <link href="{{ asset('bower_components/summernote/dist/summernote.css') }}" rel="stylesheet">
-    <script src="{{ asset('bower_components/summernote/dist/summernote.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -19,13 +18,14 @@
             {{ form_end(form) }}
         </div>
     </div>
-    <script>
-        $(document).ready(function() {
-            $('#blogbundle_post_description').summernote();
-        });
-    </script>
 {% endblock %}
 
 {% block javascripts %}
 {{ parent() }}
+    <script src="{{ asset('bower_components/summernote/dist/summernote.js') }}"></script>
+    <script>
+		$(document).ready(function() {
+			$('#blogbundle_post_description').summernote();
+		});
+    </script>
 {% endblock %}

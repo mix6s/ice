@@ -4,7 +4,7 @@ $(document).ready(function () {
        prevButton: '.swiper-button-prev',
        slidesPerView: 6,
        spaceBetween: 1,
-       initialSlide: 5-2
+       initialSlide: $('.swiper-container').data('slide')
    });
 
     $("[data-fancybox]").fancybox();

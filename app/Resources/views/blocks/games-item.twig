@@ -1,15 +1,15 @@
 <div class="games__item swiper-slide">
-    <div class="games__date">{{ item.date }}</div>
-    <div class="games__city">{{ item.place }}</div>
+    <div class="games__date">{{ game.datetime|date('d.m.Y H:i') }}</div>
+    <div class="games__city">{{ game.place }}</div>
     <div class="games__score-wrapper">
         <div class="games__score games__score--hosts">
-            <div class="games__goals">{{ item.pointsHosts }}</div>
-            <div class="games__team">{{ item.teamHosts }}</div>
+            <div class="games__goals">{{ game|scoreA}}</div>
+            <div class="games__team">{{  game.seasonTeamA.team.metadata.title }}</div>
         </div>
         <div class="games__score games__score--guests">
-            <div class="games__goals">{{ item.pointsGuests }}</div>
-            <div class="games__team">{{ item.teamGuests }}</div>
+            <div class="games__goals">{{ game|scoreB }}</div>
+            <div class="games__team">{{  game.seasonTeamB.team.metadata.title }}</div>
         </div>
     </div>
-    <a href="{{ item.url }}" class="games__link">Ссылка на результат матча</a>
+    <a href="{{ url('game', {id: game.id}) }}" class="games__link">Ссылка на результат матча</a>
 </div>

@@ -2,8 +2,10 @@
 
 namespace AppBundle;
 
+use Domain\Entity\Game;
 use Domain\Entity\PenaltyEvent;
 use DomainBundle\Entity\PlayerMetadata;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -13,6 +15,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TwigAppExtension extends \Twig_Extension
 {
+	private $scoresByGame = [];
+	private $container;
+
+	/**
+	 * TwigAppExtension constructor.
+	 * @param Container $container
+	 */
+	public function __construct(Container $container)
+	{
+		$this->container = $container;
+	}
+
 	/**
 	 * @return array
 	 */
@@ -21,6 +35,8 @@ class TwigAppExtension extends \Twig_Extension
 		return [
 			new \Twig_SimpleFilter('position', [$this, 'positionFilter']),
 			new \Twig_SimpleFilter('stick', [$this, 'stickFilter']),
+			new \Twig_SimpleFilter('scoreA', [$this, 'scoreA']),
+			new \Twig_SimpleFilter('scoreB', [$this, 'scoreB']),
 			new \Twig_SimpleFilter('pager', [$this, 'pagerFilter'], ['is_safe' => ['html']]),
 			new \Twig_SimpleFilter('eventPeriod', [$this, 'eventPeriod']),
 			new \Twig_SimpleFilter('penaltyPeriod', [$this, 'penaltyPeriod']),
@@ -149,5 +165,25 @@ class TwigAppExtension extends \Twig_Extension
 	{
 		$num = (int)($secondsInterval / (20 * 60));
 		return $num > 4 ? 4 : $num;
+	}
+
+	/**
+	 * @param Game $game
+	 * @return mixed
+	 */
+	public function scoreA(Game $game)
+	{
+		$score = $this->container->get('app.policy.game_score_policy')->scoreA($game);
+		return $score === null ? '-' : $score;
+	}
+
+	/**
+	 * @param Game $game
+	 * @return mixed
+	 */
+	public function scoreB(Game $game)
+	{
+		$score = $this->container->get('app.policy.game_score_policy')->scoreB($game);
+		return $score === null ? '-' : $score;
 	}
 }

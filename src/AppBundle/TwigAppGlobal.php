@@ -10,6 +10,7 @@ namespace AppBundle;
 
 
 use Domain\Entity\Game;
+use Domain\Entity\GoalEvent;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -22,22 +23,50 @@ class TwigAppGlobal implements ContainerAwareInterface
 {
 	use ContainerAwareTrait;
 
-
-
 	/**
 	 * @return Game[]
 	 */
 	public function getCalendarGames()
 	{
 		$builder = $this->container->get('doctrine.orm.entity_manager')->createQueryBuilder();
-		return $builder
+		$now = new \DateTime();
+
+		$games = $builder
 			->select('g')
 			->from('Domain:Game', 'g')
-			->orderBy('g.datetime', 'desc')
+			->where('g.datetime > :now')
+			->setParameter('now', $now)
+			->orderBy('g.datetime', 'ASC')
 			->setMaxResults('10')
 			->getQuery()
 			->getResult();
+		/** @var Game|null $firstFuture */
+		$firstFuture = $games[0] ?? null;
+		$past = $builder
+			->where('g.datetime <= :now')
+			->orderBy('g.datetime', 'DESC')
+			->getQuery()
+			->getResult();
 
+		foreach ($past as $game) {
+			array_unshift($games, $game);
+		}
+
+		if (empty($firstFuture)) {
+			$slide = 1;
+		} else {
+			$firstFutureNum = 0;
+			/** @var Game $game */
+			foreach ($games as $key => $game) {
+				if ($game->getId() === $firstFuture->getId()) {
+					$firstFutureNum = $key;
+					break;
+				}
+			}
+			$slide = $firstFutureNum - 2;
+		}
+
+		return ['games' => $games, 'slide' => $slide];
 	}
 
 	public function __get($name)

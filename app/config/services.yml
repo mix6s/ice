@@ -17,6 +17,7 @@ services:
 
     app.twig_app_extension:
         class: AppBundle\TwigAppExtension
+        arguments: ['@service_container']
         tags:
             - { name: twig.extension }
 
@@ -37,3 +38,7 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags:
             - { name: twig.extension }
+
+    app.policy.game_score_policy:
+        class: AppBundle\Policy\GameScorePolicy
+        arguments: ['@domain.repository.game.events']
