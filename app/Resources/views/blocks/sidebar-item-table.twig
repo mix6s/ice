@@ -11,7 +11,7 @@
         {% for num,seasonteam in teams %}
         <tr>
             <td>{{ num+1 }}</td>
-            <td><a href="#">{{ seasonteam.team.metadata.title }}</a></td>
+            <td><a href="{{ url('team.index', {id: seasonteam.team.id}) }}">{{ seasonteam.team.metadata.title }}</a></td>
             <td>0</td>
             <td>0</td>
             <td>0</td>

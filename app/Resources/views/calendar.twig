@@ -3,56 +3,49 @@
 {% block content %}
     <section class="calendar wrapper page">
         <h1 class="title">Календарь игр</h1>
-        <form action="#" class="calendar__form">
+        <form action="" method="get" class="calendar__form">
             <div class="calendar__item">
                 <label for="season" class="label">Сезон</label>
-                <select id="season" class="select">
-                    <option value="" selected>17/18</option>
-                    <option value="">16/17</option>
+                <select id="season" class="select" onchange="this.form.submit()" name="year">
+                    {% for season in seasons %}
+                        <option value="{{ season.year }}" {{ season.year == filter.year ? 'selected="selected"' : '' }}>{{ season.year - 1 }}/{{ season.year }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="calendar__item">
                 <label for="conference" class="label">Лига</label>
-                <select id="conference" class="select">
+                <select id="conference" class="select" onchange="this.form.submit()" name="league_id">
                     <option value="" selected>Все</option>
-                    <option value="">А</option>
-                    <option value="">Б</option>
+                    {% for league in leagues %}
+                        <option value="{{ league.id }}" {{ league.id == filter.league ? 'selected="selected"' : '' }}>{{ league.metadata.title }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="calendar__item">
                 <label for="month" class="label">Месяц</label>
-                <select id="month" class="select">
+                <select id="month" class="select" onchange="this.form.submit()" name="month">
                     <option value="" selected>Все</option>
-                    <option value="">Январь</option>
-                    <option value="">Февраль</option>
-                    <option value="">Март</option>
-                    <option value="">Апрель</option>
-                    <option value="">Май</option>
-                    <option value="">Июнь</option>
-                    <option value="">Июль</option>
-                    <option value="">Август</option>
-                    <option value="">Сентябрь</option>
-                    <option value="">Окнябрь</option>
-                    <option value="">Ноябрь</option>
-                    <option value="">Декабрь</option>
+                    <option value="1" {{ filter.month == 1 ? 'selected="selected"' : '' }}>Январь</option>
+                    <option value="2" {{ filter.month == 2 ? 'selected="selected"' : '' }}>Февраль</option>
+                    <option value="3" {{ filter.month == 3 ? 'selected="selected"' : '' }}>Март</option>
+                    <option value="4" {{ filter.month == 4 ? 'selected="selected"' : '' }}>Апрель</option>
+                    <option value="5" {{ filter.month == 5 ? 'selected="selected"' : '' }}>Май</option>
+                    <option value="6" {{ filter.month == 6 ? 'selected="selected"' : '' }}>Июнь</option>
+                    <option value="7" {{ filter.month == 7 ? 'selected="selected"' : '' }}>Июль</option>
+                    <option value="8" {{ filter.month == 8 ? 'selected="selected"' : '' }}>Август</option>
+                    <option value="9" {{ filter.month == 9 ? 'selected="selected"' : '' }}>Сентябрь</option>
+                    <option value="10" {{ filter.month == 10 ? 'selected="selected"' : '' }}>Окнябрь</option>
+                    <option value="11" {{ filter.month == 11 ? 'selected="selected"' : '' }}>Ноябрь</option>
+                    <option value="12" {{ filter.month == 12 ? 'selected="selected"' : '' }}>Декабрь</option>
                 </select>
             </div>
             <div class="calendar__item">
                 <label for="club" class="label">Клуб</label>
-                <select id="club" class="select">
+                <select id="club" class="select" onchange="this.form.submit()" name="team_id">
                     <option value="" selected>Все</option>
-                    <option value="">Молот</option>
-                    <option value="">Колдаис</option>
-                    <option value="">Локомотив</option>
-                    <option value="">Бессоновка</option>
-                    <option value="">Спартак</option>
-                    <option value="">Сура</option>
-                    <option value="">Молния-2</option>
-                    <option value="">Торнадо</option>
-                    <option value="">ЖБИ-2</option>
-                    <option value="">Пенза</option>
-                    <option value="">Динамит</option>
-                    <option value="">Локо</option>
+                    {% for team in teams %}
+                        <option value="{{ team.id }}" {{ team.id == filter.team ? 'selected="selected"' : '' }}>{{ team.metadata.title }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </form>
@@ -64,78 +57,20 @@
                     <th>Команды</th>
                     <th>Счет</th>
                 </tr>
+                {% for game in games %}
                 <tr>
                     <td>
-                        08.09.16
-                        <div>Четверг</div>
+                        {{ game.datetime|date("d.m.Y") }}
+                        <div>{{ game.datetime|localizeddate('none', 'none', 'ru_RU', null, "EEEE") }}</div>
                     </td>
                     <td>
-                        <a href="#">Молния</a> - <a href="#">Молния-2</a>
+                        <a href="{{ url('team.index', {id: game.seasonteamA.team.id}) }}">{{ game.seasonteamA.team.metadata.title  }}</a> - <a href="{{ url('team.index', {id: game.seasonteamB.team.id}) }}">{{ game.seasonteamB.team.metadata.title }}</a>
                     </td>
                     <td>
-                        1:0
+                        {{ game|scoreA }}:{{ game|scoreB }}
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        08.09.16
-                        <div>Четверг</div>
-                    </td>
-                    <td>
-                        <a href="#">Молния</a> - <a href="#">Молния-2</a>
-                    </td>
-                    <td>
-                        1:0
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        08.09.16
-                        <div>Четверг</div>
-                    </td>
-                    <td>
-                        <a href="#">Молния</a> - <a href="#">Молния-2</a>
-                    </td>
-                    <td>
-                        1:0
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        08.09.16
-                        <div>Четверг</div>
-                    </td>
-                    <td>
-                        <a href="#">Молния</a> - <a href="#">Молния-2</a>
-                    </td>
-                    <td>
-                        1:0
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        08.09.16
-                        <div>Четверг</div>
-                    </td>
-                    <td>
-                        <a href="#">Молния</a> - <a href="#">Молния-2</a>
-                    </td>
-                    <td>
-                        1:0
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        08.09.16
-                        <div>Четверг</div>
-                    </td>
-                    <td>
-                        <a href="#">Молния</a> - <a href="#">Молния-2</a>
-                    </td>
-                    <td>
-                        1:0
-                    </td>
-                </tr>
+                {% endfor %}
             </table>
         </div>
     </section>

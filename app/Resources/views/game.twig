@@ -14,7 +14,7 @@
                         <div class="game__team-img">
                             <img src="{{ asset('/avatar/' ~ game.seasonTeamA.team.metadata.image)}}" alt="">
                         </div>
-                        <a href="#" class="game__team-name">{{ game.seasonTeamA.team.metadata.title }}</a>
+                        <a href="{{ url('team.index', {id: game.seasonteamA.team.id}) }}" class="game__team-name">{{ game.seasonTeamA.team.metadata.title }}</a>
                         <div class="game__team-city">Саранск</div>
                     </div>
                     <div class="game__points">{{ isStarted ? scoreA : '-' }}</div>
@@ -24,7 +24,7 @@
                         <div class="game__team-img">
                             <img src="{{ asset('/avatar/' ~ game.seasonTeamB.team.metadata.image)}}" alt="">
                         </div>
-                        <a href="#" class="game__team-name">{{ game.seasonTeamB.team.metadata.title }}</a>
+                        <a href="{{ url('team.index', {id: game.seasonteamB.team.id}) }}" class="game__team-name">{{ game.seasonTeamB.team.metadata.title }}</a>
                         <div class="game__team-city">Саранск</div>
                     </div>
                     <div class="game__points game__points--dots">{{ isStarted ? scoreB : '-' }}</div>

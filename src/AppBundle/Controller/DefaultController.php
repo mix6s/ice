@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Doctrine\ORM\Query\Expr\Orx;
 use Domain\Entity\GoalEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -65,6 +66,22 @@ class DefaultController extends Controller
 	}
 
 	/**
+	 * @Route("/team/{id}", name="team.index")
+	 */
+	public function teamAction($id, Request $request)
+	{
+		$team = $this->get('domain.repository.team')->findById($id);
+		$currentSeason = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+		$seasonTeam = $this->get('domain.repository.seasonteam')->findByTeamAndSeason($team, $currentSeason);
+		$members = $this->get('domain.repository.seasonteammember')->findBySeasonTeam($seasonTeam);
+		return $this->render('team.twig', [
+			'team' => $team,
+			'seasonteam' => $seasonTeam,
+			'members' => $members
+		]);
+	}
+
+	/**
 	 * @Route("/about", name="about")
 	 */
 	public function aboutAction(Request $request)
@@ -77,7 +94,61 @@ class DefaultController extends Controller
 	 */
 	public function calendarAction(Request $request)
 	{
-		return $this->render('calendar.twig');
+		$currentSeason = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+		$leagueId = $request->get('league_id');
+		$teamId = $request->get('team_id');
+		$month = $request->get('month');
+		$year = $request->get('year', $currentSeason->getYear());
+
+		$builder = $this->get('domain.repository.game')
+			->createQueryBuilder('g')
+			->select('g')
+			->join('g.season', 's')
+			->join('g.seasonTeamA', 'sta')
+			->join('g.seasonTeamB', 'stb')
+			->where('s.year = :season')
+			->setParameter('season', $year)
+		;
+		if (!empty($leagueId)) {
+			$builder
+				->andWhere(new Orx(':league = sta.league', ':league = stb.league'))
+				->setParameter('league', $leagueId);
+		}
+
+		if (!empty($teamId)) {
+			$builder
+				->andWhere(new Orx(':team = sta.team', ':team = stb.team'))
+				->setParameter('team', $teamId);
+		}
+
+		if (!empty($month)) {
+			$builder
+				->andWhere('g.datetime >= :start')
+				->andWhere('g.datetime < :end')
+				->setParameter('start', sprintf('%d-%d-1 00:00:00', $year, $month))
+				->setParameter(
+					'end',
+					sprintf('%d-%d-1 00:00:00', $month == 12 ? $year + 1 : $year, $month == 12 ? 1 : $month)
+				);
+		}
+		$games = $builder
+			->orderBy('g.datetime', 'DESC')
+			->getQuery()
+			->getResult()
+		;
+
+		return $this->render('calendar.twig', [
+			'games' => $games,
+			'leagues' => $this->get('domain.repository.league')->findAll(),
+			'teams' => $this->get('domain.repository.team')->findAll(),
+			'seasons' => $this->get('domain.repository.season')->findBy([], ['year' => 'DESC']),
+			'filter' => [
+				'league' => $leagueId,
+				'month' => $month,
+				'year' => $year,
+				'team' => $teamId,
+			]
+		]);
 	}
 
 	/**

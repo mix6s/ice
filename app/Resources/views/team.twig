@@ -2,30 +2,36 @@
 
 {% block content %}
     <section class="team page wrapper">
-        <h1 class="title">Команда "Молния"</h1>
+        <h1 class="title">Команда "{{ team.metadata.title }}"</h1>
         <div class="team__about">
             <div class="team__img-wrapper">
-                <img src="/assets/img/team/t-1.jpg" alt="" class="team__img">
+                <img src="{{ asset('/avatar/' ~ team.metadata.image) }}" alt="" class="team__img">
             </div>
             <div class="team__content">
                 <div class="team__item">
                     <div class="team__content-title">Дата основания:</div>
-                    <div class="team__content-value">01.10.2014</div>
+                    <div class="team__content-value">{{ team.metadata.foundationDate }}</div>
                 </div>
                 <div class="team__item">
                     <div class="team__content-title">Тренер:</div>
-                    <div class="team__content-value"><a href="#">Лосев Дмитрий</a></div>
+                    <div class="team__content-value"><a href="{{ url('profile.index', {id: seasonteam.coach.id}) }}">{{ seasonteam.coach.metadata.fullName }}</a></div>
                 </div>
                 <div class="team__item">
-                    <div class="team__content-title">Капитан:</div>
-                    <div class="team__content-value"><a href="#">Безруков Дмитрий</a></div>
+                    {% for member in members %}
+                        {% if member.type == 'captain' %}
+                            <div class="team__content-title">Капитан:</div>
+                            <div class="team__content-value"><a href="{{ url('profile.index', {id: member.player.id}) }}">{{ member.player.metadata.fullName }}</a></div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
                 <div class="team__item">
                     <div class="team__content-title">Ассистенты:</div>
                     <div class="team__content-value">
-                        <a href="#">Безруков Дмитрий</a>
-                        <a href="#">Безруков Дмитрий</a>
-                        <a href="#">Безруков Дмитрий</a>
+                        {% for member in members %}
+                            {% if member.type == 'assistant' %}
+                                <a href="{{ url('profile.index', {id: member.player.id}) }}">{{ member.player.metadata.fullName }}</a>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -42,94 +48,16 @@
                         <th>Рост</th>
                         <th>Вес</th>
                     </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
-                    <tr>
-                        <td>20</td>
-                        <td>Пушкарев Максим</td>
-                        <td>Правый защитник</td>
-                        <td>20.11.1988</td>
-                        <td>170</td>
-                        <td>75</td>
-                    </tr>
+                    {% for member in members %}
+                        <tr>
+                            <td>{{ member.number }}</td>
+                            <td>{{ member.player.metadata.fullName }}</td>
+                            <td>{{ member.player.metadata.position|position }}</td>
+                            <td>{{ member.player.metadata.birthdate|date('d.m.Y') }}</td>
+                            <td>{{ member.player.metadata.height }}</td>
+                            <td>{{ member.player.metadata.weight }}</td>
+                        </tr>
+                    {% endfor %}
                 </table>
             </div>
         </div>
