@@ -23,17 +23,20 @@ class SeasonTeamMember implements \JsonSerializable
 	private $player;
 	private $type;
 	private $seasonTeam;
+	private $number;
 
 	/**
 	 * SeasonTeamMember constructor.
 	 * @param int $id
 	 * @param SeasonTeam $seasonTeam
 	 * @param Player $player
+	 * @param int $number
 	 * @param string $type
 	 */
-	private function __construct(int $id, SeasonTeam $seasonTeam, Player $player, string $type = self::TYPE_DEFAULT)
+	private function __construct(int $id, SeasonTeam $seasonTeam, Player $player, int $number, string $type = self::TYPE_DEFAULT)
 	{
 		$this->id = $id;
+		$this->number = $number;
 		$this->seasonTeam = $seasonTeam;
 		$this->player = $player;
 		$this->type = $type;
@@ -43,12 +46,13 @@ class SeasonTeamMember implements \JsonSerializable
 	 * @param int $id
 	 * @param SeasonTeam $seasonTeam
 	 * @param Player $player
+	 * @param int $number
 	 * @param string $type
 	 * @return SeasonTeamMember
 	 */
-	public static function create(int $id, SeasonTeam $seasonTeam, Player $player, string $type = self::TYPE_DEFAULT): SeasonTeamMember
+	public static function create(int $id, SeasonTeam $seasonTeam, Player $player, int $number, string $type = self::TYPE_DEFAULT): SeasonTeamMember
 	{
-		return new SeasonTeamMember($id, $seasonTeam, $player, $type);
+		return new SeasonTeamMember($id, $seasonTeam, $player, $number, $type);
 	}
 
 	/**
@@ -97,6 +101,15 @@ class SeasonTeamMember implements \JsonSerializable
 			'seasonteam' => $this->getSeasonTeam(),
 			'type' => $this->getType(),
 			'player' => $this->getPlayer(),
+			'number' => $this->getNumber(),
 		];
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getNumber(): int
+	{
+		return $this->number;
 	}
 }

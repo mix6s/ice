@@ -82,7 +82,7 @@
                         <div class="col-sm-9">
                             <div v-for="member in currentSeasonTeamMembers" class="row">
                                 <div class="col-md-12 control-label" style="text-align: left">
-                                    <span>{{ member.player.metadata.full_name}}</span>
+                                    <span>#{{ member.number }} {{ member.player.metadata.full_name}}</span>
                                     <span v-if="member.type == 'captain'" title="Капитан" class="label label-primary">К</span>
                                     <span v-if="member.type == 'assistant'" title="Ассистент" class="label label-info">А</span>
                                 </div>

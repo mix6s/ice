@@ -51,7 +51,12 @@ class SetSeasonTeamMembersUseCase
 			$this->getContainer()->getSeasonTeamMemberRepository()->remove($member);
 		}
 		$members = [];
+		$numbers = [];
 		foreach ($request->getMembers() as $memberDTO) {
+			$number = $memberDTO->getNumber();
+			if (in_array($number, $numbers)) {
+				throw new DomainException('Number already exist');
+			}
 			try {
 				$player = $this->getContainer()->getPlayerRepository()->findById($memberDTO->getPlayerId());
 			} catch (EntityNotFoundException $e) {
@@ -70,7 +75,7 @@ class SetSeasonTeamMembersUseCase
 			} catch (EntityNotFoundException $e) {
 			}
 			$memberId = $this->getContainer()->getSeasonTeamMemberRepository()->getNextId();
-			$member = SeasonTeamMember::create($memberId, $seasonTeam, $player, $memberDTO->getType());
+			$member = SeasonTeamMember::create($memberId, $seasonTeam, $player, $number, $memberDTO->getType());
 			$this->getContainer()->getSeasonTeamMemberRepository()->save($member);
 			$members[$member->getPlayer()->getId()] = $member;
 		}

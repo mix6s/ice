@@ -74,7 +74,7 @@ class SeasonTeamsController extends Controller
 
 		$addRequest = new AddSeasonTeamMemberRequest($coachId, $st->getId());
 		foreach ($members as $member) {
-			$addRequest->addMember($member['player_id'], $member['type']);
+			$addRequest->addMember($member['player_id'], $member['type'], $member['number']);
 		}
 		$response = $this
 			->get('domain.use_case.set_season_team_members_use_case')
