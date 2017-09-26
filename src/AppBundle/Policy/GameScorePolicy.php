@@ -46,7 +46,7 @@ class GameScorePolicy
 	 */
 	public function scoreB(Game $game)
 	{
-		return $this->getScores($game)[0];
+		return $this->getScores($game)[1];
 	}
 
 	/**
