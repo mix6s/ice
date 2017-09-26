@@ -23,6 +23,12 @@ class RemoveSeasonTeamUseCase
 	public function execute(int $seasonTeamId)
 	{
 		$seasonTeam = $this->getContainer()->getSeasonTeamRepository()->findById($seasonTeamId);
+		$games = $this->getContainer()->getGameRepository()->findBySeasonTeam($seasonTeam);
+		$removeGameUseCase = new RemoveGameUseCase($this->getContainer());
+		foreach ($games as $game) {
+			$removeGameUseCase->execute($game->getId());
+		}
+
 		(new RemoveSeasonTeamMembersUseCase($this->getContainer()))->execute($seasonTeam->getId());
 		$this->getContainer()->getSeasonTeamRepository()->remove($seasonTeam);
 	}

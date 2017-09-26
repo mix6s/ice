@@ -79,8 +79,7 @@ class GamesController extends Controller
 	 */
 	public function deleteAction($id)
 	{
-		$game = $this->get('domain.repository.game')->findById($id);
-		$this->get('domain.repository.game')->remove($game);
+		$this->get('domain.use_case.remove_game_use_case')->execute($id);
 		$this->get('doctrine.orm.entity_manager')->flush();
 		return $this->json([]);
 	}

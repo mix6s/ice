@@ -11,6 +11,7 @@ namespace DomainBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Domain\Entity\Game;
+use Domain\Entity\SeasonTeam;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\GameRepositoryInterface;
 use DomainBundle\Identity\GameIdentity;
@@ -63,5 +64,20 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	public function remove(Game $game)
 	{
 		$this->getEntityManager()->remove($game);
+	}
+
+	/**
+	 * @return Game[]
+	 */
+	public function findBySeasonTeam(SeasonTeam $seasonTeam)
+	{
+		return $this->getEntityManager()->createQueryBuilder()
+			->select('g')
+			->from('Domain:Game', 'g')
+			->where('g.seasonTeamA = :team')
+			->orWhere('g.seasonTeamB = :team')
+			->setParameter('team', $seasonTeam)
+			->getQuery()
+			->getResult();
 	}
 }

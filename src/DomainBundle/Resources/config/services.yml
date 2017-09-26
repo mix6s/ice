@@ -96,3 +96,7 @@ services:
     domain.use_case.save_game_events_use_case:
         class: Domain\UseCase\SaveGameEventsUseCase
         arguments: ['@domain.container']
+
+    domain.use_case.remove_game_use_case:
+        class: Domain\UseCase\RemoveGameUseCase
+        arguments: ['@domain.container']

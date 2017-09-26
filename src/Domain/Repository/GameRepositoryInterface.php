@@ -10,6 +10,7 @@ namespace Domain\Repository;
 
 
 use Domain\Entity\Game;
+use Domain\Entity\SeasonTeam;
 use Domain\Exception\EntityNotFoundException;
 
 /**
@@ -30,6 +31,10 @@ interface GameRepositoryInterface
 	 */
 	public function findById(int $id): Game;
 
+	/**
+	 * @return Game[]
+	 */
+	public function findBySeasonTeam(SeasonTeam $seasonTeam);
 	/**
 	 * @param Game $team
 	 */
