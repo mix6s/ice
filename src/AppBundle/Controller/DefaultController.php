@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Doctrine\ORM\Query\Expr\Orx;
 use Domain\Entity\GoalEvent;
+use Domain\Exception\EntityNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,9 +72,16 @@ class DefaultController extends Controller
 	public function teamAction($id, Request $request)
 	{
 		$team = $this->get('domain.repository.team')->findById($id);
-		$currentSeason = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
-		$seasonTeam = $this->get('domain.repository.seasonteam')->findByTeamAndSeason($team, $currentSeason);
-		$members = $this->get('domain.repository.seasonteammember')->findBySeasonTeam($seasonTeam);
+
+		try {
+			$currentSeason = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+			$seasonTeam = $this->get('domain.repository.seasonteam')->findByTeamAndSeason($team, $currentSeason);
+			$members = $this->get('domain.repository.seasonteammember')->findBySeasonTeam($seasonTeam);
+		} catch (EntityNotFoundException $e) {
+			$seasonTeam = null;
+			$members = [];
+		}
+
 		return $this->render('team.twig', [
 			'team' => $team,
 			'seasonteam' => $seasonTeam,

@@ -11,8 +11,10 @@
                 <div class="profile__name">
                     {{ profile.fullName }}
                     <div class="profile__buttons">
-                        <a href="{{ path('profile.player.edit') }}" class="profile__settings">Редактировать</a>
-                        <a href="{{ path('fos_user_security_logout') }}" class="profile__logout">Выход</a>
+                        {% if currentPlayerId == profile.id %}
+                            <a href="{{ path('profile.player.edit') }}" class="profile__settings">Редактировать</a>
+                            <a href="{{ path('fos_user_security_logout') }}" class="profile__logout">Выход</a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="profile__list">
@@ -36,14 +38,16 @@
                         <div class="profile__type">Вес (кг.):</div>
                         <div class="profile__value">{{ profile.weight }}</div>
                     </div>
+                    {% if member %}
                     <div class="profile__item">
                         <div class="profile__type">Команда:</div>
-                        <div class="profile__value"><a href="#">Intergaz</a> / <a href="#">Прикаспиец</a></div>
+                        <div class="profile__value"><a href="{{ url('team.index', {id: member.seasonTeam.team.id }) }}">{{ member.seasonTeam.team.metadata.title }}</a></div>
                     </div>
                     <div class="profile__item">
                         <div class="profile__type">Номер:</div>
-                        <div class="profile__value">#7 / #66</div>
+                        <div class="profile__value">#{{ member.number }}</div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

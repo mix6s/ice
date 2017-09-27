@@ -12,6 +12,7 @@
                     <div class="team__content-title">Дата основания:</div>
                     <div class="team__content-value">{{ team.metadata.foundationDate }}</div>
                 </div>
+                {% if seasonteam %}
                 <div class="team__item">
                     <div class="team__content-title">Тренер:</div>
                     <div class="team__content-value"><a href="{{ url('profile.index', {id: seasonteam.coach.id}) }}">{{ seasonteam.coach.metadata.fullName }}</a></div>
@@ -34,6 +35,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="team__crew">
@@ -51,7 +53,7 @@
                     {% for member in members %}
                         <tr>
                             <td>{{ member.number }}</td>
-                            <td>{{ member.player.metadata.fullName }}</td>
+                            <td><a href="{{ url('profile.index', {id: member.player.id}) }}">{{ member.player.metadata.fullName }}</a></td>
                             <td>{{ member.player.metadata.position|position }}</td>
                             <td>{{ member.player.metadata.birthdate|date('d.m.Y') }}</td>
                             <td>{{ member.player.metadata.height }}</td>

@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use Domain\Entity\Player;
+use Domain\Exception\EntityNotFoundException;
 use DomainBundle\Entity\PlayerMetadata;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\PlayerProfileFormType;
@@ -76,8 +77,26 @@ class ProfileController extends Controller
 		if (!$player) {
 			throw $this->createNotFoundException();
 		}
+		try {
+			$season = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+			$seasonTeamMember = $this->get('domain.repository.seasonteammember')->findByPlayerAndSeason($player, $season);
+		} catch (EntityNotFoundException $e) {
+			$seasonTeamMember = null;
+		}
+
+		$currentPlayerId = 0;
+		/** @var User $user */
+		$user = $this->getUser();
+		if ($user) {
+			$currentPlayer = $user->getPlayer();
+			if ($currentPlayer) {
+				$currentPlayerId = $currentPlayer->getId();
+			}
+		}
 		return $this->render('profile.twig', [
-			'profile' => $player->getMetadata()
+			'profile' => $player->getMetadata(),
+			'member' => $seasonTeamMember,
+			'currentPlayerId' => $currentPlayerId
 		]);
 	}
 
