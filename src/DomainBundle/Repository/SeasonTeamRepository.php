@@ -10,7 +10,9 @@ namespace DomainBundle\Repository;
 
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Domain\Entity\League;
+use Domain\Entity\Player;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Entity\Team;
@@ -66,6 +68,20 @@ class SeasonTeamRepository extends EntityRepository implements SeasonTeamReposit
 			->setParameters(['season' => $season])
 			->orderBy('lm.title')
 			->addOrderBy('tm.title')
+			->getQuery()
+			->getResult();
+	}
+
+	/**
+	 * @param Player $player
+	 * @return SeasonTeam[]
+	 */
+	public function findByPlayer(Player $player): array
+	{
+		return $this->createQueryBuilder('st')
+			->join('Domain\Entity\SeasonTeamMember', 'm', Join::WITH, 'm.seasonTeam = st.id')
+			->where('m.player = :player')
+			->setParameters(['player' => $player])
 			->getQuery()
 			->getResult();
 	}
