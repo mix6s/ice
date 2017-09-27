@@ -96,6 +96,7 @@
                     <div class="col-sm-12">
                          <button class="btn btn-primary" v-on:click="addEvent({type: 'goal'}, game.seasonteamA, membersA)">Гол</button>
                          <button class="btn btn-danger" v-on:click="addEvent({type: 'penalty'}, game.seasonteamA, membersA)">Удаление</button>
+                         <button class="btn btn-info" v-on:click="addEvent({type: 'goalkeeper'}, game.seasonteamA, membersA)">Статистика вратаря</button>
                     </div>
                </div>
             </div>
@@ -104,6 +105,7 @@
                     <div class="col-sm-12">
                          <button class="btn btn-primary" v-on:click="addEvent({type: 'goal'}, game.seasonteamB, membersB)">Гол</button>
                          <button class="btn btn-danger" v-on:click="addEvent({type: 'penalty'}, game.seasonteamB, membersB)">Удаление</button>
+                         <button class="btn btn-info" v-on:click="addEvent({type: 'goalkeeper'}, game.seasonteamB, membersB)">Статистика вратаря</button>
                     </div>
                </div>
             </div>
@@ -200,6 +202,7 @@
 				}
 				self.events.push($.extend({
                     member: {},
+					period: 1,
 					assistant_a: {},
 					assistant_b: {},
 					_members: members,

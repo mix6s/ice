@@ -315,6 +315,7 @@ class PlayerMetadata implements \JsonSerializable
 			'second_name' => $this->getSecondName(),
 			'full_name' => $this->getFullName(),
 			'player_name' => $this->getPlayerName(),
+			'position' => $this->getPosition()
 		];
 	}
 }
