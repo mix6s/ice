@@ -1,0 +1,25 @@
+{% extends "layouts/default.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block content %}
+    <section class="signin page wrapper">
+        <h1 class="title">Смена пароля</h1>
+        {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'fos_user_resetting_reset' } }) }}
+        {{ form_widget(form._token) }}
+        <div class="registration__item">
+            {{ form_label(form.plainPassword.first, 'Пароль', {label_attr : {class: 'label'}}) }}
+            {{ form_widget(form.plainPassword.first, {attr: {class: not form.plainPassword.first.vars.valid ? 'input input--error' : 'input'}}) }}
+            {{ form_errors(form.plainPassword.first) }}
+        </div>
+        <div class="registration__item">
+            {{ form_label(form.plainPassword.second, 'Подтведите пароль', {label_attr : {class: 'label'}}) }}
+            {{ form_widget(form.plainPassword.second, {attr: {class: not form.plainPassword.second.vars.valid ? 'input input--error' : 'input'}}) }}
+            {{ form_errors(form.plainPassword.second) }}
+        </div>
+        <div class="signin__button">
+            <button class="btn btn--action">{{ 'resetting.reset.submit'|trans }}</button>
+        </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

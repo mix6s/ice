@@ -1,0 +1,11 @@
+{% extends "layouts/default.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block content %}
+    <section class="signin page wrapper">
+        <p>
+            {{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}
+        </p>
+    </section>
+{% endblock %}

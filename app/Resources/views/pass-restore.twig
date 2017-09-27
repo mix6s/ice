@@ -3,18 +3,10 @@
 {% block content %}
     <section class="signin page wrapper">
         <h1 class="title">Восстановление пароля</h1>
-        <form action="{{ path("fos_user_security_check") }}" method="post" class="signin__form">
-            {% if csrf_token %}
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
-            {% endif %}
+        <form action="{{ path("fos_user_resetting_send_email") }}" method="post" class="signin__form">
             <div class="signin__item">
                 <label for="email" class="label">Ваш e-mail</label>
-                <input id="email" type="email" name="_username" class="input {{ error ? 'input--error' : '' }}" placeholder="example@gmail.com" value="{{ last_username }}" required>
-                {% if error %}
-                    <div class="form-message form-message--error">
-                        {{ error.messageKey|trans(error.messageData, 'security') }}
-                    </div>
-                {% endif %}
+                <input id="email" type="email" name="username" class="input" placeholder="example@gmail.com" value="" required>
             </div>
             <div class="signin__button">
                 <button class="btn btn--action">Прислать пароль</button>
