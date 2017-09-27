@@ -34,3 +34,5 @@
 /web/uploads/post_images/*
 !/web/uploads/post_images/.gitkeep
 /web/bower_components/*
+/web/uploads/album_images/*
+!/web/uploads/album_images/.gitkeep

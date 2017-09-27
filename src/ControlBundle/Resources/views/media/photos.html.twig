@@ -1,0 +1,19 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h3>Картиночки</h3>
+            {% for image in images %}
+                    <img src="{{ asset('/uploads/album_images/' ~ image.path) }}"
+                         alt="..."
+                         class="img-thumbnail"
+                         style="width:300px">
+            {% endfor %}
+        </div>
+        <div class="row">
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}
+

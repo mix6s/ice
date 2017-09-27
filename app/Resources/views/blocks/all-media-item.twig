@@ -1,3 +1,3 @@
-<a href="{{ item.src }}" class="all-media__link" data-fancybox="group">
-    <img class="all-media__img" src="{{ item.src }}" alt="" />
+<a href="{{ asset('/uploads/album_images/' ~ image.path) }}" class="all-media__link" data-fancybox="group">
+    <img width="250px" class="all-media__img" src="{{ asset('/uploads/album_images/' ~ image.path) }}" alt="" />
 </a>

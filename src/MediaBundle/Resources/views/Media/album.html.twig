@@ -1,0 +1,13 @@
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="page wrapper">
+        {% include 'blocks/breadcrumbs.twig' %}
+        <h1 class="title">Медиа</h1>
+        <div class="all-media__list">
+            {% for image in images  %}
+                {% include 'blocks/all-media-item.twig' with {image: image} %}
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

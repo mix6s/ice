@@ -51,3 +51,8 @@ blog:
 
 _liip_imagine:
     resource: "@LiipImagineBundle/Resources/config/routing.xml"
+
+media:
+    resource: "@MediaBundle/Controller"
+    type:     annotation
+    prefix:   /media

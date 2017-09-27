@@ -18,10 +18,16 @@ use DomainBundle\Entity\LeagueMetadata;
 use DomainBundle\Entity\PlayerMetadata;
 use DomainBundle\Entity\TeamMetadata;
 use Liip\ImagineBundle\Model\Binary;
+use MediaBundle\DTO\AddImagesDTO;
+use MediaBundle\Entity\Album;
+use MediaBundle\Entity\Image;
+use MediaBundle\Form\AddImagesDTOType;
+use MediaBundle\Form\AlbumType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class ControlController
@@ -229,10 +235,104 @@ class ControlController extends Controller
 		fwrite($f, $response->getContent());
 		fclose($f);
 
-		$response = $this->get('liip_imagine.filter.manager')->applyFilter($binary, 'avatar_normal');
-		$f = fopen($this->getParameter('web_dir') . '/avatar/' . $filename, 'w');
-		fwrite($f, $response->getContent());
-		fclose($f);
-		return $this->json($filename);
-	}
+        $response = $this->get('liip_imagine.filter.manager')->applyFilter($binary, 'avatar_normal');
+        $f = fopen($this->getParameter('web_dir') . '/avatar/' . $filename, 'w');
+        fwrite($f, $response->getContent());
+        fclose($f);
+        return $this->json($filename);
+    }
+
+
+    /**
+     * @Route("/media/album/list", name="control.media.album.list")
+     * @param Request $request
+     * @return Response
+     * @throws \LogicException
+     */
+    public function mediaListAction(Request $request): Response
+    {
+        $repo = $this->getDoctrine()->getRepository(Album::class);
+        $albums = $repo->findAll();
+        return $this->render('@Control/media/list.html.twig', ['albums' => $albums]);
+    }
+
+    /**
+     * @Route("/media/album/new", name="control.media.album.new")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     */
+    public function mediaAlbumNew(Request $request): Response
+    {
+        $album = new Album();
+        $form = $this->createForm(AlbumType::class, $album);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($album);
+            $em->flush();
+            return $this->redirectToRoute('control.media.album.list');
+        }
+        return $this->render('@Control/media/new.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/media/album/edit/{id}", name="control.media.album.edit")
+     * @param Request $request
+     * @param Album $album
+     * @return Response
+     */
+    public function mediaAlbumEdit(Request $request, Album $album): Response
+    {
+        $form = $this->createForm(AlbumType::class, $album);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($album);
+            $em->flush();
+            return $this->redirectToRoute('control.media.album.list');
+        }
+        return $this->render('@Control/media/new.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/media/album/photos/{id}", name="control.media.album.photos")
+     * @param Request $request
+     * @param Album $album
+     * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
+     * @throws \UnexpectedValueException
+     */
+    public function mediaAlbumPhotos(Request $request, Album $album): Response
+    {
+        $addImagesDto = new AddImagesDTO();
+        $form = $this->createForm(AddImagesDTOType::class, $addImagesDto);
+        $form->handleRequest($request);
+
+        $repo = $this->getDoctrine()->getRepository(Image::class);
+        $images = $repo->findBy(['album' => $album->getId()]);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            foreach ($addImagesDto->getImages() as $uploadedFile) {
+                $fileName = md5(uniqid('', true)).'.'.$uploadedFile->guessExtension();
+                $uploadedFile->move($this->getParameter('album_images_directory'), $fileName);
+                $image = new Image();
+                $image->setAlbum($album);
+                $image->setPath($fileName);
+                $em->persist($image);
+            }
+            $em->flush();
+            return $this->redirect($request->getRequestUri());
+        }
+        return $this->render(
+            '@Control/media/photos.html.twig',
+            [
+                'album' => $album,
+                'form' => $form->createView(),
+                'images' => $images
+            ]);
+    }
 }

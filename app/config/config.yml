@@ -98,6 +98,9 @@ doctrine:
             BlogBundle:
                 type: annotation
                 prefix: BlogBundle\Entity
+            MediaBundle:
+                type: annotation
+                prefix: MediaBundle\Entity
 
 
 # Swiftmailer Configuration

@@ -1,0 +1,41 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row actions">
+            <a class="btn btn-primary" href="{{ url('control.media.album.new') }}" role="button">Добавить альбом</a>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Название альбома</th>
+                    <th>Описание</th>
+                    <th>Виден пользователям</th>
+                    <th>Доступные действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for album in albums %}
+                    <tr>
+                        <th scope="row">{{ album.id }}</th>
+                        <td>{{ album.title }}</td>
+                        <td>{{ album.description }}</td>
+                        <td>{{ album.isActive ? 'Да' : 'Нет' }}</td>
+                        <td>
+                            <a class="btn btn-primary"
+                               href="{{ url('control.media.album.edit', {id:album.id}) }}"
+                               role="button">Редактировать описание</a>
+                            <a class="btn btn-primary"
+                               href="{{ url('control.media.album.photos', {id:album.id}) }}"
+                               role="button">Добавить фотографии</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
