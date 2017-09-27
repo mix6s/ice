@@ -10,7 +10,10 @@
             <div class="profile__content">
                 <div class="profile__name">
                     {{ profile.fullName }}
-                    <a href="{{ path('profile.player.edit') }}" class="profile__settings">Редактировать</a>
+                    <div class="profile__buttons">
+                        <a href="{{ path('profile.player.edit') }}" class="profile__settings">Редактировать</a>
+                        <a href="{{ path('fos_user_security_logout') }}" class="profile__logout">Выход</a>
+                    </div>
                 </div>
                 <div class="profile__list">
                     <div class="profile__item">

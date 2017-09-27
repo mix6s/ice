@@ -2,7 +2,7 @@
 
 {% block content %}
     <section class="signin page wrapper">
-        <h1 class="title">Вход на сайт</h1>
+        <h1 class="title">Восстановление пароля</h1>
         <form action="{{ path("fos_user_security_check") }}" method="post" class="signin__form">
             {% if csrf_token %}
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
@@ -15,15 +15,9 @@
                         {{ error.messageKey|trans(error.messageData, 'security') }}
                     </div>
                 {% endif %}
-
-            </div>
-            <div class="signin__item">
-                <label for="pass-1" class="label">Пароль</label>
-                <input id="pass-1"  name="_password" type="password" class="input" required>
             </div>
             <div class="signin__button">
-                <button class="btn btn--action">Войти</button>
-                <a href="#" class="signin__link">Забыли пароль?</a>
+                <button class="btn btn--action">Прислать пароль</button>
             </div>
         </form>
     </section>

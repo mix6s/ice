@@ -16,6 +16,8 @@
   border: 2px solid #0085D6;
   border-radius: 50%;
   overflow: hidden;
+  background: url(../img/profile/profile-icon.png) 50% 50% no-repeat;
+  background-size: 100px 125px;
 }
 
 .profile__img {
@@ -36,6 +38,11 @@
   align-items: center;
 }
 
+.profile__buttons {
+  display: flex;
+  align-items: center;
+}
+
 .profile__settings {
   font-size: 0;
   display: inline-block;
@@ -45,6 +52,14 @@
   &:hover {
     transform: rotate(360deg);
   }
+}
+
+.profile__logout {
+  font-size: 0;
+  display: inline-block;
+  @include sprite($icon-logout);
+  transition: all .5s;
+  margin-left: 10px;
 }
 
 .profile__list {
