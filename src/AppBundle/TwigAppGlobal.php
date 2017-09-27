@@ -29,6 +29,12 @@ class TwigAppGlobal implements ContainerAwareInterface
 	public function getCurrentSeasonTeams()
 	{
 		$currentSeasonId = $this->container->get('settings.manager')->getCurrentSeasonId();
+		if (empty($currentSeasonId)) {
+            return [
+                'byLeague' => [],
+                'stats' => []
+            ];
+        }
 		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
 		$teams = $this->container->get('domain.repository.seasonteam')->findBySeason($season);
 		$byLeague = [];
