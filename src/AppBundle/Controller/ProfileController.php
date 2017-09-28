@@ -84,6 +84,7 @@ class ProfileController extends Controller
 			$seasonTeamMember = null;
 		}
 
+		$seasonTeams = $this->get('domain.repository.seasonteam')->findByPlayer($player);
 		$currentPlayerId = 0;
 		/** @var User $user */
 		$user = $this->getUser();
@@ -96,7 +97,8 @@ class ProfileController extends Controller
 		return $this->render('profile.twig', [
 			'profile' => $player->getMetadata(),
 			'member' => $seasonTeamMember,
-			'currentPlayerId' => $currentPlayerId
+			'currentPlayerId' => $currentPlayerId,
+			'seasonTeams' => $seasonTeams
 		]);
 	}
 

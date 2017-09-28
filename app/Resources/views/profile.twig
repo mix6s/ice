@@ -64,33 +64,17 @@
                     <th>Очков</th>
                     <th>Штраф</th>
                 </tr>
+                {% for num, seasonteam in seasonTeams %}
                 <tr>
-                    <td>1</td>
-                    <td>17/18</td>
-                    <td>Молния</td>
-                    <td>10</td>
-                    <td>5</td>
-                    <td>15</td>
-                    <td>240</td>
+                    <td>{{ num + 1 }}</td>
+                    <td>{{ seasonteam.season.year - 1 }} - {{ seasonteam.season.year }}</td>
+                    <td>{{ seasonteam.team.metadata.title }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tr>
-                <tr>
-                    <td>1</td>
-                    <td>17/18</td>
-                    <td>Молния</td>
-                    <td>10</td>
-                    <td>5</td>
-                    <td>15</td>
-                    <td>240</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>17/18</td>
-                    <td>Молния</td>
-                    <td>10</td>
-                    <td>5</td>
-                    <td>15</td>
-                    <td>240</td>
-                </tr>
+                {% endfor %}
             </table>
         </div>
     </section>

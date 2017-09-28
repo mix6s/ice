@@ -6,8 +6,18 @@
                 <div class="panel panel-primary">
                  <div class="panel-heading">
                  <div class="row">
-                     <div class="col-sm-6"><input class="form-control input-sm" style="width: 60px" placeholder="Время" v-model="event._timeFormatted"/></div>
-                    <div class="col-sm-6 text-right">
+
+                     <div class="col-sm-5">
+                            <select  v-model="event.period" class="form-control input-sm" title="Период">
+                                <option value="1">1-й период</option>
+                                <option value="2">2-й период</option>
+                                <option value="3">3-й период</option>
+                                <option value="4">Овертайм</option>
+                                <option value="5">Буллиты</option>
+                            </select>
+                      </div>
+                      <div class="col-sm-3"><input class="form-control input-sm" style="width: 60px" placeholder="Время" v-model="event._timeFormatted"/></div>
+                    <div class="col-sm-4 text-right">
                         <button title="Удалить"  v-on:click="remove" class="btn btn-danger btn-sm"><i aria-hidden="true" class="fa fa-close"></i></button>
                     </div>
                 </div>
@@ -40,13 +50,57 @@
                 </div>
              </div>
         </div>
+         <div v-else-if="event.type == 'goalkeeper'" class="form-group">
+             <div class="col-sm-12">
+                <div class="panel panel-info">
+                 <div class="panel-heading">
+                 <div class="row">
+                     <div class="col-sm-8">
+                      <select ref="memberSelectpicker"  v-model="event.member.id" class="form-control" title="Вратарь">
+
+                                <option v-for="member in event._members" v-if="member.player.metadata.position == 'goalkeeper'" :value="member.id" :selected="event.member.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                            </select>
+                     </div>
+                    <div class="col-sm-4 text-right">
+                        <button title="Удалить"  v-on:click="remove" class="btn btn-danger btn-sm"><i aria-hidden="true" class="fa fa-close"></i></button>
+                    </div>
+                </div>
+
+                </div>
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <input class="form-control input-sm"  placeholder="Броски" v-model="event.bullets"/>
+                        </div>
+
+                         <div class="col-sm-4">
+                            <input class="form-control input-sm"  placeholder="Голы"  v-model="event.goals" />
+                        </div>
+
+                         <div class="col-sm-4">
+                            <input class="form-control input-sm" placeholder="Время"  v-model="event.time" />
+                        </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+        </div>
           <div v-else class="form-group">
              <div class="col-sm-12">
                 <div class="panel panel-danger">
                  <div class="panel-heading">
                  <div class="row">
-                     <div class="col-sm-6"><input class="form-control input-sm" style="width: 60px" placeholder="Время"  v-model="event._timeFormatted"/></div>
-                    <div class="col-sm-6 text-right">
+                     <div class="col-sm-5">
+                            <select  v-model="event.period" class="form-control input-sm" title="Период">
+                                <option value="1">1-й период</option>
+                                <option value="2">2-й период</option>
+                                <option value="3">3-й период</option>
+                                <option value="4">Овертайм</option>
+                                <option value="5">Буллиты</option>
+                            </select>
+                      </div>
+                      <div class="col-sm-3"><input class="form-control input-sm" style="width: 60px" placeholder="Время" v-model="event._timeFormatted"/></div>
+                    <div class="col-sm-4 text-right">
                         <button title="Удалить" class="btn btn-danger btn-sm" v-on:click="remove"><i aria-hidden="true" class="fa fa-close"></i></button>
                     </div>
                 </div>
