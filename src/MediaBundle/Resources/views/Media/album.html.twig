@@ -2,10 +2,17 @@
 
 {% block content %}
     <section class="page wrapper">
-        {% include 'blocks/breadcrumbs.twig' %}
+        {% include 'blocks/breadcrumbs.twig' with {
+        parent: {
+        url: url('media.index'), title:'Медиа'
+        },
+        current:{
+        url: url('media.index', {id:album.id}), title: album.title
+        }
+        } %}
         <h1 class="title">Медиа</h1>
         <div class="all-media__list">
-            {% for image in images  %}
+            {% for image in images %}
                 {% include 'blocks/all-media-item.twig' with {image: image} %}
             {% endfor %}
         </div>

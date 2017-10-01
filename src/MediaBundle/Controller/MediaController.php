@@ -42,7 +42,8 @@ class MediaController extends Controller
         $images = $repo->findBy(['album' => $album->getId()]);
 
         return $this->render('@Media/Media/album.html.twig', [
-            'images' => $images
+            'images' => $images,
+            'album' => $album
         ]);
     }
 
