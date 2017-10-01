@@ -24,10 +24,13 @@
                         <td>{{ album.description }}</td>
                         <td>{{ album.isActive ? 'Да' : 'Нет' }}</td>
                         <td>
-                            <a class="btn btn-primary"
+                            <a class="btn btn-danger js-remove-album"
+                               href="{{ url('control.media.album.remove', {id:album.id}) }}"
+                               role="button">Удалить альбом</a>
+                            <a class="btn btn-warning"
                                href="{{ url('control.media.album.edit', {id:album.id}) }}"
                                role="button">Редактировать описание</a>
-                            <a class="btn btn-primary"
+                            <a class="btn btn-success"
                                href="{{ url('control.media.album.photos', {id:album.id}) }}"
                                role="button">Добавить фотографии</a>
                         </td>
@@ -37,5 +40,15 @@
             </table>
         </div>
     </div>
+
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        $('.js-remove-album').on('click', function (event) {
+            return !!confirm("Вы уверены? Данное действие нельзя будет отменить!");
+        })
+    </script>
+{% endblock %}

@@ -8,13 +8,13 @@
 
 namespace ControlBundle\Controller;
 
+use MediaBundle\DTO\AddImagesDTO;
+use MediaBundle\Form\AddImagesDTOType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use MediaBundle\DTO\AddImagesDTO;
 use MediaBundle\Entity\Album;
 use MediaBundle\Entity\Image;
-use MediaBundle\Form\AddImagesDTOType;
 use MediaBundle\Form\AlbumType;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -87,15 +87,16 @@ class MediaController extends Controller
      */
     public function mediaAlbumPhotos(Request $request, Album $album): Response
     {
-        $addImagesDto = new AddImagesDTO();
-        $form = $this->createForm(AddImagesDTOType::class, $addImagesDto);
-        $form->handleRequest($request);
-
         $repo = $this->getDoctrine()->getRepository(Image::class);
         $images = $repo->findBy(['album' => $album->getId()]);
+
+        $imagesDto = new AddImagesDTO();
+        $form = $this->createForm(AddImagesDTOType::class, $imagesDto);
+        $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            foreach ($addImagesDto->getImages() as $uploadedFile) {
+            foreach ($imagesDto->getImages() as $uploadedFile) {
                 $fileName = md5(uniqid('', true)).'.'.$uploadedFile->guessExtension();
                 $uploadedFile->move($this->getParameter('album_images_directory'), $fileName);
                 $image = new Image();
@@ -114,4 +115,40 @@ class MediaController extends Controller
                 'images' => $images
             ]);
     }
+
+    /**
+     * @Route("/media/album/remove/{id}", name="control.media.album.remove")
+     * @param Album $album
+     * @return Response
+     */
+    public function mediaAlbumRemove(Album $album): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getRepository(Image::class);
+        $images = $repo->findBy(['album' => $album->getId()]);
+        foreach ($images as $image) {
+            $em->remove($image);
+        }
+        $em->remove($album);
+        $em->flush();
+        return $this->redirectToRoute('control.media.album.list');
+    }
+
+    /**
+     * @Route("/media/image/remove/{id}", name="control.media.image.remove")
+     * @param Request $request
+     * @param Image $image
+     * @return Response
+     */
+    public function mediaImageRemove(Request $request, Image $image): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        /** @var Album $album */
+        $album = $image->getAlbum();
+
+        $em->remove($image);
+        $em->flush();
+        return $this->redirectToRoute('control.media.album.photos', ['id' => $album->getId()]);
+    }
+
 }
