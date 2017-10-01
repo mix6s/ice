@@ -43,6 +43,12 @@ class Album
     private $isActive;
 
     /**
+     * @ORM\OneToOne(targetEntity="MediaBundle\Entity\Image")
+     * @ORM\JoinColumn(name="main_image_id", referencedColumnName="id")
+     */
+    private $mainImage;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -104,6 +110,16 @@ class Album
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    public function setMainImage($image)
+    {
+        $this->mainImage = $image;
+    }
+
+    public function getMainImage()
+    {
+        return $this->mainImage;
     }
 
 }

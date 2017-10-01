@@ -33,6 +33,9 @@
                             <a class="btn btn-success"
                                href="{{ url('control.media.album.photos', {id:album.id}) }}"
                                role="button">Добавить фотографии</a>
+                            <a class="btn btn-success"
+                               href="{{ url('control.media.album.choose_thumbnail', {id:album.id}) }}"
+                               role="button">Выбор обложки</a>
                         </td>
                     </tr>
                 {% endfor %}

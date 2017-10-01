@@ -28,7 +28,7 @@ class Image
     private $id;
 
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Column(name="path", type="text")
      */

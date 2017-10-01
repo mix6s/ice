@@ -151,4 +151,35 @@ class MediaController extends Controller
         return $this->redirectToRoute('control.media.album.photos', ['id' => $album->getId()]);
     }
 
+    /**
+     * @Route("/media/album/choose_thumbnail/{id}", name="control.media.album.choose_thumbnail")
+     * @param Album $album
+     * @return Response
+     */
+    public function chooseThumbnail(Album $album): Response
+    {
+        $repo = $this->getDoctrine()->getRepository(Image::class);
+        $images = $repo->findBy(['album' => $album->getId()]);
+        return $this->render('@Control/media/choose_thumbnail.html.twig', [
+            'album' => $album,
+            'images' => $images
+        ]);
+    }
+
+    /**
+     * @Route("/media/album/set_thumbnail/{id}", name="control.media.album.set_thumbnail")
+     * @param Image $image
+     * @return Response
+     */
+    public function setThumbnail(Image $image): Response
+    {
+        /** @var Album $album */
+        $album = $image->getAlbum();
+        $album->setMainImage($image);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($album);
+        $em->flush();
+        return $this->redirectToRoute('control.media.album.list');
+    }
+
 }

@@ -7,9 +7,9 @@
             {% for image in images %}
                 <div style="width: 150px; display: inline-block">
                     <a href="{{ url('control.media.image.remove', {id:image.id}) }}">Удалить</a>
-                        <img src="{{ asset('/uploads/album_images/' ~ image.path) }}"
-                             alt="..."
-                             class="img-thumbnail">
+                    <img src="{{ asset('/uploads/album_images/' ~ image.path) }}"
+                         alt="..."
+                         class="img-thumbnail">
                 </div>
             {% endfor %}
         </div>
