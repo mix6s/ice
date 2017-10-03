@@ -12,22 +12,19 @@
             {% endfor %}
         </div>
     </section>
-    <section class="media wrapper">
-        <div class="media__title">
-            Медиа
-            <a href="media.html" class="media__title-link">Все материалы</a>
-        </div>
-        <div class="media__list">
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-1.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-2.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-3.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-4.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-5.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-6.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-7.jpg'}} %}
-            {% include 'blocks/media-item.twig' with {item: {src: '/assets/img/media/m-8.jpg'}} %}
-        </div>
-    </section>
+    {% if albums is defined %}
+        <section class="media wrapper">
+            <div class="media__title">
+                Медиа
+                <a href="{{ url('media.index') }}" class="media__title-link">Все материалы</a>
+            </div>
+            <div class="media__list">
+                {% for album in albums %}
+                    {% include 'blocks/media-item.twig' with {album: album} %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
     <section class="about wrapper">
         <div class="about__title">О нас</div>
         <div class="about__wrapper">

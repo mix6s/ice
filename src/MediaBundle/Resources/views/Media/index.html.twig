@@ -1,0 +1,16 @@
+{% extends 'layouts/default.twig' %}
+
+{% block content %}
+    <section class="page wrapper">
+        {% include 'blocks/breadcrumbs.twig' with {
+        parent: {
+        url: url('media.index'), title:'Медиа'
+        }} %}
+        <h1 class="title">Медиа</h1>
+        <div class="all-media__list">
+            {% for album in albums %}
+                {% include 'blocks/media-item.twig' with {album: album} %}
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Doctrine\ORM\Query\Expr\Orx;
 use Domain\Entity\GoalEvent;
+use MediaBundle\Entity\Album;
 use Domain\Exception\EntityNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,14 +18,21 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
+     * @throws \UnexpectedValueException
+     * @throws \LogicException
      */
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery('SELECT p FROM BlogBundle:Post p ORDER BY p.postedAt DESC')->setMaxResults(3);
         $posts = $query->getResult();
+        $albums = $this
+            ->getDoctrine()
+            ->getRepository(Album::class)
+            ->findBy(['isActive' => true]);
         return $this->render('index.twig', [
-            'posts' => $posts
+            'posts' => $posts,
+            'albums' => $albums
         ]);
     }
 
@@ -156,13 +164,5 @@ class DefaultController extends Controller
 				'team' => $teamId,
 			]
 		]);
-	}
-
-	/**
-	 * @Route("/media", name="media")
-	 */
-	public function mediaAction(Request $request)
-	{
-		return $this->render('media.twig');
 	}
 }

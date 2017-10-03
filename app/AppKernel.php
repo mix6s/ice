@@ -21,6 +21,7 @@ class AppKernel extends Kernel
 			new \ControlBundle\ControlBundle(),
 			new Liip\ImagineBundle\LiipImagineBundle(),
             new BlogBundle\BlogBundle(),
+            new \MediaBundle\MediaBundle(),
         ];
 
 		if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

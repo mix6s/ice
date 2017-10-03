@@ -98,10 +98,15 @@ doctrine:
             BlogBundle:
                 type: annotation
                 prefix: BlogBundle\Entity
+            MediaBundle:
+                type: annotation
+                prefix: MediaBundle\Entity
 
 
 # Swiftmailer Configuration
 swiftmailer:
+    auth_mode: 'login'
+    port: '%mailer_port%'
     transport: '%mailer_transport%'
     host: '%mailer_host%'
     username: '%mailer_user%'

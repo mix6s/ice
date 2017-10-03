@@ -229,10 +229,12 @@ class ControlController extends Controller
 		fwrite($f, $response->getContent());
 		fclose($f);
 
-		$response = $this->get('liip_imagine.filter.manager')->applyFilter($binary, 'avatar_normal');
-		$f = fopen($this->getParameter('web_dir') . '/avatar/' . $filename, 'w');
-		fwrite($f, $response->getContent());
-		fclose($f);
-		return $this->json($filename);
-	}
+        $response = $this->get('liip_imagine.filter.manager')->applyFilter($binary, 'avatar_normal');
+        $f = fopen($this->getParameter('web_dir') . '/avatar/' . $filename, 'w');
+        fwrite($f, $response->getContent());
+        fclose($f);
+        return $this->json($filename);
+    }
+
+
 }

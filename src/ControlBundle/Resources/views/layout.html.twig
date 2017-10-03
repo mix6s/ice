@@ -44,7 +44,8 @@
                 'control.teams.list': 'Команды',
                 'control.leagues.list': 'Лиги' ,
                 'control.players.list': 'Игроки',
-                'control.posts.list' : 'Новости'
+                'control.posts.list' : 'Новости',
+                'control.media.album.list' : 'Медиа'
                 } %}
                 {% for route, title in menuUrls %}
                     <li class="{{ route == app.request.get('_route') ? 'active' : '' }}"><a href="{{ url(route) }}">{{ title }}</a></li>

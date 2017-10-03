@@ -1,0 +1,21 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h3>Картиночки</h3>
+            {% for image in images %}
+                <div style="width: 150px; display: inline-block">
+                    <a href="{{ url('control.media.image.remove', {id:image.id}) }}">Удалить</a>
+                    <img src="{{ asset('/uploads/album_images/' ~ image.path) }}"
+                         alt="..."
+                         class="img-thumbnail">
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,23 @@
+{% extends '@Control/layout.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h3>Выберите картинку для превью</h3>
+            {% for image in images %}
+                <div style="width: 100px; display: inline-block">
+                    <a href="{{ url('control.media.album.set_thumbnail', {id:image.id}) }}">
+                        <img src="{{ asset('/uploads/album_images/' ~ image.path) }}"
+                             alt="..."
+                             class="img-thumbnail">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
+
