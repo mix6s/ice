@@ -18,18 +18,21 @@ class PenaltyEventData
 	private $penaltyTimeType;
 	private $secondsFromStart;
 	private $memberId;
+	private $period;
 
 	/**
 	 * PenaltyEventData constructor.
 	 * @param int $secondsFromStart
+	 * @param int $period
 	 * @param int $memberId
 	 * @param string $penaltyTimeType
 	 */
-	public function __construct(int $secondsFromStart, int $memberId, string $penaltyTimeType)
+	public function __construct(int $secondsFromStart, int $period, int $memberId, string $penaltyTimeType)
 	{
 		$this->secondsFromStart = $secondsFromStart;
 		$this->memberId = $memberId;
 		$this->penaltyTimeType = $penaltyTimeType;
+		$this->period = $period;
 	}
 
 	/**
@@ -54,5 +57,13 @@ class PenaltyEventData
 	public function getPenaltyTimeType(): string
 	{
 		return $this->penaltyTimeType;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getPeriod(): int
+	{
+		return $this->period;
 	}
 }

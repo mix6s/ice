@@ -12,6 +12,8 @@ Domain\Entity\Game:
             type: datetime
         type:
             type: gametype
+        state:
+            type: integer
 
     manyToOne:
         season:

@@ -40,8 +40,7 @@ class DefaultController extends Controller
 		$scoreMap = [];
 		$eventsByPeriod = [];
 		foreach ($events as $event) {
-			$num = (int)($event->getSecondsFromStart() / (20 * 60));
-			$num = $num > 4 ? 4 : $num;
+			$num = $event->getPeriod();
 			if (empty($eventsByPeriod[$num])) {
 				$eventsByPeriod[$num] = [];
 			}

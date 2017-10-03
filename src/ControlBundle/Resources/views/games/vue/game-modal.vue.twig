@@ -111,14 +111,23 @@
             </div>
         </div>
     </div>
-
          <div class="has-error" v-if="error">
             <div class="alert alert-danger text-center" role="alert">{{ error }}</div>
         </div>
     </div>
     <div class="modal-footer">
+        <div class="col-sm-6">
+      <div class="checkbox">
+    <label>
+      <input type="checkbox" v-model="game.state"> Завершена
+    </label>
+  </div>
+        </div>
+       <div class="col-sm-6">
+
         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
         <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
     </div>
 </div>
     {% endverbatim %}
@@ -127,6 +136,12 @@
 
 
 <script>
+    function secToTime(secondsInterval) {
+		let minutes = parseInt(secondsInterval / 60);
+		let seconds = secondsInterval - minutes * 60;
+		return (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+	}
+
 	Vue.component('picker', {
 		props: ['datetime'],
 		template: '{{ block('vue_template_picker')|escape('js') }}',
@@ -190,10 +205,6 @@
             },
 			addEvent: function (event, seasonteam, members) {
 				let self = this;
-				let secondsInterval = event.seconds_from_start ? event.seconds_from_start : 0;
-				let minutes = parseInt(secondsInterval / 60);
-				let seconds = secondsInterval - minutes * 60;
-				let time = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 				if (!event.assistant_a) {
 					event.assistant_a = {};
                 }
@@ -207,7 +218,10 @@
 					assistant_b: {},
 					_members: members,
 					_seasonteam: seasonteam,
-					_timeFormatted: time,
+					_timeFormatted: secToTime(event.seconds_from_start ? event.seconds_from_start : 0),
+					time: secToTime(event.duration ? event.duration : 0),
+                    goals: 0,
+                    bullets: 0,
 					_id: self.getNextEventId()
 				}, event));
 			},

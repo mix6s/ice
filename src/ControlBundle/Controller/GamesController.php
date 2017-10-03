@@ -9,6 +9,9 @@
 namespace ControlBundle\Controller;
 
 
+use Domain\DTO\GoalEventData;
+use Domain\DTO\GoalkeeperData;
+use Domain\DTO\PenaltyEventData;
 use Domain\DTO\Request\SaveGameEventsRequest;
 use Domain\Entity\GameEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -38,6 +41,21 @@ class GamesController extends Controller
 
 	}
 
+
+	private function timeToSeconds(string $time)
+	{
+		$seconds = 0;
+		$parts = explode(':', $time);
+		if (isset($parts[0])) {
+			$seconds += isset($parts[1]) ? $parts[0] * 60 : $parts[0];
+		}
+
+		if (isset($parts[1])) {
+			$seconds += $parts[1];
+		}
+		return $seconds;
+	}
+
 	/**
 	 * @Route("/save", name="control.games.save")
 	 */
@@ -52,20 +70,40 @@ class GamesController extends Controller
 			$gameRequestData['datetime'],
 			$gameRequestData['season']['id'],
 			$gameRequestData['seasonteamA']['id'],
-			$gameRequestData['seasonteamB']['id']
+			$gameRequestData['seasonteamB']['id'],
+			$gameRequestData['state'] == 'false' || empty($gameRequestData['state']) ? 0 : 1
 		);
 
 		$eventsChangeRequest = new SaveGameEventsRequest($game->getId());
 		foreach ($eventsRequestData as $data) {
 			if ($data['type'] === 'goal') {
 				$eventsChangeRequest->addGoalEventData(
-					$data['_timeFormatted'],
-					$data['member']['id'],
-					!empty($data['assistant_a']) ? $data['assistant_a']['id'] : null,
-					!empty($data['assistant_b']) ? $data['assistant_b']['id'] : null
+					new GoalEventData(
+						(int)$this->timeToSeconds($data['_timeFormatted']),
+						(int)$data['period'],
+						(int)$data['member']['id'],
+						!empty($data['assistant_a']) ? (int)$data['assistant_a']['id'] : null,
+						!empty($data['assistant_b']) ? (int)$data['assistant_b']['id'] : null
+					)
+				);
+			} elseif ($data['type'] === 'goalkeeper') {
+				$eventsChangeRequest->addGoalkeeperData(
+					new GoalkeeperData(
+						(int)$data['goals'],
+						(int)$data['bullets'],
+						$data['time'],
+						(int)$data['member']['id']
+					)
 				);
 			} elseif ($data['type'] === 'penalty') {
-				$eventsChangeRequest->addPenaltyEventData($data['_timeFormatted'], $data['member']['id'], $data['penalty_time_type']);
+				$eventsChangeRequest->addPenaltyEventData(
+					new PenaltyEventData(
+						(int)$this->timeToSeconds($data['_timeFormatted']),
+						(int)$data['period'],
+						(int)$data['member']['id'],
+						$data['penalty_time_type']
+					)
+				);
 			}
 		}
 		$events = $this->get('domain.use_case.save_game_events_use_case')->execute($eventsChangeRequest);

@@ -10,10 +10,12 @@ namespace Domain\UseCase;
 
 
 use Domain\DTO\GoalEventData;
+use Domain\DTO\GoalkeeperData;
 use Domain\DTO\PenaltyEventData;
 use Domain\DTO\Request\SaveGameEventsRequest;
 use Domain\Entity\GameEvent;
 use Domain\Entity\GoalEvent;
+use Domain\Entity\GoalkeeperEvent;
 use Domain\Entity\PenaltyEvent;
 use Domain\Exception\DomainException;
 
@@ -55,12 +57,15 @@ class SaveGameEventsUseCase
 					$assistantB = null;
 				}
 				$secondsFromStart = $eventData->getSecondsFromStart();
-				$event = new GoalEvent($eventId, $game, $secondsFromStart, $member, $assistantA, $assistantB);
+				$event = new GoalEvent($eventId, $eventData->getPeriod(), $game, $secondsFromStart, $member, $assistantA, $assistantB);
+			} elseif ($eventData instanceof GoalkeeperData) {
+				$member = $this->getContainer()->getSeasonTeamMemberRepository()->findById($eventData->getMemberId());
+				$event = new GoalkeeperEvent($eventId, $game, $eventData->getBullets(), $eventData->getGoals(), $eventData->getDuration(), $member);
 			} elseif ($eventData instanceof PenaltyEventData) {
 				$member = $this->getContainer()->getSeasonTeamMemberRepository()->findById($eventData->getMemberId());
 				$secondsFromStart = $eventData->getSecondsFromStart();
 				$penaltyTimeType = $eventData->getPenaltyTimeType();
-				$event = new PenaltyEvent($eventId, $game, $secondsFromStart, $member, $penaltyTimeType);
+				$event = new PenaltyEvent($eventId, $eventData->getPeriod(), $game, $secondsFromStart, $member, $penaltyTimeType);
 			} else {
 				throw new DomainException("Unknown game event data type");
 			}

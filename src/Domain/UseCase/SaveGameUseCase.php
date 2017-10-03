@@ -29,16 +29,17 @@ class SaveGameUseCase
 	 * @param $seasonId
 	 * @param $seasonteamAId
 	 * @param $seasonteamBId
+	 * @param $state
 	 * @return Game
 	 */
-	public function execute($id = null, $type, $place, $datetime, $seasonId, $seasonteamAId, $seasonteamBId)
+	public function execute($id = null, $type, $place, $datetime, $seasonId, $seasonteamAId, $seasonteamBId, $state)
 	{
 		$season = $this->getContainer()->getSeasonRepository()->findById($seasonId);
 		$seasonteamA = $this->getContainer()->getSeasonTeamRepository()->findById($seasonteamAId);
 		$seasonteamB = $this->getContainer()->getSeasonTeamRepository()->findById($seasonteamBId);
 		try {
 			$game = $this->getContainer()->getGameRepository()->findById((int)$id);
-			$game->change(new \DateTime($datetime), GameType::resolve($type), $place, $season, $seasonteamA, $seasonteamB);
+			$game->modify(new \DateTime($datetime), GameType::resolve($type), $place, $season, $seasonteamA, $seasonteamB, $state);
 		} catch (EntityNotFoundException $e) {
 			$id = $this->getContainer()->getGameRepository()->getNextId();
 			$game = Game::create($id, new \DateTime($datetime), GameType::resolve($type), $place, $season, $seasonteamA, $seasonteamB);

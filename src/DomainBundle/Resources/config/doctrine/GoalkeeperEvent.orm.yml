@@ -1,16 +1,17 @@
-Domain\Entity\PenaltyEvent:
+Domain\Entity\GoalkeeperEvent:
     type: entity
     id:
         id:
             type: integer
             generator: { strategy: NONE }
     fields:
-        secondsFromStart:
+        duration:
             type: integer
-        penaltyTimeType:
-            type: string
-        period:
+        goals:
             type: integer
+        bullets:
+            type: integer
+
     manyToOne:
         game:
             targetEntity: Domain\Entity\Game

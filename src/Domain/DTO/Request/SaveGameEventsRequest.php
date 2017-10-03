@@ -10,6 +10,7 @@ namespace Domain\DTO\Request;
 
 
 use Domain\DTO\GoalEventData;
+use Domain\DTO\GoalkeeperData;
 use Domain\DTO\PenaltyEventData;
 
 /**
@@ -32,39 +33,27 @@ class SaveGameEventsRequest
 	}
 
 	/**
-	 * @param string $timeFormatted
-	 * @param int $memberId
-	 * @param int|null $assistantAId
-	 * @param int|null $assistantBId
+	 * @param GoalEventData $data
 	 */
-	public function addGoalEventData(string $timeFormatted, int $memberId, int $assistantAId = null, int $assistantBId = null)
+	public function addGoalEventData(GoalEventData $data)
 	{
-		$this->gameEventsData[] = new GoalEventData($this->timeToSeconds($timeFormatted), $memberId, $assistantAId, $assistantBId);
+		$this->gameEventsData[] = $data;
 	}
 
 	/**
-	 * /**
-	 * @param string $timeFormatted
-	 * @param int $memberId
-	 * @param string $penaltyTimeType
+	 * @param PenaltyEventData $data
 	 */
-	public function addPenaltyEventData(string $timeFormatted, int $memberId, string $penaltyTimeType)
+	public function addPenaltyEventData(PenaltyEventData $data)
 	{
-		$this->gameEventsData[] = new PenaltyEventData($this->timeToSeconds($timeFormatted), $memberId, $penaltyTimeType);
+		$this->gameEventsData[] = $data;
 	}
 
-	private function timeToSeconds(string $time)
+	/**
+	 * @param GoalkeeperData $data
+	 */
+	public function addGoalkeeperData(GoalkeeperData $data)
 	{
-		$seconds = 0;
-		$parts = explode(':', $time);
-		if (!empty($parts[0])) {
-			$seconds += !empty($parts[1]) ? $parts[0] * 60 : $parts[0];
-		}
-
-		if (!empty($parts[1])) {
-			$seconds += $parts[0];
-		}
-		return $seconds;
+		$this->gameEventsData[] = $data;
 	}
 
 	/**

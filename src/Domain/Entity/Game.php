@@ -20,6 +20,9 @@ class Game implements \JsonSerializable
 {
 	use MetadataTrait;
 
+	const STATE_DEFAULT = 0;
+	const STATE_FINISHED = 1;
+
 	private $id;
 	private $datetime;
 	private $type;
@@ -27,6 +30,7 @@ class Game implements \JsonSerializable
 	private $season;
 	private $seasonTeamA;
 	private $seasonTeamB;
+	private $state;
 
 	/**
 	 * Game constructor.
@@ -48,22 +52,7 @@ class Game implements \JsonSerializable
 		SeasonTeam $seasonTeamB
 	) {
 		$this->id = $id;
-		$this->change($datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB);
-		if ($season->getId() != $seasonTeamA->getSeason()->getId()
-			|| $season->getId() != $seasonTeamB->getSeason()->getId()) {
-			throw new DomainException("seasonteams seasons dont equal season");
-		}
-
-		if ($seasonTeamA->getId() === $seasonTeamB->getId()) {
-			throw new DomainException("seasonteams equal");
-		}
-		$this->id = $id;
-		$this->datetime = $datetime;
-		$this->type = $type;
-		$this->place = $place;
-		$this->season = $season;
-		$this->seasonTeamA = $seasonTeamA;
-		$this->seasonTeamB = $seasonTeamB;
+		$this->modify($datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB, self::STATE_DEFAULT);
 	}
 
 	/**
@@ -95,15 +84,17 @@ class Game implements \JsonSerializable
 	 * @param Season $season
 	 * @param SeasonTeam $seasonTeamA
 	 * @param SeasonTeam $seasonTeamB
+	 * @param int $state
 	 * @throws DomainException
 	 */
-	public function change(
+	public function modify(
 		\DateTime $datetime,
 		GameType $type,
 		string $place,
 		Season $season,
 		SeasonTeam $seasonTeamA,
-		SeasonTeam $seasonTeamB
+		SeasonTeam $seasonTeamB,
+		int $state
 	) {
 		if ($season->getId() != $seasonTeamA->getSeason()->getId()
 			|| $season->getId() != $seasonTeamB->getSeason()->getId()) {
@@ -119,6 +110,7 @@ class Game implements \JsonSerializable
 		$this->season = $season;
 		$this->seasonTeamA = $seasonTeamA;
 		$this->seasonTeamB = $seasonTeamB;
+		$this->state = $state;
 	}
 
 	/**
@@ -138,7 +130,8 @@ class Game implements \JsonSerializable
 			'season' => $this->getSeason(),
 			'seasonteamA' => $this->getSeasonTeamA(),
 			'seasonteamB' => $this->getSeasonTeamB(),
-			'metadata' => $this->getMetadata()
+			'metadata' => $this->getMetadata(),
+			'state' => $this->getState()
 		];
 	}
 
@@ -196,5 +189,13 @@ class Game implements \JsonSerializable
 	public function getSeasonTeamB(): SeasonTeam
 	{
 		return $this->seasonTeamB;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getState(): int
+	{
+		return $this->state;
 	}
 }

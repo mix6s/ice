@@ -22,6 +22,7 @@ class PenaltyEvent extends GameEvent
 	private $secondsFromStart;
 	private $penaltyTimeType;
 	private $member;
+	private $period;
 
 	const PENALTY_TIME_TYPE_2 = '2';
 	const PENALTY_TIME_TYPE_2_2 = '2_2';
@@ -31,13 +32,14 @@ class PenaltyEvent extends GameEvent
 	/**
 	 * PenaltyEvent constructor.
 	 * @param int $id
+	 * @param int $period
 	 * @param Game $game
 	 * @param int $secondsFromStart
 	 * @param SeasonTeamMember $member
 	 * @param string $penaltyTimeType
 	 * @throws DomainException
 	 */
-	public function __construct(int $id, Game $game, int $secondsFromStart, SeasonTeamMember $member, string $penaltyTimeType)
+	public function __construct(int $id, int $period, Game $game, int $secondsFromStart, SeasonTeamMember $member, string $penaltyTimeType)
 	{
 		if (!in_array(
 			$penaltyTimeType,
@@ -57,6 +59,7 @@ class PenaltyEvent extends GameEvent
 			throw new DomainException("Member does not exist in game season teams members");
 		}
 		$this->id = $id;
+		$this->period = $period;
 		$this->game = $game;
 		$this->secondsFromStart = $secondsFromStart;
 		$this->member = $member;
@@ -105,6 +108,7 @@ class PenaltyEvent extends GameEvent
 	{
 		return [
 			'type' => $this->getType(),
+			'period' => $this->getPeriod(),
 			'id' => $this->getId(),
 			'seconds_from_start' => $this->getSecondsFromStart(),
 			'game' => $this->getGame(),
@@ -126,5 +130,13 @@ class PenaltyEvent extends GameEvent
 	function getType(): string
 	{
 		return 'penalty';
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getPeriod(): int
+	{
+		return $this->period;
 	}
 }

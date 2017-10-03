@@ -15,6 +15,11 @@ namespace Domain\Entity;
  */
 abstract class GameEvent implements \JsonSerializable
 {
+	const PERIOD_1 = 1;
+	const PERIOD_2 = 2;
+	const PERIOD_3 = 3;
+	const PERIOD_OVERTIME = 4;
+	const PERIOD_BULLETS = 5;
 	/**
 	 * @return string
 	 */
@@ -34,4 +39,9 @@ abstract class GameEvent implements \JsonSerializable
 	 * @return int
 	 */
 	abstract public function getSecondsFromStart(): int;
+
+	/**
+	 * @return int
+	 */
+	abstract public function getPeriod(): int;
 }

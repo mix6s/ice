@@ -7,6 +7,8 @@ Domain\Entity\GoalEvent:
     fields:
         secondsFromStart:
             type: integer
+        period:
+            type: integer
 
     manyToOne:
         game:

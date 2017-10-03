@@ -55,7 +55,7 @@ class GameScorePolicy
 	 */
 	private function getScores(Game $game)
 	{
-		if ($game->getDatetime()->getTimestamp() > (new \DateTime())->getTimestamp()) {
+		if ($game->getState() === Game::STATE_DEFAULT) {
 			return [null, null];
 		}
 		if (array_key_exists($game->getId(), $this->scoresByGame)) {

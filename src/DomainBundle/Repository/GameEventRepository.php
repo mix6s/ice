@@ -92,6 +92,14 @@ class GameEventRepository implements GameEventRepositoryInterface
 		}
 
 		if (empty($event)) {
+			$event = $this->getEntityManager()->createQueryBuilder()
+				->from('Domain:GoalkeeperEvent', 'e')
+				->where('id = :id')
+				->setParameter('id', $id)->getQuery()
+				->getSingleResult();
+		}
+
+		if (empty($event)) {
 			throw new EntityNotFoundException(sprintf('Game event with id %d not found', $id));
 		}
 		return $event;
@@ -119,7 +127,17 @@ class GameEventRepository implements GameEventRepositoryInterface
 			->setParameter('gameId', $game->getId())->getQuery()
 			->getResult();
 
+		$keeperEvent = $this->getEntityManager()->createQueryBuilder()
+			->select('e')
+			->from('Domain:GoalkeeperEvent', 'e')
+			->where('e.game = :gameId')
+			->setParameter('gameId', $game->getId())->getQuery()
+			->getResult();
+
 		foreach ($penaltyEvent as $event) {
+			$events[] = $event;
+		}
+		foreach ($keeperEvent as $event) {
 			$events[] = $event;
 		}
 		return $events;

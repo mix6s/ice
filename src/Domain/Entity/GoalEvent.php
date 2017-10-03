@@ -23,10 +23,12 @@ class GoalEvent extends GameEvent
 	private $member;
 	private $assistantA;
 	private $assistantB;
+	private $period;
 
 	/**
 	 * GoalEvent constructor.
 	 * @param int $id
+	 * @param int $period
 	 * @param Game $game
 	 * @param int $secondsFromStart
 	 * @param SeasonTeamMember $member
@@ -34,7 +36,7 @@ class GoalEvent extends GameEvent
 	 * @param SeasonTeamMember|null $assistantB
 	 * @throws DomainException
 	 */
-	public function __construct(int $id, Game $game, int $secondsFromStart, SeasonTeamMember $member, SeasonTeamMember $assistantA = null, SeasonTeamMember $assistantB = null)
+	public function __construct(int $id, int $period, Game $game, int $secondsFromStart, SeasonTeamMember $member, SeasonTeamMember $assistantA = null, SeasonTeamMember $assistantB = null)
 	{
 		if (!in_array($member->getSeasonTeam()->getId() ,[$game->getSeasonTeamB()->getId(), $game->getSeasonTeamA()->getId()])) {
 			throw new DomainException("Member does not exist in game season teams members");
@@ -44,6 +46,7 @@ class GoalEvent extends GameEvent
 			throw new DomainException("Season team members in different season teams");
 		}
 		$this->id = $id;
+		$this->period = $period;
 		$this->game = $game;
 		$this->secondsFromStart = $secondsFromStart;
 		$this->member = $member;
@@ -110,6 +113,7 @@ class GoalEvent extends GameEvent
 	{
 		return [
 			'type' => $this->getType(),
+			'period' => $this->getPeriod(),
 			'id' => $this->getId(),
 			'seconds_from_start' => $this->getSecondsFromStart(),
 			'game' => $this->getGame(),
@@ -125,5 +129,13 @@ class GoalEvent extends GameEvent
 	function getType(): string
 	{
 		return 'goal';
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getPeriod(): int
+	{
+		return $this->period;
 	}
 }
