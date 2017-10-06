@@ -11,7 +11,7 @@
                 <div class="profile__name">
                     {{ profile.fullName }}
                     <div class="profile__buttons">
-                        {% if currentPlayerId == profile.id %}
+                        {% if isCurrentPlayer %}
                             <a href="{{ path('profile.player.edit') }}" class="profile__settings">Редактировать</a>
                             <a href="{{ path('fos_user_security_logout') }}" class="profile__logout">Выход</a>
                         {% endif %}
