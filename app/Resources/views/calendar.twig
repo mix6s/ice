@@ -34,7 +34,7 @@
                     <option value="7" {{ filter.month == 7 ? 'selected="selected"' : '' }}>Июль</option>
                     <option value="8" {{ filter.month == 8 ? 'selected="selected"' : '' }}>Август</option>
                     <option value="9" {{ filter.month == 9 ? 'selected="selected"' : '' }}>Сентябрь</option>
-                    <option value="10" {{ filter.month == 10 ? 'selected="selected"' : '' }}>Окнябрь</option>
+                    <option value="10" {{ filter.month == 10 ? 'selected="selected"' : '' }}>Октябрь</option>
                     <option value="11" {{ filter.month == 11 ? 'selected="selected"' : '' }}>Ноябрь</option>
                     <option value="12" {{ filter.month == 12 ? 'selected="selected"' : '' }}>Декабрь</option>
                 </select>
@@ -60,7 +60,7 @@
                 {% for game in games %}
                 <tr>
                     <td>
-                        {{ game.datetime|date("d.m.Y") }}
+                        {{ game.datetime|date("d.m.Y H:i") }}
                         <div>{{ game.datetime|localizeddate('none', 'none', 'ru_RU', null, "EEEE") }}</div>
                     </td>
                     <td>
