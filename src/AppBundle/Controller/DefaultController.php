@@ -149,7 +149,7 @@ class DefaultController extends Controller
 				)
 				->setParameter(
 					'end',
-					new \DateTime(sprintf('%s-%s-01 00:00:00', $month == 12 ? $year : $year - 1, $month == 12 ? 1 : $month)),
+					new \DateTime(sprintf('%s-%s-01 00:00:00', $month == 12 ? $year : $year - 1, $month == 12 ? 1 : $month + 1)),
 					\Doctrine\DBAL\Types\Type::DATETIME
 				);
 		}
