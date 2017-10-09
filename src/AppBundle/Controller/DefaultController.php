@@ -126,14 +126,16 @@ class DefaultController extends Controller
 		;
 		if (!empty($leagueId)) {
 			$builder
-				->andWhere(new Orx(':league = sta.league', ':league = stb.league'))
-				->setParameter('league', $leagueId);
+				->andWhere($builder->expr()->orX('sta.league = :league1', 'stb.league = :league2'))
+				->setParameter('league1', $leagueId)
+				->setParameter('league2', $leagueId);
 		}
 
 		if (!empty($teamId)) {
 			$builder
-				->andWhere(new Orx(':team = sta.team', ':team = stb.team'))
-				->setParameter('team', $teamId);
+				->andWhere($builder->expr()->orX('sta.team = :team1', 'stb.team = :team2'))
+				->setParameter('team1', $teamId)
+				->setParameter('team2', $teamId);
 		}
 
 		if (!empty($month)) {
@@ -147,7 +149,7 @@ class DefaultController extends Controller
 				);
 		}
 		$games = $builder
-			->orderBy('g.datetime', 'DESC')
+			->orderBy('g.datetime', 'ASC')
 			->getQuery()
 			->getResult()
 		;
