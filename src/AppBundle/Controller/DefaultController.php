@@ -144,12 +144,12 @@ class DefaultController extends Controller
 				->andWhere('g.datetime < :end')
 				->setParameter(
 					'start',
-					new \DateTime(sprintf('%d-%d-1 00:00:00', $year, $month)),
+					new \DateTime(sprintf('%d-%d-1 00:00:00', $year - 1, $month)),
 					\Doctrine\DBAL\Types\Type::DATETIME
 				)
 				->setParameter(
 					'end',
-					new \DateTime(sprintf('%d-%d-1 00:00:00', $month == 12 ? $year + 1 : $year, $month == 12 ? 1 : $month)),
+					new \DateTime(sprintf('%d-%d-1 00:00:00', $month == 12 ? $year : $year - 1, $month == 12 ? 1 : $month)),
 					\Doctrine\DBAL\Types\Type::DATETIME
 				);
 		}
