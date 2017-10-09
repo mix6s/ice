@@ -112,8 +112,8 @@ class DefaultController extends Controller
 		$currentSeason = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
 		$leagueId = $request->get('league_id');
 		$teamId = $request->get('team_id');
-		$month = $request->get('month');
-		$year = $request->get('year', $currentSeason->getYear());
+		$month = (int)$request->get('month');
+		$year = (int)$request->get('year', $currentSeason->getYear());
 
 		$builder = $this->get('domain.repository.game')
 			->createQueryBuilder('g')
@@ -144,12 +144,12 @@ class DefaultController extends Controller
 				->andWhere('g.datetime < :end')
 				->setParameter(
 					'start',
-					new \DateTime(sprintf('%s-%s-1 00:00:00', $year - 1, $month)),
+					new \DateTime(sprintf('%s-%s-01 00:00:00', $year - 1, $month)),
 					\Doctrine\DBAL\Types\Type::DATETIME
 				)
 				->setParameter(
 					'end',
-					new \DateTime(sprintf('%s-%s-1 00:00:00', $month == 12 ? $year : $year - 1, $month == 12 ? 1 : $month)),
+					new \DateTime(sprintf('%s-%s-01 00:00:00', $month == 12 ? $year : $year - 1, $month == 12 ? 1 : $month)),
 					\Doctrine\DBAL\Types\Type::DATETIME
 				);
 		}
