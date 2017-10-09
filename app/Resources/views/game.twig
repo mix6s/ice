@@ -5,7 +5,7 @@
         <div class="game__title">{{ game.place }}</div>
         <div class="game__info">
             <div class="game__date-wrapper">
-                <div class="game__date">{{ game.datetime|localizeddate('none', 'none', 'ru_RU', null, "d MMMM Y H:m") }}</div>
+                <div class="game__date">{{ game.datetime|localizeddate('none', 'none', 'ru_RU', null, "d MMMM Y HH:mm") }}</div>
                 <div class="game__playoff {{ {final: 'game__playoff--final', playoff: 'game__playoff', regular: 'game__playoff'}[game.type.__toString] }}">{{ {final: 'Финал', playoff: 'Плей-офф', regular: 'Регулярный чемпионат'}[game.type.__toString] }}</div>
             </div>
             <div class="game__content">
