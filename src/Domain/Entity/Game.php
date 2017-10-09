@@ -31,6 +31,8 @@ class Game implements \JsonSerializable
 	private $seasonTeamA;
 	private $seasonTeamB;
 	private $state;
+	private $membersA;
+	private $membersB;
 
 	/**
 	 * Game constructor.
@@ -131,7 +133,9 @@ class Game implements \JsonSerializable
 			'seasonteamA' => $this->getSeasonTeamA(),
 			'seasonteamB' => $this->getSeasonTeamB(),
 			'metadata' => $this->getMetadata(),
-			'state' => $this->getState()
+			'state' => $this->getState(),
+			'membersA' => $this->getMembersA(),
+			'membersB' => $this->getMembersB()
 		];
 	}
 
@@ -197,5 +201,43 @@ class Game implements \JsonSerializable
 	public function getState(): int
 	{
 		return $this->state;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getMembersA(): array
+	{
+		if (!is_array($this->membersA)) {
+			return [];
+		}
+		return $this->membersA;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getMembersB(): array
+	{
+		if (!is_array($this->membersB)) {
+			return [];
+		}
+		return $this->membersB;
+	}
+
+	/**
+	 * @param array $membersA
+	 */
+	public function setMembersA(array $membersA)
+	{
+		$this->membersA = $membersA;
+	}
+
+	/**
+	 * @param array $membersB
+	 */
+	public function setMembersB(array $membersB)
+	{
+		$this->membersB = $membersB;
 	}
 }

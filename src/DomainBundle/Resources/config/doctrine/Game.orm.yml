@@ -14,7 +14,12 @@ Domain\Entity\Game:
             type: gametype
         state:
             type: integer
-
+        membersA:
+            type: array
+            nullable: true
+        membersB:
+            type: array
+            nullable: true
     manyToOne:
         season:
             targetEntity: Domain\Entity\Season

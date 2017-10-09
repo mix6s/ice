@@ -1,0 +1,33 @@
+<template>
+    {% block vue_template %}
+{% verbatim %}
+    <div>
+        <label v-for="member,key in seasonteammembers" class="col-sm-12">
+             <input type="checkbox"  v-model="gameteammembers[key]" v-bind:true-value="member.id" v-bind:false-value="0"> {{ member.number}} {{ member.player.metadata.full_name}}
+        </label>
+    </div>
+{% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('memberList', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['seasonteammembers', 'gameteammembers'],
+		data: function () {
+			return {
+				members: {}
+            };
+		},
+		computed: {
+		},
+		methods: {
+		},
+		created: function () {
+
+		},
+		mounted: function () {
+
+		}
+	});
+</script>

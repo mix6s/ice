@@ -32,7 +32,7 @@ class SaveGameUseCase
 	 * @param $state
 	 * @return Game
 	 */
-	public function execute($id = null, $type, $place, $datetime, $seasonId, $seasonteamAId, $seasonteamBId, $state)
+	public function execute($id = null, $type, $place, $datetime, $seasonId, $seasonteamAId, $seasonteamBId, $state, $membersA = [], $membersB = [])
 	{
 		$season = $this->getContainer()->getSeasonRepository()->findById($seasonId);
 		$seasonteamA = $this->getContainer()->getSeasonTeamRepository()->findById($seasonteamAId);
@@ -44,6 +44,8 @@ class SaveGameUseCase
 			$id = $this->getContainer()->getGameRepository()->getNextId();
 			$game = Game::create($id, new \DateTime($datetime), GameType::resolve($type), $place, $season, $seasonteamA, $seasonteamB);
 		}
+		$game->setMembersA($membersA);
+		$game->setMembersB($membersB);
 		$this->getContainer()->getGameRepository()->save($game);
 		return $game;
 	}

@@ -34,7 +34,7 @@ class ControlController extends Controller
 	 */
 	public function indexAction()
 	{
-		return $this->redirectToRoute('control.seasons.list');
+		return $this->redirectToRoute('control.games.list');
 	}
 
 

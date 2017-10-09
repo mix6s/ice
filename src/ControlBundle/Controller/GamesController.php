@@ -71,7 +71,9 @@ class GamesController extends Controller
 			$gameRequestData['season']['id'],
 			$gameRequestData['seasonteamA']['id'],
 			$gameRequestData['seasonteamB']['id'],
-			$gameRequestData['state'] == 'false' || empty($gameRequestData['state']) ? 0 : 1
+			$gameRequestData['state'] == 'false' || empty($gameRequestData['state']) ? 0 : 1,
+			$gameRequestData['membersA'] ?? [],
+			$gameRequestData['membersB'] ?? []
 		);
 
 		$eventsChangeRequest = new SaveGameEventsRequest($game->getId());

@@ -71,6 +71,9 @@
                             <option v-if="props.game" selected="selected" :value="props.game.seasonteamA.id">{{props.game.seasonteamA.team.metadata.title }}</option>
                         </select>
                     </div>
+                    <div class="col-sm-12">
+                     <memberList :seasonteammembers="membersA" :gameteammembers="props.game.membersA"></memberList>
+                    </div>
                </div>
             </div>
             <div class="col-xs-6">
@@ -79,6 +82,9 @@
                         <select ref="teamBSelectpicker"  class="form-control" title="Команда гости">
                         <option v-if="props.game" selected="selected" :value="props.game.seasonteamB.id">{{props.game.seasonteamB.team.metadata.title }}</option>
                         </select>
+                    </div>
+                    <div class="col-sm-12">
+                     <memberList :seasonteammembers="membersB" :gameteammembers="props.game.membersB"></memberList>
                     </div>
                </div>
             </div>
@@ -175,6 +181,8 @@
 				events: [],
 				game: {
 					id: null,
+                    membersA: {},
+					membersB: {},
 					datetime: undefined,
 					season: {},
 					seasonteamA: {},
