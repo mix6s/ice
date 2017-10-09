@@ -142,10 +142,15 @@ class DefaultController extends Controller
 			$builder
 				->andWhere('g.datetime >= :start')
 				->andWhere('g.datetime < :end')
-				->setParameter('start', sprintf('%d-%d-1 00:00:00', $year, $month))
+				->setParameter(
+					'start',
+					new \DateTime(sprintf('%d-%d-1 00:00:00', $year, $month)),
+					\Doctrine\DBAL\Types\Type::DATETIME
+				)
 				->setParameter(
 					'end',
-					sprintf('%d-%d-1 00:00:00', $month == 12 ? $year + 1 : $year, $month == 12 ? 1 : $month)
+					new \DateTime(sprintf('%d-%d-1 00:00:00', $month == 12 ? $year + 1 : $year, $month == 12 ? 1 : $month)),
+					\Doctrine\DBAL\Types\Type::DATETIME
 				);
 		}
 		$games = $builder
