@@ -62,6 +62,7 @@
                     <td>
                         {{ game.datetime|date("d.m.Y H:i") }}
                         <div>{{ game.datetime|localizeddate('none', 'none', 'ru_RU', null, "EEEE") }}</div>
+                        <div>{{ game.place }}</div>
                     </td>
                     <td>
                         <a href="{{ url('team.index', {id: game.seasonteamA.team.id}) }}">{{ game.seasonteamA.team.metadata.title  }}</a> - <a href="{{ url('team.index', {id: game.seasonteamB.team.id}) }}">{{ game.seasonteamB.team.metadata.title }}</a>
