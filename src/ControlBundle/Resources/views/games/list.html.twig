@@ -41,15 +41,7 @@
 			computed: {},
 			methods: {
 				showAddGamePopup: function () {
-					this.$refs.modal.show('gameModal', {
-                        id: null,
-                        membersA: {},
-                        membersB: {},
-                        datetime: undefined,
-                        season: {},
-                        seasonteamA: {},
-                        seasonteamB: {},
-                    }, 'modal-lg');
+					this.$refs.modal.show('gameModal', {}, 'modal-lg');
 				},
 				setGames: function (games) {
 					this.games = games.filter(function (game) {
