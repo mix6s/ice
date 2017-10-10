@@ -16,7 +16,7 @@
                         </div>
                         <a href="{{ url('team.index', {id: game.seasonteamA.team.id}) }}" class="game__team-name">{{ game.seasonTeamA.team.metadata.title }}</a>
                     </div>
-                    <div class="game__points">{{ isStarted ? scoreA : '-' }}</div>
+                    <div class="game__points">{{ game|scoreA }}</div>
                 </div>
                 <div class="game__team game__team--guests">
                     <div class="game__team-info">
@@ -25,7 +25,7 @@
                         </div>
                         <a href="{{ url('team.index', {id: game.seasonteamB.team.id}) }}" class="game__team-name">{{ game.seasonTeamB.team.metadata.title }}</a>
                     </div>
-                    <div class="game__points game__points--dots">{{ isStarted ? scoreB : '-' }}</div>
+                    <div class="game__points game__points--dots">{{  game|scoreB }}</div>
                 </div>
             </div>
         </div>
@@ -119,10 +119,10 @@
                     </tr>#}
                     <tr class="table-total">
                         <td>Итого</td>
-                        <td>{{ statistic.teamABullets }}</td>
-                        <td>{{ statistic.teamBBullets }}</td>
-                        <td>{{ statistic.teamAPenaltyTime }}</td>
-                        <td>{{ statistic.teamBPenaltyTime }}</td>
+                        <td>{{ game.state == 1 ? statistic.teamABullets : '-'}}</td>
+                        <td>{{ game.state == 1 ? statistic.teamBBullets : '-'}}</td>
+                        <td>{{ game.state == 1 ? statistic.teamAPenaltyTime : '-'}}</td>
+                        <td>{{ game.state == 1 ? statistic.teamBPenaltyTime : '-'}}</td>
                     </tr>
                 </table>
             </div>
