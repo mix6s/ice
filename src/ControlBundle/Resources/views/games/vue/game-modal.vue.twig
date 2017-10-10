@@ -228,8 +228,8 @@
 					_seasonteam: seasonteam,
 					_timeFormatted: secToTime(event.seconds_from_start ? event.seconds_from_start : 0),
 					time: secToTime(event.duration ? event.duration : 0),
-                    goals: 0,
-                    bullets: 0,
+                    goals: null,
+                    bullets: null,
 					_id: self.getNextEventId()
 				}, event));
 			},

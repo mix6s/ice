@@ -69,7 +69,8 @@ class DefaultController extends Controller
 			'scoreA' => $scoreA,
 			'scoreB' => $scoreB,
 			'scoreMap' => $scoreMap,
-			'isStarted' => $game->getDatetime()->getTimestamp() <= (new\DateTime())->getTimestamp()
+			'isStarted' => $game->getDatetime()->getTimestamp() <= (new\DateTime())->getTimestamp(),
+			'statistic' => $this->get('app.statistic.aggregator')->getGameStatistic($game)
 		]);
 	}
 

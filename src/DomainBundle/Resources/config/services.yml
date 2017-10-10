@@ -18,6 +18,10 @@ services:
     domain.repository.game:
         class: DomainBundle\Repository\GameRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        calls:
+            - method: setCache
+              arguments:
+                  - '@app.cache'
         arguments:
             - Domain\Entity\Game
     domain.repository.season:

@@ -91,19 +91,19 @@
                 <table class="table table--summary">
                     <tr>
                         <th>Период</th>
-                        <th>Броски СибКом</th>
-                        <th>Броски Торпедо</th>
-                        <th>Удаления СибКом</th>
-                        <th>Удаления Торпедо</th>
+                        <th>Броски {{ game.seasonTeamA.team.metadata.title }}</th>
+                        <th>Броски {{ game.seasonTeamB.team.metadata.title }}</th>
+                        <th>Удаления {{ game.seasonTeamA.team.metadata.title }}</th>
+                        <th>Удаления {{ game.seasonTeamB.team.metadata.title }}</th>
+                    </tr>
+                    {#<tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
                     </tr>
                     <tr>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
                         <td>2</td>
                         <td>2</td>
                         <td>2</td>
@@ -116,13 +116,13 @@
                         <td>3</td>
                         <td>3</td>
                         <td>3</td>
-                    </tr>
+                    </tr>#}
                     <tr class="table-total">
                         <td>Итого</td>
-                        <td>44</td>
-                        <td>44</td>
-                        <td>44</td>
-                        <td>44</td>
+                        <td>{{ statistic.teamABullets }}</td>
+                        <td>{{ statistic.teamBBullets }}</td>
+                        <td>{{ statistic.teamAPenaltyTime }}</td>
+                        <td>{{ statistic.teamBPenaltyTime }}</td>
                     </tr>
                 </table>
             </div>

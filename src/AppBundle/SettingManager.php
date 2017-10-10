@@ -94,6 +94,9 @@ class SettingManager
 
 		$qb = $this->em->createQueryBuilder();
 		$this->settings = $qb->from('AppBundle:Setting', 's')->select('s')->getQuery()->getResult();
+		$cached = $this->cache->getItem(self::CACHE_KEY);
+		$cached->set($this->settings);
+		$this->cache->save($cached);
 		if (!empty($this->settings)) {
 			return $this->settings;
 		}

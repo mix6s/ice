@@ -42,3 +42,10 @@ services:
     app.policy.game_score_policy:
         class: AppBundle\Policy\GameScorePolicy
         arguments: ['@domain.repository.game.events']
+
+    app.statistic.aggregator:
+        class: AppBundle\Statistic\Aggregator
+        arguments: ['@app.cache', '@domain.repository.game', '@domain.repository.seasonteam', '@domain.repository.seasonteammember', '@domain.repository.game.events']
+    app.cache:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments: [ '@app.cache.data.adapter', '@app.cache.tags.adapter' ]

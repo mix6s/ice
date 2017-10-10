@@ -11,10 +11,12 @@ namespace DomainBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Domain\Entity\Game;
+use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\GameRepositoryInterface;
 use DomainBundle\Identity\GameIdentity;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
 /**
  * Class GameRepository
@@ -25,6 +27,11 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	const DEFAULT_LIMIT = 20;
 
 	/**
+	 * @var TagAwareAdapter
+	 */
+	private $cache;
+
+	/**
 	 * @return int
 	 */
 	public function getNextId(): int
@@ -33,6 +40,14 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 		$this->getEntityManager()->persist($identity);
 		$this->getEntityManager()->flush($identity);
 		return $identity->getId();
+	}
+
+	/**
+	 * @param TagAwareAdapter $cache
+	 */
+	public function setCache(TagAwareAdapter $cache)
+	{
+		$this->cache = $cache;
 	}
 
 	/**
@@ -55,6 +70,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	 */
 	public function save(Game $game)
 	{
+		$this->cache->invalidateTags(['game.' . $game->getId()]);
 		$this->getEntityManager()->persist($game);
 	}
 
@@ -77,6 +93,20 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 			->where('g.seasonTeamA = :team')
 			->orWhere('g.seasonTeamB = :team')
 			->setParameter('team', $seasonTeam)
+			->getQuery()
+			->getResult();
+	}
+
+	/**
+	 * @return Game[]
+	 */
+	public function findBySeason(Season $season)
+	{
+		return $this->getEntityManager()->createQueryBuilder()
+			->select('g')
+			->from('Domain:Game', 'g')
+			->where('g.season = :season')
+			->setParameter('season', $season)
 			->getQuery()
 			->getResult();
 	}

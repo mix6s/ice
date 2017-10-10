@@ -15,7 +15,10 @@ framework:
         # defaults to memcached://localhost
         default_memcached_provider: "memcached://%memcache_host%:11211"
         pools:
-            app.cache:
+            app.cache.data.adapter:
+                adapter: cache.adapter.memcached
+                public: true
+            app.cache.tags.adapter:
                 adapter: cache.adapter.memcached
                 public: true
     #esi: ~
