@@ -63,6 +63,22 @@ class GoalEventData
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function hasAssistantAId(): bool
+	{
+		return !empty($this->assistantAId);
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasAssistantBId(): bool
+	{
+		return !empty($this->assistantBId);
+	}
+
+	/**
 	 * @return int|null
 	 */
 	public function getAssistantBId()

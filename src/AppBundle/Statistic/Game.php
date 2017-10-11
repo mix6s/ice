@@ -9,8 +9,14 @@
 namespace AppBundle\Statistic;
 
 
+/**
+ * Class Game
+ * @package AppBundle\Statistic
+ */
 class Game
 {
+	private $teamAGoals = 0;
+	private $teamBGoals = 0;
 	private $teamABullets = 0;
 	private $teamBBullets = 0;
 	private $teamAPenaltyTime = 0;
@@ -78,5 +84,37 @@ class Game
 	public function setTeamBPenaltyTime(int $teamBPenaltyTime)
 	{
 		$this->teamBPenaltyTime = $teamBPenaltyTime;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTeamAGoals(): int
+	{
+		return $this->teamAGoals;
+	}
+
+	/**
+	 * @param int $teamAGoals
+	 */
+	public function setTeamAGoals(int $teamAGoals)
+	{
+		$this->teamAGoals = $teamAGoals;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTeamBGoals(): int
+	{
+		return $this->teamBGoals;
+	}
+
+	/**
+	 * @param int $teamBGoals
+	 */
+	public function setTeamBGoals(int $teamBGoals)
+	{
+		$this->teamBGoals = $teamBGoals;
 	}
 }

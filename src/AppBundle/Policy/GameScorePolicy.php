@@ -9,6 +9,7 @@
 namespace AppBundle\Policy;
 
 
+use AppBundle\Statistic\Aggregator;
 use Domain\Entity\Game;
 use Domain\Entity\GoalEvent;
 use DomainBundle\Repository\GameEventRepository;
@@ -21,14 +22,16 @@ class GameScorePolicy
 {
 	private $scoresByGame = [];
 	private $gameEventRepository;
+	private $aggregator;
 
 	/**
 	 * GameScorePolicy constructor.
 	 * @param GameEventRepository $gameEventRepository
 	 */
-	public function __construct(GameEventRepository $gameEventRepository)
+	public function __construct(GameEventRepository $gameEventRepository, Aggregator $aggregator)
 	{
 		$this->gameEventRepository = $gameEventRepository;
+		$this->aggregator = $aggregator;
 	}
 
 	/**
@@ -55,7 +58,7 @@ class GameScorePolicy
 	 */
 	private function getScores(Game $game)
 	{
-		if ($game->getDatetime()->getTimestamp() < (new \DateTime())->getTimestamp()) {
+		if ($game->getDatetime()->getTimestamp() > (new \DateTime())->getTimestamp()) {
 			return [null, null];
 		}
 		if (array_key_exists($game->getId(), $this->scoresByGame)) {
@@ -63,21 +66,11 @@ class GameScorePolicy
 		}
 
 		$events = $this->gameEventRepository->findByGame($game);
-		if (empty($events) && $game->getState() !== Game::STATE_FINISHED) {
+		if (count($events) === 0 && $game->getState() !== Game::STATE_FINISHED) {
 			return [null, null];
 		}
-		$scoreA = 0;
-		$scoreB = 0;
-		foreach ($events as $event) {
-			if ($event instanceof GoalEvent) {
-				if ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamA()->getId()) {
-					$scoreA++;
-				} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
-					$scoreB++;
-				}
-			}
-		}
-		$this->scoresByGame[$game->getId()] = [$scoreA, $scoreB];
+		$gameStatistic = $this->aggregator->getGameStatistic($game);
+		$this->scoresByGame[$game->getId()] = [$gameStatistic->getTeamAGoals(), $gameStatistic->getTeamBGoals()];
 		return $this->scoresByGame[$game->getId()];
 	}
 }

@@ -41,7 +41,7 @@ services:
 
     app.policy.game_score_policy:
         class: AppBundle\Policy\GameScorePolicy
-        arguments: ['@domain.repository.game.events']
+        arguments: ['@domain.repository.game.events', '@app.statistic.aggregator']
 
     app.statistic.aggregator:
         class: AppBundle\Statistic\Aggregator

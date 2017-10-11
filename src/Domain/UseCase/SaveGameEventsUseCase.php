@@ -45,13 +45,13 @@ class SaveGameEventsUseCase
 			$eventId = $this->getContainer()->getGameEventRepository()->getNextId();
 			if ($eventData instanceof GoalEventData) {
 				$member = $this->getContainer()->getSeasonTeamMemberRepository()->findById($eventData->getMemberId());
-				if ($eventData->getAssistantAId() !== null) {
+				if ($eventData->hasAssistantAId()) {
 					$assistantA = $this->getContainer()->getSeasonTeamMemberRepository()->findById($eventData->getAssistantAId());
 				} else {
 					$assistantA = null;
 				}
 
-				if ($eventData->getAssistantBId() !== null) {
+				if ($eventData->hasAssistantBId()) {
 					$assistantB = $this->getContainer()->getSeasonTeamMemberRepository()->findById($eventData->getAssistantBId());
 				} else {
 					$assistantB = null;

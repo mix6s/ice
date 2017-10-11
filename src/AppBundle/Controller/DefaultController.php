@@ -44,6 +44,8 @@ class DefaultController extends Controller
 		$game = $this->get('domain.repository.game')->findById($id);
 		$events = $this->get('domain.repository.game.events')->findByGame($game);
 		$scoreMap = [];
+		$scoreA = 0;
+		$scoreB = 0;
 		$eventsByPeriod = [];
 		foreach ($events as $event) {
 			$num = $event->getPeriod();
@@ -51,6 +53,14 @@ class DefaultController extends Controller
 				$eventsByPeriod[$num] = [];
 			}
 			$eventsByPeriod[$num][] = $event;
+			if ($event instanceof GoalEvent) {
+				if ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamA()->getId()) {
+					$scoreA++;
+				} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
+					$scoreB++;
+				}
+				$scoreMap[$event->getId()] = $scoreA . ':' . $scoreB;
+			}
 		}
 		return $this->render('game.twig', [
 			'game' => $game,
