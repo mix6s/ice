@@ -55,7 +55,7 @@ class GameScorePolicy
 	 */
 	private function getScores(Game $game)
 	{
-		if ($game->getState() === Game::STATE_DEFAULT) {
+		if ($game->getDatetime()->getTimestamp() < (new \DateTime())->getTimestamp()) {
 			return [null, null];
 		}
 		if (array_key_exists($game->getId(), $this->scoresByGame)) {
@@ -63,6 +63,9 @@ class GameScorePolicy
 		}
 
 		$events = $this->gameEventRepository->findByGame($game);
+		if (empty($events) && $game->getState() !== Game::STATE_FINISHED) {
+			return [null, null];
+		}
 		$scoreA = 0;
 		$scoreB = 0;
 		foreach ($events as $event) {
