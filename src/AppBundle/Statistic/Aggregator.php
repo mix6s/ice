@@ -11,10 +11,12 @@ namespace AppBundle\Statistic;
 
 use AppBundle\Policy\GameScorePolicy;
 use Domain\Entity\Game;
+use Domain\Entity\GameEvent;
 use Domain\Entity\GoalEvent;
 use Domain\Entity\GoalkeeperEvent;
 use Domain\Entity\PenaltyEvent;
 use Domain\Entity\Season;
+use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
 use DomainBundle\Repository\GameEventRepository;
 use DomainBundle\Repository\GameRepository;
@@ -35,6 +37,7 @@ class Aggregator
 	private $cache;
 
 	private $games = [];
+	private $seasonTeams = [];
 	private $seasonTeamMembers = [];
 
 	public function __construct(
@@ -50,6 +53,103 @@ class Aggregator
 		$this->seasonTeamRepository = $seasonTeamRepository;
 		$this->seasonTeamMemberRepository = $seasonTeamMemberRepository;
 		$this->gameEventRepository = $gameEventRepository;
+	}
+
+	/**
+	 * @param SeasonTeam $seasonTeam
+	 * @return \AppBundle\Statistic\SeasonTeam
+	 */
+	public function getSeasonTeamStatistic(SeasonTeam $seasonTeam): \AppBundle\Statistic\SeasonTeam
+	{
+		if (array_key_exists($seasonTeam->getId(), $this->seasonTeams)) {
+			return $this->seasonTeams[$seasonTeam->getId()];
+		}
+
+		$this->seasonTeams[$seasonTeam->getId()] = $this->cache->getItem('stat.seasonteam.' . $seasonTeam->getId())->get();
+		if (!empty($this->seasonTeams[$seasonTeam->getId()])) {
+			return $this->seasonTeams[$seasonTeam->getId()];
+		}
+
+		$stat = new \AppBundle\Statistic\SeasonTeam();
+		$games = $this->gameRepository->findBySeasonTeam($seasonTeam);
+		foreach ($games as $game) {
+			if ($game->getState() !== Game::STATE_FINISHED) {
+				continue;
+			}
+			$gameStat = $this->getGameStatistic($game);
+
+			$stat->setGamesCount($stat->getGamesCount() + 1);
+
+			$lastEventPeriod = GameEvent::PERIOD_1;
+			$events = $this->gameEventRepository->findByGame($game);
+			foreach ($events as $event) {
+				switch ($event->getType()) {
+					case 'goalkeeper':
+						/** @var GoalkeeperEvent $event */
+						break;
+					case 'goal':
+						/** @var GoalEvent $event */
+						if ($event->getMember()->getSeasonTeam()->getId() === $seasonTeam->getId()) {
+							$stat->setGoals($stat->getGoals() + 1);
+						} else {
+							$stat->setGoalsFailed($stat->getGoalsFailed() + 1);
+						}
+						$lastEventPeriod = $event->getPeriod();
+						break;
+					case 'penalty':
+						/** @var PenaltyEvent $event */
+						$lastEventPeriod = $event->getPeriod();
+						break;
+					default:
+						break;
+				}
+			}
+			$isWinner = false;
+			if ($game->getSeasonTeamA()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() > $gameStat->getTeamBGoals()
+				|| $game->getSeasonTeamB()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() < $gameStat->getTeamBGoals()) {
+				$isWinner = true;
+			}
+			if ($isWinner) {
+				switch ($lastEventPeriod) {
+					case GameEvent::PERIOD_1:
+					case GameEvent::PERIOD_2:
+					case GameEvent::PERIOD_3:
+						$stat->setWinInMain($stat->getWinInMain() + 1);
+						break;
+					case GameEvent::PERIOD_OVERTIME:
+						$stat->setWinInOvertime($stat->getWinInOvertime() + 1);
+						break;
+					case GameEvent::PERIOD_BULLETS:
+						$stat->setWinInBullets($stat->getWinInBullets() + 1);
+						break;
+					default:
+						break;
+				}
+			} else {
+				switch ($lastEventPeriod) {
+					case GameEvent::PERIOD_1:
+					case GameEvent::PERIOD_2:
+					case GameEvent::PERIOD_3:
+						$stat->setLoseInMain($stat->getLoseInMain() + 1);
+						break;
+					case GameEvent::PERIOD_OVERTIME:
+						$stat->setLoseInOvertime($stat->getLoseInOvertime() + 1);
+						break;
+					case GameEvent::PERIOD_BULLETS:
+						$stat->setLoseInBullets($stat->getLoseInBullets() + 1);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
+		$this->seasonTeams[$seasonTeam->getId()] = $stat;
+		$cached = $this->cache->getItem('stat.seasonteam.' . $seasonTeam->getId());
+		$cached->tag(['seasonteam.' . $seasonTeam->getId()]);
+		$cached->set($stat);
+		$this->cache->save($cached);
+		return $this->seasonTeams[$seasonTeam->getId()];
 	}
 
 	/**

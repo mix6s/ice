@@ -103,6 +103,14 @@ class DefaultController extends Controller
 	}
 
 	/**
+	 * @Route("/standings/{id}", name="standings")
+	 */
+	public function seasonStatistic(int $id, Request $request)
+	{
+
+	}
+
+	/**
 	 * @Route("/calendar", name="calendar")
 	 */
 	public function calendarAction(Request $request)
