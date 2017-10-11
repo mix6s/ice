@@ -85,6 +85,7 @@ class ProfileController extends Controller
 		}
 
 		$seasonTeams = $this->get('domain.repository.seasonteam')->findByPlayer($player);
+		$members = $this->get('domain.repository.seasonteammember')->findByPlayer($player);
 		$isCurrentPlayer = false;
 		/** @var User $user */
 		$user = $this->getUser();
@@ -98,7 +99,7 @@ class ProfileController extends Controller
 			'profile' => $player->getMetadata(),
 			'member' => $seasonTeamMember,
 			'isCurrentPlayer' => $isCurrentPlayer,
-			'seasonTeams' => $seasonTeams
+			'members' => $members
 		]);
 	}
 

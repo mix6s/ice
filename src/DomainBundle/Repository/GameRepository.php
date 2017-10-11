@@ -15,6 +15,7 @@ use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\GameRepositoryInterface;
+use DomainBundle\CacheTrait;
 use DomainBundle\Identity\GameIdentity;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
@@ -24,12 +25,9 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapter;
  */
 class GameRepository extends EntityRepository implements GameRepositoryInterface
 {
-	const DEFAULT_LIMIT = 20;
+	use CacheTrait;
 
-	/**
-	 * @var TagAwareAdapter
-	 */
-	private $cache;
+	const DEFAULT_LIMIT = 20;
 
 	/**
 	 * @return int
@@ -42,13 +40,6 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 		return $identity->getId();
 	}
 
-	/**
-	 * @param TagAwareAdapter $cache
-	 */
-	public function setCache(TagAwareAdapter $cache)
-	{
-		$this->cache = $cache;
-	}
 
 	/**
 	 * @param int $id
@@ -70,7 +61,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	 */
 	public function save(Game $game)
 	{
-		$this->cache->invalidateTags(['game.' . $game->getId()]);
+		$this->getCache()->invalidateTags(['game.' . $game->getId()]);
 		$this->getEntityManager()->persist($game);
 	}
 

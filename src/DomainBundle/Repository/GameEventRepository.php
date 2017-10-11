@@ -12,8 +12,12 @@ namespace DomainBundle\Repository;
 use Doctrine\ORM\EntityManager;
 use Domain\Entity\Game;
 use Domain\Entity\GameEvent;
+use Domain\Entity\GoalEvent;
+use Domain\Entity\GoalkeeperEvent;
+use Domain\Entity\PenaltyEvent;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\GameEventRepositoryInterface;
+use DomainBundle\CacheTrait;
 use DomainBundle\Identity\GameEventIdentity;
 
 /**
@@ -22,6 +26,8 @@ use DomainBundle\Identity\GameEventIdentity;
  */
 class GameEventRepository implements GameEventRepositoryInterface
 {
+	use CacheTrait;
+
 	private $em;
 
 	/**
@@ -58,6 +64,29 @@ class GameEventRepository implements GameEventRepositoryInterface
 	 */
 	public function save(GameEvent $event)
 	{
+		switch ($event->getType()) {
+			case 'goalkeeper':
+				/** @var GoalkeeperEvent $event */
+				$this->getCache()->invalidateTags(['member.' . $event->getMember()->getId()]);
+				break;
+			case 'goal':
+				/** @var GoalEvent $event */
+				$this->getCache()->invalidateTags(['member.' . $event->getMember()->getId()]);
+				if ($event->getAssistantA() !== null) {
+					$this->getCache()->invalidateTags(['member.' . $event->getAssistantA()->getId()]);
+				}
+				if ($event->getAssistantB() !== null) {
+					$this->getCache()->invalidateTags(['member.' . $event->getAssistantB()->getId()]);
+				}
+				break;
+			case 'penalty':
+				/** @var PenaltyEvent $event */
+				$this->getCache()->invalidateTags(['member.' . $event->getMember()->getId()]);
+				break;
+			default:
+				break;
+		}
+		$this->getCache()->invalidateTags(['member.' . $event->getGame()->getId()]);
 		$this->getEntityManager()->persist($event);
 	}
 

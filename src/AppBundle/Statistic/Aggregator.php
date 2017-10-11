@@ -9,6 +9,7 @@
 namespace AppBundle\Statistic;
 
 
+use AppBundle\Policy\GameScorePolicy;
 use Domain\Entity\Game;
 use Domain\Entity\GoalEvent;
 use Domain\Entity\GoalkeeperEvent;
@@ -81,12 +82,22 @@ class Aggregator
 			foreach ($events as $event) {
 				switch ($event->getType()) {
 					case 'goalkeeper':
+						/** @var GoalkeeperEvent $event */
+						$stat->setGoalsFailed($stat->getGoalsFailed() + $event->getGoals());
+						$stat->setTotalSecondsTime($stat->getTotalSecondsTime() + $event->getDuration());
 						break;
 					case 'goal':
 						/** @var GoalEvent $event */
+						$assistants = [];
+						if ($event->getAssistantA()) {
+							$assistants[] = $event->getAssistantA()->getId();
+						}
+						if ($event->getAssistantB()) {
+							$assistants[] = $event->getAssistantB()->getId();
+						}
 						if ($event->getMember()->getId() === $member->getId()) {
 							$stat->setGoals($stat->getGoals() + 1);
-						} elseif (in_array($member->getId(), [$event->getAssistantB()->getId(), $event->getAssistantB()->getId()])) {
+						} elseif (in_array($member->getId(), $assistants)) {
 							$stat->setAssistantGoals($stat->getAssistantGoals() + 1);
 						}
 						break;
@@ -99,6 +110,9 @@ class Aggregator
 					default:
 						break;
 				}
+			}
+			if ($stat->getGoalsFailed() === 0) {
+				$stat->setZeroGameCount($stat->getZeroGameCount() + 1);
 			}
 		}
 		$this->seasonTeamMembers[$member->getId()] = $stat;
