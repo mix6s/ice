@@ -4,6 +4,7 @@ namespace AppBundle;
 
 use Domain\Entity\Game;
 use Domain\Entity\PenaltyEvent;
+use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
 use DomainBundle\Entity\PlayerMetadata;
 use Symfony\Component\DependencyInjection\Container;
@@ -44,6 +45,7 @@ class TwigAppExtension extends \Twig_Extension
 			new \Twig_SimpleFilter('eventPeriodType', [$this, 'eventPeriodType']),
 			new \Twig_SimpleFilter('gameDatetime', [$this, 'gameDatetimeFilter']),
 			new \Twig_SimpleFilter('memberStatistic', [$this, 'memberStatistic']),
+			new \Twig_SimpleFilter('seasonTeamStatistic', [$this, 'seasonTeamStatistic']),
 		];
 	}
 
@@ -196,5 +198,14 @@ class TwigAppExtension extends \Twig_Extension
 	public function memberStatistic(SeasonTeamMember $member): \AppBundle\Statistic\SeasonTeamMember
 	{
 		return $this->container->get('app.statistic.aggregator')->getSeasonTeamMemberStatistic($member);
+	}
+
+	/**
+	 * @param SeasonTeam $seasonTeam
+	 * @return Statistic\SeasonTeam
+	 */
+	public function seasonTeamStatistic(SeasonTeam $seasonTeam): \AppBundle\Statistic\SeasonTeam
+	{
+		return $this->container->get('app.statistic.aggregator')->getSeasonTeamStatistic($seasonTeam);
 	}
 }
