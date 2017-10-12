@@ -18,6 +18,7 @@ use Domain\Entity\SeasonTeam;
 use Domain\Entity\Team;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\SeasonTeamRepositoryInterface;
+use DomainBundle\CacheTrait;
 use DomainBundle\Identity\SeasonTeamIdentity;
 
 /**
@@ -26,6 +27,7 @@ use DomainBundle\Identity\SeasonTeamIdentity;
  */
 class SeasonTeamRepository extends EntityRepository implements SeasonTeamRepositoryInterface
 {
+	use CacheTrait;
 
 	/**
 	 * @return int
@@ -60,6 +62,7 @@ class SeasonTeamRepository extends EntityRepository implements SeasonTeamReposit
 	public function findBySeason(Season $season): array
 	{
 		return $this->createQueryBuilder('st')
+			->select('st', 'l', 'lm', 't', 'tm')
 			->join('st.league', 'l')
 			->join('l.metadata', 'lm')
 			->join('st.team', 't')

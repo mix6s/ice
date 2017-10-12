@@ -37,6 +37,10 @@ services:
     domain.repository.seasonteam:
         class: DomainBundle\Repository\SeasonTeamRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        calls:
+            - method: setCache
+              arguments:
+                  - '@app.cache'
         arguments:
             - Domain\Entity\SeasonTeam
     domain.repository.game.events:
