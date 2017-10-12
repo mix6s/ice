@@ -21,12 +21,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/profile")
- * @Security("has_role('ROLE_USER')")
  */
 class ProfileController extends Controller
 {
 	/**
 	 * @Route("", name="profile.current")
+	 * @Security("has_role('ROLE_USER')")
 	 */
 	public function currentAction()
 	{
