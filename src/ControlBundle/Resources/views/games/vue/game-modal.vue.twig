@@ -186,7 +186,7 @@
 					datetime: undefined,
 					season: {},
 					seasonteamA: {},
-					seasonteamB: {},
+					seasonteamB: {}
 				},
                 membersA: [],
                 membersB: [],
@@ -202,13 +202,34 @@
 			},
             saveData: function () {
 			    var events = [];
+			    var game = {
+			        id: this.game.id,
+                    type: this.game.type,
+                    place: this.game.place,
+                    datetime: this.game.datetime,
+                    state: this.game.state,
+                    membersA: this.game.membersA,
+                    membersB: this.game.membersB,
+                    season: {id: this.game.season.id},
+                    seasonteamA: {id: this.game.seasonteamA.id},
+                    seasonteamB: {id: this.game.seasonteamB.id}
+                };
+
 			    for (var i in this.events) {
-			        var event = Object.assign({}, this.events[i]);
-			        delete event._members;
-			        delete event._seasonteam;
-                    events.push(event);
+                    events.push({
+                        member: this.events[i].member ? {id: this.events[i].member.id} : {},
+                        period: this.events[i].period,
+                        assistant_a: this.events[i].assistant_a ? {id: this.events[i].assistant_a.id} : {},
+                        assistant_b: this.events[i].assistant_b ? {id: this.events[i].assistant_b.id} : {},
+                        time: this.events[i].time,
+                        goals: this.events[i].goals,
+                        bullets: this.events[i].bullets,
+                        penalty_time_type: this.events[i].penalty_time_type,
+                        type: this.events[i].type,
+                        _timeFormatted: this.events[i]._timeFormatted
+                    });
                 }
-                return {game: this.game, events: events}
+                return {game: game, events: events}
 			}
 		},
 		methods: {
