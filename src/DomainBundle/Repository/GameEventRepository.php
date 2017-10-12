@@ -166,6 +166,12 @@ class GameEventRepository implements GameEventRepositoryInterface
 		foreach ($penaltyEvent as $event) {
 			$events[] = $event;
 		}
+		usort($events, function (GameEvent $a, GameEvent $b) {
+			if ($a->getSecondsFromStart() === $b->getSecondsFromStart()) {
+				return 0;
+			}
+			return ($a->getSecondsFromStart() > $b->getSecondsFromStart()) ? -1 : 1;
+		});
 		foreach ($keeperEvent as $event) {
 			$events[] = $event;
 		}
