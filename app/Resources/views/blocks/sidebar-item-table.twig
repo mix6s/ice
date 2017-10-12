@@ -10,7 +10,7 @@
         </tr>
         {% for num,stat in teams %}
         <tr>
-            <td>{{ num+1 }}</td>
+            <td>{{ num + 1 }}</td>
             <td><a href="{{ url('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
             <td>{{ stat.gamesCount }}</td>
             <td>{{ stat.winInMain }}</td>
