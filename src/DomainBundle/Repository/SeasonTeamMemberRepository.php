@@ -32,7 +32,10 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 	public function findBySeasonTeam(SeasonTeam $seasonTeam): array
 	{
 		return $this->createQueryBuilder('stm')
+			->select('stm', 'p', 'pm')
 			->where('stm.seasonTeam = :seasonTeam')
+			->join('stm.player', 'p')
+			->join('p.metadata', 'pm')
 			->setParameters(['seasonTeam' => $seasonTeam])
 			->getQuery()
 			->getResult();
