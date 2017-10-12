@@ -201,7 +201,14 @@
                 return this.datetimeMoment.format('DD.MM.YYYY HH:mm')
 			},
             saveData: function () {
-                return {game: this.game, events: this.events}
+			    var events = [];
+			    for (var i in this.events) {
+			        var event = Object.assign({}, this.events[i]);
+			        delete event._members;
+			        delete event._seasonteam;
+                    events.push(event);
+                }
+                return {game: this.game, events: events}
 			}
 		},
 		methods: {
