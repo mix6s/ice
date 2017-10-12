@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="game__statistics">
-            {% set periods = {0: '1-й период', 1: '2-й период', 2: '3-й период', 3: 'Овертайм', 4: 'Броски'} %}
+            {% set periods = {1: '1-й период', 2: '2-й период', 3: '3-й период', 4: 'Овертайм', 5: 'Броски'} %}
             {% for num, period in eventsByPeriod %}
             <div class="game__period">
                 <div class="game__period-header">{{ periods[num]  }}</div>
