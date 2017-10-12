@@ -174,6 +174,6 @@ class SeasonTeam
 	 */
 	public function getScores(): int
 	{
-		return $this->winInMain * 3 + ($this->winInBullets + $this->winInOvertime) * 2 + ($this->loseInBullets + $this->loseInOvertime) * 2;
+		return $this->winInMain * 3 + ($this->winInBullets + $this->winInOvertime) * 2 + ($this->loseInBullets + $this->loseInOvertime) * 1;
 	}
 }
