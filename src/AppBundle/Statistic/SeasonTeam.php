@@ -15,6 +15,7 @@ namespace AppBundle\Statistic;
  */
 class SeasonTeam
 {
+	private $seasonTeam;
 	private $gamesCount = 0;
 	private $winInMain = 0;
 	private $winInBullets = 0;
@@ -24,6 +25,15 @@ class SeasonTeam
 	private $loseInOvertime = 0;
 	private $goals = 0;
 	private $goalsFailed = 0;
+
+	/**
+	 * SeasonTeam constructor.
+	 * @param \Domain\Entity\SeasonTeam $seasonTeam
+	 */
+	public function __construct(\Domain\Entity\SeasonTeam $seasonTeam)
+	{
+		$this->seasonTeam = $seasonTeam;
+	}
 
 	/**
 	 * @return int
@@ -175,5 +185,13 @@ class SeasonTeam
 	public function getScores(): int
 	{
 		return $this->winInMain * 3 + ($this->winInBullets + $this->winInOvertime) * 2 + ($this->loseInBullets + $this->loseInOvertime) * 1;
+	}
+
+	/**
+	 * @return \Domain\Entity\SeasonTeam
+	 */
+	public function getSeasonTeam(): \Domain\Entity\SeasonTeam
+	{
+		return $this->seasonTeam;
 	}
 }

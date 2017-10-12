@@ -30,26 +30,21 @@ class TwigAppGlobal implements ContainerAwareInterface
 	{
 		$currentSeasonId = $this->container->get('settings.manager')->getCurrentSeasonId();
 		if (empty($currentSeasonId)) {
-            return [
-                'byLeague' => [],
-                'stats' => []
-            ];
-        }
-		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
-		$teams = $this->container->get('domain.repository.seasonteam')->findBySeason($season);
-		$byLeague = [];
-		$stats = [];
-		foreach ($teams as $seasonTeam) {
-			$stats[$seasonTeam->getId()] = [0,0,0];
-			if (!array_key_exists($seasonTeam->getLeague()->getId(), $byLeague)) {
-				$byLeague[$seasonTeam->getLeague()->getId()] = ['league' => $seasonTeam->getLeague(), 'seasonteams' => []];
-			}
-			$byLeague[$seasonTeam->getLeague()->getId()]['seasonteams'][] = $seasonTeam;
+			return [];
 		}
-		return [
-			'byLeague' => $byLeague,
-			'stats' => $stats
-		];
+		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
+		$stat = $this->container->get('app.statistic.aggregator')->getSeasonStatistic($season);
+		$byLeague = [];
+		foreach ($stat as $item) {
+			if (!array_key_exists($item->getSeasonTeam()->getLeague()->getId(), $byLeague)) {
+				$byLeague[$item->getSeasonTeam()->getLeague()->getId()] = [
+					'league' => $item->getSeasonTeam()->getLeague(),
+					'seasonteams' => []
+				];
+			}
+			$byLeague[$item->getSeasonTeam()->getLeague()->getId()]['seasonteams'][] = $item;
+		}
+		return $byLeague;
 	}
 
 	/**

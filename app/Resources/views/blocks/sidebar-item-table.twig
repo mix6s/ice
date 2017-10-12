@@ -8,13 +8,13 @@
             <th>В</th>
             <th>О</th>
         </tr>
-        {% for num,seasonteam in teams %}
+        {% for num,stat in teams %}
         <tr>
             <td>{{ num+1 }}</td>
-            <td><a href="{{ url('team.index', {id: seasonteam.team.id}) }}">{{ seasonteam.team.metadata.title }}</a></td>
-            <td>{{ seasonteam|seasonTeamStatistic.gamesCount }}</td>
-            <td>{{ seasonteam|seasonTeamStatistic.winInMain }}</td>
-            <td>{{ seasonteam|seasonTeamStatistic.scores }}</td>
+            <td><a href="{{ url('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
+            <td>{{ stat.gamesCount }}</td>
+            <td>{{ stat.winInMain }}</td>
+            <td>{{ stat.scores }}</td>
         </tr>
         {% endfor %}
     </table>

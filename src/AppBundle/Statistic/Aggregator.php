@@ -39,6 +39,7 @@ class Aggregator
 	private $games = [];
 	private $seasonTeams = [];
 	private $seasonTeamMembers = [];
+	private $seasons = [];
 
 	public function __construct(
 		AdapterInterface $cache,
@@ -56,6 +57,39 @@ class Aggregator
 	}
 
 	/**
+	 * @param Season $season
+	 * @return \AppBundle\Statistic\SeasonTeam[]
+	 */
+	public function getSeasonStatistic(Season $season)
+	{
+		if (array_key_exists($season->getId(), $this->seasons)) {
+			return $this->seasons[$season->getId()];
+		}
+		$stat = [];
+		$teams = $this->seasonTeamRepository->findBySeason($season);
+		foreach ($teams as $seasonTeam) {
+			$stat[] = $this->getSeasonTeamStatistic($seasonTeam);
+		}
+		usort($stat, [$this, 'sortSeasonTeams']);
+		$this->seasons[$season->getId()] = $stat;
+		return $this->seasons[$season->getId()];
+	}
+
+	/**
+	 * @param \AppBundle\Statistic\SeasonTeam $teamA
+	 * @param \AppBundle\Statistic\SeasonTeam $teamB
+	 * @return int
+	 */
+	private function sortSeasonTeams(\AppBundle\Statistic\SeasonTeam $teamA, \AppBundle\Statistic\SeasonTeam $teamB)
+	{
+		if ($teamA->getScores() < $teamB->getScores()) {
+			return 1;
+		} elseif ($teamA->getScores() > $teamB->getScores()) {
+			return -1;
+		}
+		return 0;
+	}
+	/**
 	 * @param SeasonTeam $seasonTeam
 	 * @return \AppBundle\Statistic\SeasonTeam
 	 */
@@ -70,7 +104,7 @@ class Aggregator
 			return $this->seasonTeams[$seasonTeam->getId()];
 		}
 
-		$stat = new \AppBundle\Statistic\SeasonTeam();
+		$stat = new \AppBundle\Statistic\SeasonTeam($seasonTeam);
 		$games = $this->gameRepository->findBySeasonTeam($seasonTeam);
 		foreach ($games as $game) {
 			if ($game->getState() !== Game::STATE_FINISHED) {

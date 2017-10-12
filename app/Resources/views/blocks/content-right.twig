@@ -16,7 +16,7 @@
         <div class="sidebar-table__title">Таблица</div>
         <div class="sidebar-table__list">
             {% set data = global.currentSeasonTeams %}
-            {% for item in data.byLeague %}
+            {% for item in global.currentSeasonTeams %}
                 {% include 'blocks/sidebar-item-table.twig' with {league: item.league, teams: item.seasonteams} %}
             {% endfor %}
         </div>
