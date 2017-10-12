@@ -32,7 +32,7 @@
         <div class="game__statistics">
             {% set periods = {1: '1-й период', 2: '2-й период', 3: '3-й период', 4: 'Овертайм', 5: 'Броски'} %}
             {% for num, period in periods %}
-            {% if eventsByPeriod[num] is not empty %}
+            {% if eventsByPeriod[num] is defined and eventsByPeriod[num] is not empty %}
             <div class="game__period">
                 <div class="game__period-header">{{ periods[num]  }}</div>
                 <div class="game__table">
