@@ -9,6 +9,7 @@ use Domain\Entity\SeasonTeamMember;
 use DomainBundle\Entity\PlayerMetadata;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
+use Twig_Function_Method;
 
 
 /**
@@ -29,6 +30,13 @@ class TwigAppExtension extends \Twig_Extension
 		$this->container = $container;
 	}
 
+	public function getFunctions()
+	{
+		return array(
+			"getCurrentSeasonStatistic" => new Twig_Function_Method($this, "getCurrentSeasonStatistic")
+		);
+	}
+
 	/**
 	 * @return array
 	 */
@@ -47,6 +55,30 @@ class TwigAppExtension extends \Twig_Extension
 			new \Twig_SimpleFilter('memberStatistic', [$this, 'memberStatistic']),
 			new \Twig_SimpleFilter('seasonTeamStatistic', [$this, 'seasonTeamStatistic']),
 		];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCurrentSeasonStatistic()
+	{
+		$currentSeasonId = $this->container->get('settings.manager')->getCurrentSeasonId();
+		if (empty($currentSeasonId)) {
+			return [];
+		}
+		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
+		$stat = $this->container->get('app.statistic.aggregator')->getSeasonStatistic($season);
+		$byLeague = [];
+		foreach ($stat as $item) {
+			if (!array_key_exists($item->getSeasonTeam()->getLeague()->getId(), $byLeague)) {
+				$byLeague[$item->getSeasonTeam()->getLeague()->getId()] = [
+					'league' => $item->getSeasonTeam()->getLeague(),
+					'seasonteams' => []
+				];
+			}
+			$byLeague[$item->getSeasonTeam()->getLeague()->getId()]['seasonteams'][] = $item;
+		}
+		return $byLeague;
 	}
 
 	/**
