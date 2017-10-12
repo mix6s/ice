@@ -170,7 +170,7 @@ class GameEventRepository implements GameEventRepositoryInterface
 			if ($a->getSecondsFromStart() === $b->getSecondsFromStart()) {
 				return 0;
 			}
-			return ($a->getSecondsFromStart() > $b->getSecondsFromStart()) ? -1 : 1;
+			return ($a->getSecondsFromStart() < $b->getSecondsFromStart()) ? -1 : 1;
 		});
 		foreach ($keeperEvent as $event) {
 			$events[] = $event;

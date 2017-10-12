@@ -183,8 +183,10 @@ class Aggregator
 				switch ($event->getType()) {
 					case 'goalkeeper':
 						/** @var GoalkeeperEvent $event */
-						$stat->setGoalsFailed($stat->getGoalsFailed() + $event->getGoals());
-						$stat->setTotalSecondsTime($stat->getTotalSecondsTime() + $event->getDuration());
+						if ($event->getMember()->getId() === $member->getId()) {
+							$stat->setGoalsFailed($stat->getGoalsFailed() + $event->getGoals());
+							$stat->setTotalSecondsTime($stat->getTotalSecondsTime() + $event->getDuration());
+						}
 						break;
 					case 'goal':
 						/** @var GoalEvent $event */
