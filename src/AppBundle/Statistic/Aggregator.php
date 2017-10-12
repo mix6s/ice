@@ -245,9 +245,9 @@ class Aggregator
 				case 'goalkeeper':
 					/** @var GoalkeeperEvent $event */
 					if ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamA()->getId()) {
-						$stat->setTeamABullets($stat->getTeamABullets() + $event->getBullets());
-					} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
 						$stat->setTeamBBullets($stat->getTeamBBullets() + $event->getBullets());
+					} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
+						$stat->setTeamABullets($stat->getTeamABullets() + $event->getBullets());
 					}
 					break;
 				case 'goal':
