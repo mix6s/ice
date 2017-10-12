@@ -65,6 +65,12 @@ class Aggregator
 		if (array_key_exists($season->getId(), $this->seasons)) {
 			return $this->seasons[$season->getId()];
 		}
+
+		$this->seasons[$season->getId()] = $this->cache->getItem('stat.season.' . $season->getId())->get();
+		if (!empty($this->seasons[$season->getId()])) {
+			return $this->seasons[$season->getId()];
+		}
+
 		$stat = [];
 		$teams = $this->seasonTeamRepository->findBySeason($season);
 		foreach ($teams as $seasonTeam) {
@@ -72,6 +78,10 @@ class Aggregator
 		}
 		usort($stat, [$this, 'sortSeasonTeams']);
 		$this->seasons[$season->getId()] = $stat;
+		$cached = $this->cache->getItem('stat.season.' . $season->getId());
+		$cached->tag(['season.' . $season->getId()]);
+		$cached->set($stat);
+		$this->cache->save($cached);
 		return $this->seasons[$season->getId()];
 	}
 
