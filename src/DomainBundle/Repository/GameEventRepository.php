@@ -86,7 +86,7 @@ class GameEventRepository implements GameEventRepositoryInterface
 			default:
 				break;
 		}
-		$this->getCache()->invalidateTags(['member.' . $event->getGame()->getId()]);
+		$this->getCache()->invalidateTags(['game.' . $event->getGame()->getId()]);
 		$this->getEntityManager()->persist($event);
 	}
 
