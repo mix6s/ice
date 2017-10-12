@@ -61,8 +61,15 @@ class TwigAppGlobal implements ContainerAwareInterface
 		$now = new \DateTime();
 
 		$games = $builder
-			->select('g')
+			->select('g', 's', 'sta', 'stb', 'sta_t', 'stb_t', 'sta_tm', 'stb_tm')
 			->from('Domain:Game', 'g')
+			->join('g.season', 's')
+			->join('g.seasonTeamA', 'sta')
+			->join('g.seasonTeamB', 'stb')
+			->join('sta.team', 'sta_t')
+			->join('stb.team', 'stb_t')
+			->join('stb_t.metadata', 'stb_tm')
+			->join('sta_t.metadata', 'sta_tm')
 			->where('g.datetime > :now')
 			->setParameter('now', $now)
 			->orderBy('g.datetime', 'ASC')
