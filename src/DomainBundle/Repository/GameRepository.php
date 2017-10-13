@@ -68,6 +68,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 			'seasonteam.' . $game->getSeasonTeamA()->getId(),
 			'seasonteam.' . $game->getSeasonTeamB()->getId(),
 		]);
+		$this->getCache()->clear();
 	}
 
 	/**
