@@ -61,6 +61,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	 */
 	public function save(Game $game)
 	{
+		$this->getCache()->deleteItem('stat.season.' . $game->getSeason()->getId());
 		$this->getCache()->invalidateTags([
 			'game.' . $game->getId(),
 			'season.' . $game->getSeason()->getId(),
