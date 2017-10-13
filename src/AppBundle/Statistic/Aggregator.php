@@ -100,9 +100,9 @@ class Aggregator
 		}
 
 		//набравшая наибольшее количество очков во всех матчах между собой;
-		if ($teamA->getScores($teamB) < $teamB->getScores($teamA)) {
+		if ($teamA->getScores($teamB->getSeasonTeam()) < $teamB->getScores($teamA->getSeasonTeam())) {
 			return 1;
-		} elseif ($teamA->getScores($teamB) > $teamB->getScores($teamA)) {
+		} elseif ($teamA->getScores($teamB->getSeasonTeam()) > $teamB->getScores($teamA->getSeasonTeam())) {
 			return -1;
 		}
 
