@@ -77,6 +77,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	public function remove(Game $game)
 	{
 		$this->getEntityManager()->remove($game);
+		$this->getCache()->clear();
 	}
 
 	/**
