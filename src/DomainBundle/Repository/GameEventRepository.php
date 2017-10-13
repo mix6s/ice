@@ -64,6 +64,7 @@ class GameEventRepository implements GameEventRepositoryInterface
 	 */
 	public function save(GameEvent $event)
 	{
+		$this->getEntityManager()->persist($event);
 		switch ($event->getType()) {
 			case 'goalkeeper':
 				/** @var GoalkeeperEvent $event */
@@ -90,7 +91,6 @@ class GameEventRepository implements GameEventRepositoryInterface
 			'game.' . $event->getGame()->getId(),
 			'season.' . $event->getGame()->getSeason()->getId(),
 		]);
-		$this->getEntityManager()->persist($event);
 	}
 
 	/**
