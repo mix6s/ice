@@ -66,7 +66,7 @@ class Aggregator
 			return $this->seasons[$season->getId()];
 		}
 
-		$this->seasons[$season->getId()] = $this->cache->getItem('stat.season2.' . $season->getId())->get();
+		$this->seasons[$season->getId()] = $this->cache->getItem('stat.season.' . $season->getId())->get();
 		if (!empty($this->seasons[$season->getId()])) {
 			return $this->seasons[$season->getId()];
 		}
