@@ -200,7 +200,7 @@ class Aggregator
 
 		$this->seasonTeams[$seasonTeam->getId()] = $stat;
 		$cached = $this->cache->getItem('stat.seasonteam.' . $seasonTeam->getId());
-		$cached->tag(['seasonteam.' . $seasonTeam->getId()]);
+		$cached->tag(['seasonteam.' . $seasonTeam->getId(), 'season.' . $seasonTeam->getSeason()->getId()]);
 		$cached->set($stat);
 		$this->cache->save($cached);
 		return $this->seasonTeams[$seasonTeam->getId()];
@@ -273,7 +273,7 @@ class Aggregator
 		}
 		$this->seasonTeamMembers[$member->getId()] = $stat;
 		$cached = $this->cache->getItem('stat.member.' . $member->getId());
-		$cached->tag(['member.' . $member->getId()]);
+		$cached->tag(['member.' . $member->getId(), 'season.' . $member->getSeasonTeam()->getSeason()->getId()]);
 		$cached->set($stat);
 		$this->cache->save($cached);
 		return $this->seasonTeamMembers[$member->getId()];
