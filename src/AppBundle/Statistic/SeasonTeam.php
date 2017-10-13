@@ -17,12 +17,12 @@ class SeasonTeam
 {
 	private $seasonTeam;
 	private $gamesCount = 0;
-	private $winInMain = 0;
-	private $winInBullets = 0;
-	private $winInOvertime = 0;
-	private $loseInMain = 0;
-	private $loseInBullets = 0;
-	private $loseInOvertime = 0;
+	private $winInMain = [];
+	private $winInBullets = [];
+	private $winInOvertime = [];
+	private $loseInMain = [];
+	private $loseInBullets = [];
+	private $loseInOvertime = [];
 	private $goals = 0;
 	private $goalsFailed = 0;
 
@@ -52,99 +52,129 @@ class SeasonTeam
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getWinInMain(): int
+	public function getWinInMain(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->winInMain;
+		if ($team === null) {
+			return array_sum($this->winInMain);
+		}
+		return $this->winInMain[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $winInMain
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setWinInMain(int $winInMain)
+	public function setWinInMain(int $winInMain, \Domain\Entity\SeasonTeam $team)
 	{
-		$this->winInMain = $winInMain;
+		$this->winInMain[$team->getId()] = $winInMain;
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getWinInBullets(): int
+	public function getWinInBullets(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->winInBullets;
+		if ($team === null) {
+			return array_sum($this->winInBullets);
+		}
+		return $this->winInBullets[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $winInBullets
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setWinInBullets(int $winInBullets)
+	public function setWinInBullets(int $winInBullets, \Domain\Entity\SeasonTeam $team)
 	{
-		$this->winInBullets = $winInBullets;
+		$this->winInBullets[$team->getId()] = $winInBullets;
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getWinInOvertime(): int
+	public function getWinInOvertime(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->winInOvertime;
+		if ($team === null) {
+			return array_sum($this->winInOvertime);
+		}
+		return $this->winInOvertime[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $winInOvertime
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setWinInOvertime(int $winInOvertime)
+	public function setWinInOvertime(int $winInOvertime, \Domain\Entity\SeasonTeam $team)
 	{
-		$this->winInOvertime = $winInOvertime;
+		$this->winInOvertime[$team->getId()] = $winInOvertime;
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getLoseInMain(): int
+	public function getLoseInMain(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->loseInMain;
+		if ($team === null) {
+			return array_sum($this->loseInMain);
+		}
+		return $this->loseInMain[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $loseInMain
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setLoseInMain(int $loseInMain)
+	public function setLoseInMain(int $loseInMain, \Domain\Entity\SeasonTeam $team)
 	{
-		$this->loseInMain = $loseInMain;
+		$this->loseInMain[$team->getId()] = $loseInMain;
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam $team
 	 * @return int
 	 */
-	public function getLoseInBullets(): int
+	public function getLoseInBullets(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->loseInBullets;
+		if ($team === null) {
+			return array_sum($this->loseInBullets);
+		}
+		return $this->loseInBullets[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $loseInBullets
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setLoseInBullets(int $loseInBullets)
+	public function setLoseInBullets(int $loseInBullets, \Domain\Entity\SeasonTeam $team)
 	{
-		$this->loseInBullets = $loseInBullets;
+		$this->loseInBullets[$team->getId()] = $loseInBullets;
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getLoseInOvertime(): int
+	public function getLoseInOvertime(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->loseInOvertime;
+		if ($team === null) {
+			return array_sum($this->loseInOvertime);
+		}
+		return $this->loseInOvertime[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $loseInOvertime
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setLoseInOvertime(int $loseInOvertime)
+	public function setLoseInOvertime(int $loseInOvertime, \Domain\Entity\SeasonTeam $team)
 	{
-		$this->loseInOvertime = $loseInOvertime;
+		$this->loseInOvertime[$team->getId()] = $loseInOvertime;
 	}
 
 	/**
@@ -180,11 +210,14 @@ class SeasonTeam
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getScores(): int
+	public function getScores(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->winInMain * 3 + ($this->winInBullets + $this->winInOvertime) * 2 + ($this->loseInBullets + $this->loseInOvertime) * 1;
+		return $this->getWinInMain($team) * 3
+			+ ($this->getWinInBullets($team) + $this->getWinInOvertime($team)) * 2
+			+ ($this->getLoseInBullets($team) + $this->getLoseInOvertime($team)) * 1;
 	}
 
 	/**

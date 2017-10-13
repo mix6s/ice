@@ -92,11 +92,20 @@ class Aggregator
 	 */
 	private function sortSeasonTeams(\AppBundle\Statistic\SeasonTeam $teamA, \AppBundle\Statistic\SeasonTeam $teamB)
 	{
+		//набравшая наибольшее количество очков во всех матчах;
 		if ($teamA->getScores() < $teamB->getScores()) {
 			return 1;
 		} elseif ($teamA->getScores() > $teamB->getScores()) {
 			return -1;
 		}
+
+		//набравшая наибольшее количество очков во всех матчах между собой;
+		if ($teamA->getScores($teamB) < $teamB->getScores($teamA)) {
+			return 1;
+		} elseif ($teamA->getScores($teamB) > $teamB->getScores($teamA)) {
+			return -1;
+		}
+
 		return 0;
 	}
 	/**
@@ -149,6 +158,7 @@ class Aggregator
 				}
 			}
 			$isWinner = false;
+			$oppositeTeam = $game->getSeasonTeamA()->getId() === $seasonTeam->getId() ? $game->getSeasonTeamB() : $game->getSeasonTeamA();
 			if ($game->getSeasonTeamA()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() > $gameStat->getTeamBGoals()
 				|| $game->getSeasonTeamB()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() < $gameStat->getTeamBGoals()) {
 				$isWinner = true;
@@ -158,13 +168,13 @@ class Aggregator
 					case GameEvent::PERIOD_1:
 					case GameEvent::PERIOD_2:
 					case GameEvent::PERIOD_3:
-						$stat->setWinInMain($stat->getWinInMain() + 1);
+						$stat->setWinInMain($stat->getWinInMain($oppositeTeam) + 1, $oppositeTeam);
 						break;
 					case GameEvent::PERIOD_OVERTIME:
-						$stat->setWinInOvertime($stat->getWinInOvertime() + 1);
+						$stat->setWinInOvertime($stat->getWinInOvertime($oppositeTeam) + 1, $oppositeTeam);
 						break;
 					case GameEvent::PERIOD_BULLETS:
-						$stat->setWinInBullets($stat->getWinInBullets() + 1);
+						$stat->setWinInBullets($stat->getWinInBullets($oppositeTeam) + 1, $oppositeTeam);
 						break;
 					default:
 						break;
@@ -174,13 +184,13 @@ class Aggregator
 					case GameEvent::PERIOD_1:
 					case GameEvent::PERIOD_2:
 					case GameEvent::PERIOD_3:
-						$stat->setLoseInMain($stat->getLoseInMain() + 1);
+						$stat->setLoseInMain($stat->getLoseInMain($oppositeTeam) + 1, $oppositeTeam);
 						break;
 					case GameEvent::PERIOD_OVERTIME:
-						$stat->setLoseInOvertime($stat->getLoseInOvertime() + 1);
+						$stat->setLoseInOvertime($stat->getLoseInOvertime($oppositeTeam) + 1, $oppositeTeam);
 						break;
 					case GameEvent::PERIOD_BULLETS:
-						$stat->setLoseInBullets($stat->getLoseInBullets() + 1);
+						$stat->setLoseInBullets($stat->getLoseInBullets($oppositeTeam) + 1, $oppositeTeam);
 						break;
 					default:
 						break;
