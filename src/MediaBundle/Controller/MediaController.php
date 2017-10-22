@@ -20,10 +20,9 @@ class MediaController extends Controller
      */
     public function mediaAction(Request $request): Response
     {
-        $repo = $this->getDoctrine()->getRepository(Album::class);
-        $albums = $repo->findBy([
-            'isActive' => true
-        ]);
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery('SELECT a FROM MediaBundle:Album a WHERE a.isActive = true ORDER BY a.id DESC');
+        $albums = $query->getResult();
         return $this->render('@Media/Media/index.html.twig', [
             'albums' => $albums
         ]);
