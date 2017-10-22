@@ -23,8 +23,9 @@ class PostController extends Controller
      */
     public function blogListAction(Request $request)
     {
-        $repo = $this->getDoctrine()->getRepository(Post::class);
-        $posts = $repo->findAll();
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery('SELECT p FROM BlogBundle:Post p ORDER BY p.id DESC');
+        $posts = $query->getResult();
         return $this->render('@Control/blog/list.html.twig', [
             'posts' => $posts
         ]);
