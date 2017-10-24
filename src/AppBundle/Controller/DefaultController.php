@@ -2,9 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use Doctrine\ORM\Query\Expr\Orx;
 use Domain\Entity\GoalEvent;
-use MediaBundle\Entity\Album;
 use Domain\Exception\EntityNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -26,10 +24,8 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery('SELECT p FROM BlogBundle:Post p ORDER BY p.postedAt DESC')->setMaxResults(3);
         $posts = $query->getResult();
-        $albums = $this
-            ->getDoctrine()
-            ->getRepository(Album::class)
-            ->findBy(['isActive' => true]);
+        $query = $em->createQuery('SELECT a FROM MediaBundle:Album a WHERE a.isActive = true ORDER BY a.id DESC')->setMaxResults(8);
+        $albums = $query->getResult();
         return $this->render('index.twig', [
             'posts' => $posts,
             'albums' => $albums
