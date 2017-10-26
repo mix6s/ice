@@ -28,13 +28,13 @@
                         <div class="col-sm-6">
                             <select ref="memberSelectpicker"  v-model="event.member.id" class="form-control" title="Автор гола">
 
-                                <option v-for="member in event._members" :value="member.id" :selected="event.member.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                                <option v-for="member in event._members" :value="member.id" :selected="event.member.id == member.id ? 'selected' : ''">#{{ member.number}} {{ member.player.metadata.full_name}}</option>
                             </select>
                         </div>
                          <div class="col-sm-6">
                             <select ref="assistantASelectpicker"  v-model="event.assistant_a.id" class="form-control" title="Ассистент">
                                 <option>Не указано</option>
-                                <option v-for="member in event._members" :value="member.id" :selected="event.assistant_a.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                                <option v-for="member in event._members" :value="member.id" :selected="event.assistant_a.id == member.id ? 'selected' : ''">#{{ member.number}} {{ member.player.metadata.full_name}}</option>
                             </select>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                          <div class="col-sm-6 col-sm-offset-6">
                             <select ref="assistantBSelectpicker"   v-model="event.assistant_b.id" class="form-control" title="Ассистент">
                                 <option>Не указано</option>
-                                <option v-for="member in event._members" :value="member.id" :selected="event.assistant_b.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                                <option v-for="member in event._members" :value="member.id" :selected="event.assistant_b.id == member.id ? 'selected' : ''">#{{ member.number}} {{ member.player.metadata.full_name}}</option>
                             </select>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                      <div class="col-sm-8">
                       <select ref="memberSelectpicker"  v-model="event.member.id" class="form-control" title="Вратарь">
 
-                                <option v-for="member in event._members" v-if="member.player.metadata.position == 'goalkeeper'" :value="member.id" :selected="event.member.id == member.id ? 'selected' : ''">{{ member.player.metadata.full_name}}</option>
+                                <option v-for="member in event._members" v-if="member.player.metadata.position == 'goalkeeper'" :value="member.id" :selected="event.member.id == member.id ? 'selected' : ''">#{{ member.number}} {{ member.player.metadata.full_name}}</option>
                             </select>
                      </div>
                     <div class="col-sm-4 text-right">
@@ -110,7 +110,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <select ref="memberSelectpicker"  v-model="event.member.id" class="form-control" title="Игрок">
-                                <option v-for="member in event._members" :selected="event.member.id == member.id" :value="member.id">{{ member.player.metadata.full_name}}</option>
+                                <option v-for="member in event._members" :selected="event.member.id == member.id" :value="member.id">#{{ member.number}} {{ member.player.metadata.full_name}}</option>
                             </select>
                         </div>
                          <div class="col-sm-6">
