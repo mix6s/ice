@@ -81,6 +81,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	}
 
 	/**
+	 * @param SeasonTeam $seasonTeam
 	 * @return Game[]
 	 */
 	public function findBySeasonTeam(SeasonTeam $seasonTeam)
@@ -91,6 +92,19 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 			->where('g.seasonTeamA = :team')
 			->orWhere('g.seasonTeamB = :team')
 			->setParameter('team', $seasonTeam)
+			->getQuery()
+			->getResult();
+	}
+
+	/**
+	 * @return Game[]
+	 */
+	public function findAllGames()
+	{
+		return $this->getEntityManager()->createQueryBuilder()
+			->from('Domain:Game', 'g')
+			->select('g')
+			->orderBy('g.datetime', 'DESC')
 			->getQuery()
 			->getResult();
 	}

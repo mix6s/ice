@@ -34,7 +34,7 @@ class GamesController extends Controller
 		if (!$request->isXmlHttpRequest()) {
 			return $this->render('@Control/games/list.html.twig');
 		}
-		$games = $this->get('domain.repository.game')->findAll();
+		$games = $this->get('domain.repository.game')->findAllGames();
 		return $this->json([
 			'games' => $games,
 		]);
