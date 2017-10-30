@@ -58,7 +58,7 @@ class CopySeasonUseCase
 			$membersToCopy = $this->getContainer()->getSeasonTeamMemberRepository()->findBySeasonTeam($seasonTeam);
 			$addRequest = new AddSeasonTeamMemberRequest($newSeasonTeam->getCoach()->getId(), $newSeasonTeam->getId());
 			foreach ($membersToCopy as $member) {
-				$addRequest->addMember($member->getPlayer()->getId(), $member->getType(), $member->getNumber());
+				$addRequest->addMember(null, $member->getPlayer()->getId(), $member->getType(), $member->getNumber());
 			}
 			$addMemberUseCase->execute($addRequest);
 			$newSeasonTeams[] = $newSeasonTeam;

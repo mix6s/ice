@@ -18,18 +18,21 @@ class Member
 	private $playerId;
 	private $type;
 	private $number;
+	private $id;
 
 	/**
 	 * Member constructor.
+	 * @param int $id
 	 * @param int $playerId
 	 * @param string $type
 	 * @param int $number
 	 */
-	public function __construct(int $playerId, string $type, int $number)
+	public function __construct(int $id = null, int $playerId, string $type, int $number)
 	{
 		$this->playerId = $playerId;
 		$this->type = $type;
 		$this->number = $number;
+		$this->id = $id;
 	}
 
 	/**
@@ -54,5 +57,13 @@ class Member
 	public function getNumber(): int
 	{
 		return $this->number;
+	}
+
+	/**
+	 * @return int|null
+	 */
+	public function getId()
+	{
+		return $this->id;
 	}
 }

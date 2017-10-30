@@ -112,4 +112,20 @@ class SeasonTeamMember implements \JsonSerializable
 	{
 		return $this->number;
 	}
+
+	/**
+	 * @param int $number
+	 */
+	public function setNumber(int $number)
+	{
+		$this->number = $number;
+	}
+
+	/**
+	 * @param string $type
+	 */
+	public function setType(string $type)
+	{
+		$this->type = $type;
+	}
 }

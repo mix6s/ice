@@ -68,13 +68,13 @@ class SeasonTeamsController extends Controller
 			$st->changeCoach($coach);
 			$st->changeLeague($league);
 		}
-		$this->get('domain.use_case.remove_season_team_members_use_case')->execute($st->getId());
 
 		$members = $seasonTeam['members'] ?? [];
 
 		$addRequest = new AddSeasonTeamMemberRequest($coachId, $st->getId());
 		foreach ($members as $member) {
-			$addRequest->addMember($member['player_id'], $member['type'], $member['number']);
+			$memberId = ((int)$member['id']) > 0 ? $member['id'] : null;
+			$addRequest->addMember($memberId, $member['player_id'], $member['type'], $member['number']);
 		}
 		$response = $this
 			->get('domain.use_case.set_season_team_members_use_case')

@@ -34,13 +34,14 @@ class AddSeasonTeamMemberRequest
 	}
 
 	/**
+	 * @param int $id
 	 * @param int $playerId
 	 * @param string $type
 	 * @param int $number
 	 */
-	public function addMember(int $playerId, string $type, int $number)
+	public function addMember(int $id = null, int $playerId, string $type, int $number)
 	{
-		$this->members[] = new Member($playerId, $type, $number);
+		$this->members[] = new Member($id, $playerId, $type, $number);
 	}
 
 	/**

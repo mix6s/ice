@@ -61,6 +61,7 @@
 		mounted: function () {
 			var _this = this;
 			$('#' + _this.idSelector).editable({
+				disabled: _this.member.id >= 0,
 				mode: 'inline',
 				unsavedclass: '',
 				showbuttons: false,
