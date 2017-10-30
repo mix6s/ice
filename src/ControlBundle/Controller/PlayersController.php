@@ -25,13 +25,15 @@ class PlayersController extends Controller
 	public function listAction(Request $request)
 	{
 		$page = $request->get('page', 1);
+		$query = (string)$request->get('query');
 		$limit = 20;
 		$offset = ($page - 1) * $limit;
-		$players = $this->get('domain.repository.player')->findPlayers($limit, $offset);
-		$count = $this->get('domain.repository.player')->countPlayers();
+		$players = $this->get('domain.repository.player')->findPlayers($query, $limit, $offset);
+		$count = $this->get('domain.repository.player')->countPlayers($query);
 		return $this->render(
 			'@Control/players/list.html.twig',
 			[
+				'query' => $query,
 				'players' => $players,
 				'currentPage' => $page,
 				'pagesCount' => ceil($count / $limit)

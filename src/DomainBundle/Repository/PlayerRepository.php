@@ -48,29 +48,48 @@ class PlayerRepository extends EntityRepository implements PlayerRepositoryInter
 		return $player;
 	}
 
-    /**
-     * @param int $limit
-     * @param int $offset
-     * @return Player[]
-     */
-	public function findPlayers(int $limit, int $offset)
-    {
-        return $this->createQueryBuilder('p')
-            ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->orderBy('p.id', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
+	/**
+	 * @param int $limit
+	 * @param int $offset
+	 * @return Player[]
+	 */
+	public function findPlayers(string $query, int $limit, int $offset)
+	{
+		$builder = $this->createQueryBuilder('p')
+			->join('p.metadata', 'm')
+			->setMaxResults($limit)
+			->setFirstResult($offset)
+			->orderBy('p.id', 'DESC');
+		if (!empty($query)) {
+			$builder
+				->where('m.surname like :query')
+				->orWhere('m.firstName like :query')
+				->orWhere('m.secondName like :query')
+				->setParameter('query', '%' . $query . '%');
+		}
+		return $builder
+			->getQuery()
+			->getResult();
+	}
 
-    /**
-     * @return mixed
-     */
-    public function countPlayers()
-    {
-        return $this->createQueryBuilder('p')
-            ->select('count(p.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
+	/**
+	 * @return mixed
+	 */
+	public function countPlayers(string $query)
+	{
+		$builder = $this->createQueryBuilder('p')
+			->select('count(p.id)')
+			->join('p.metadata', 'm');
+
+		if (!empty($query)) {
+			$builder
+				->where('m.surname like :query')
+				->orWhere('m.firstName like :query')
+				->orWhere('m.secondName like :query')
+				->setParameter('query', '%' . $query . '%');
+		}
+		return $builder
+			->getQuery()
+			->getSingleScalarResult();
+	}
 }
