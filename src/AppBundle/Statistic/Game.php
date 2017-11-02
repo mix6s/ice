@@ -8,6 +8,8 @@
 
 namespace AppBundle\Statistic;
 
+use Domain\Entity\GameEvent;
+
 
 /**
  * Class Game
@@ -21,6 +23,7 @@ class Game
 	private $teamBBullets = 0;
 	private $teamAPenaltyTime = 0;
 	private $teamBPenaltyTime = 0;
+	private $winPeriod = GameEvent::PERIOD_1;
 
 	/**
 	 * @return int
@@ -116,5 +119,29 @@ class Game
 	public function setTeamBGoals(int $teamBGoals)
 	{
 		$this->teamBGoals = $teamBGoals;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getWinPeriod(): int
+	{
+		return $this->winPeriod;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isWinByBullets(): bool
+	{
+		return $this->winPeriod === GameEvent::PERIOD_BULLETS;
+	}
+
+	/**
+	 * @param int $winPeriod
+	 */
+	public function setWinPeriod(int $winPeriod)
+	{
+		$this->winPeriod = $winPeriod;
 	}
 }

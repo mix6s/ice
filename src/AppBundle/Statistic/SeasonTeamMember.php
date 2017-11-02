@@ -16,6 +16,7 @@ namespace AppBundle\Statistic;
 class SeasonTeamMember
 {
 	private $gamesCount = 0;
+	private $gamesCountAsGoalkeeper = 0;
 	private $goals = 0;
 	private $assistantGoals = 0;
 	private $penaltyTime = 0;
@@ -161,5 +162,21 @@ class SeasonTeamMember
 	public function getTotalMinutesTime(): float
 	{
 		return $this->getTotalSecondsTime() / 60;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getGamesCountAsGoalkeeper(): int
+	{
+		return $this->gamesCountAsGoalkeeper;
+	}
+
+	/**
+	 * @param int $gamesCountAsGoalkeeper
+	 */
+	public function setGamesCountAsGoalkeeper(int $gamesCountAsGoalkeeper)
+	{
+		$this->gamesCountAsGoalkeeper = $gamesCountAsGoalkeeper;
 	}
 }

@@ -71,7 +71,7 @@
                             <td>{{ num + 1 }}</td>
                             <td>{{ seasonteammember.seasonTeam.season.year - 1 }} - {{ seasonteammember.seasonTeam.season.year }}</td>
                             <td>{{ seasonteammember.seasonTeam.team.metadata.title }}</td>
-                            <td>{{ seasonteammember|memberStatistic.gamesCount }}</td>
+                            <td>{{ seasonteammember|memberStatistic.gamesCountAsGoalkeeper }}</td>
                             <td>{{ seasonteammember|memberStatistic.zeroGameCount }}</td>
                             <td>{{ seasonteammember|memberStatistic.goalsFailed }}</td>
                             <td>{{ seasonteammember|memberStatistic.totalMinutesTime|number_format(0, '.', ',') }}</td>

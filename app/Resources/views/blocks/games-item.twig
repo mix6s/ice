@@ -3,12 +3,22 @@
     <div class="games__city">{{ game.place }}</div>
     <div class="games__score-wrapper">
         <div class="games__score games__score--hosts">
-            <div class="games__goals">{{ game|scoreA}}</div>
+
+            <div class="games__goals">
+                {% if game|gameStatistic.isWinByBullets and game|scoreA > game|scoreB  %}
+                    Б{#тут пометка Б если выграла по булитам команда А#}
+                {% endif %}
+                {{ game|scoreA}}</div>
             <div class="games__team">{{  game.seasonTeamA.team.metadata.title }}</div>
         </div>
         <div class="games__score games__score--guests">
-            <div class="games__goals">{{ game|scoreB }}</div>
+            <div class="games__goals">{{ game|scoreB }}
+                {% if game|gameStatistic.isWinByBullets and game|scoreA < game|scoreB  %}
+                    Б{#тут пометка Б если выграла по булитам команда Б#}
+                {% endif %}
+            </div>
             <div class="games__team">{{  game.seasonTeamB.team.metadata.title }}</div>
+
         </div>
     </div>
     <a href="{{ url('game', {id: game.id}) }}" class="games__link">Ссылка на результат матча</a>

@@ -54,6 +54,7 @@ class TwigAppExtension extends \Twig_Extension
 			new \Twig_SimpleFilter('gameDatetime', [$this, 'gameDatetimeFilter']),
 			new \Twig_SimpleFilter('memberStatistic', [$this, 'memberStatistic']),
 			new \Twig_SimpleFilter('seasonTeamStatistic', [$this, 'seasonTeamStatistic']),
+			new \Twig_SimpleFilter('gameStatistic', [$this, 'gameStatistic']),
 		];
 	}
 
@@ -239,5 +240,14 @@ class TwigAppExtension extends \Twig_Extension
 	public function seasonTeamStatistic(SeasonTeam $seasonTeam): \AppBundle\Statistic\SeasonTeam
 	{
 		return $this->container->get('app.statistic.aggregator')->getSeasonTeamStatistic($seasonTeam);
+	}
+
+	/**
+	 * @param Game $game
+	 * @return Statistic\Game
+	 */
+	public function gameStatistic(Game $game): \AppBundle\Statistic\Game
+	{
+		return $this->container->get('app.statistic.aggregator')->getGameStatistic($game);
 	}
 }

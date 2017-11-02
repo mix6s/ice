@@ -233,11 +233,13 @@ class Aggregator
 			}
 			$stat->setGamesCount($stat->getGamesCount() + 1);
 			$events = $this->gameEventRepository->findByGame($game);
+			$memberIsGoalkeeper = false;
 			foreach ($events as $event) {
 				switch ($event->getType()) {
 					case 'goalkeeper':
 						/** @var GoalkeeperEvent $event */
 						if ($event->getMember()->getId() === $member->getId()) {
+							$memberIsGoalkeeper = true;
 							$stat->setGoalsFailed($stat->getGoalsFailed() + $event->getGoals());
 							$stat->setTotalSecondsTime($stat->getTotalSecondsTime() + $event->getDuration());
 						}
@@ -267,8 +269,11 @@ class Aggregator
 						break;
 				}
 			}
-			if ($stat->getGoalsFailed() === 0) {
-				$stat->setZeroGameCount($stat->getZeroGameCount() + 1);
+			if ($memberIsGoalkeeper) {
+				$stat->setGamesCountAsGoalkeeper($stat->getGamesCountAsGoalkeeper() + 1);
+				if ($stat->getGoalsFailed() === 0) {
+					$stat->setZeroGameCount($stat->getZeroGameCount() + 1);
+				}
 			}
 		}
 		$this->seasonTeamMembers[$member->getId()] = $stat;
@@ -296,6 +301,7 @@ class Aggregator
 
 		$events = $this->gameEventRepository->findByGame($game);
 		$stat = new \AppBundle\Statistic\Game();
+		$lastEventPeriod = GameEvent::PERIOD_1;
 		foreach ($events as $event) {
 			switch ($event->getType()) {
 				case 'goalkeeper':
@@ -313,6 +319,7 @@ class Aggregator
 					} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
 						$stat->setTeamBGoals($stat->getTeamBGoals() + 1);
 					}
+					$lastEventPeriod = $event->getPeriod();
 					break;
 				case 'penalty':
 					/** @var PenaltyEvent $event */
@@ -322,11 +329,13 @@ class Aggregator
 					} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
 						$stat->setTeamBPenaltyTime($stat->getTeamBPenaltyTime() + $time);
 					}
+					$lastEventPeriod = $event->getPeriod();
 					break;
 				default:
 					break;
 			}
 		}
+		$stat->setWinPeriod($lastEventPeriod);
 		$this->games[$game->getId()] = $stat;
 		$cached = $this->cache->getItem('stat.game.' . $game->getId());
 		$cached->tag(['game.' . $game->getId()]);
