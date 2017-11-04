@@ -28,6 +28,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	use CacheTrait;
 
 	const DEFAULT_LIMIT = 20;
+	private $bySeasonTeams = [];
 
 	/**
 	 * @return int
@@ -86,7 +87,10 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 	 */
 	public function findBySeasonTeam(SeasonTeam $seasonTeam)
 	{
-		return $this->getEntityManager()->createQueryBuilder()
+		if (array_key_exists($seasonTeam->getId(), $this->bySeasonTeams)) {
+			return $this->bySeasonTeams[$seasonTeam->getId()];
+		}
+		$this->bySeasonTeams[$seasonTeam->getId()] = $this->getEntityManager()->createQueryBuilder()
 			->select('g')
 			->from('Domain:Game', 'g')
 			->where('g.seasonTeamA = :team')
@@ -94,6 +98,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 			->setParameter('team', $seasonTeam)
 			->getQuery()
 			->getResult();
+		return $this->bySeasonTeams[$seasonTeam->getId()];
 	}
 
 	/**

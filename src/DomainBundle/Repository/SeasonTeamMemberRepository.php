@@ -127,6 +127,8 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 	public function findById(int $id): SeasonTeamMember
 	{
 		$member = $this->createQueryBuilder('stm')
+			->join('stm.player', 'p')
+			->join('p.metadata', 'pm')
 			->where('stm.id = :id')
 			->setParameters(['id' => $id])
 			->getQuery()

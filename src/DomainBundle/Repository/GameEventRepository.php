@@ -29,6 +29,7 @@ class GameEventRepository implements GameEventRepositoryInterface
 	use CacheTrait;
 
 	private $em;
+	private $byGames = [];
 
 	/**
 	 * GameEventRepository constructor.
@@ -143,6 +144,9 @@ class GameEventRepository implements GameEventRepositoryInterface
 	 */
 	public function findByGame(Game $game): array
 	{
+		if (array_key_exists($game->getId(), $this->byGames)) {
+			return $this->byGames[$game->getId()];
+		}
 		$events = $this->getEntityManager()->createQueryBuilder()
 			->select('e')
 			->from('Domain:GoalEvent', 'e')
@@ -178,6 +182,7 @@ class GameEventRepository implements GameEventRepositoryInterface
 		foreach ($keeperEvent as $event) {
 			$events[] = $event;
 		}
-		return $events;
+		$this->byGames[$game->getId()] = $events;
+		return $this->byGames[$game->getId()];
 	}
 }
