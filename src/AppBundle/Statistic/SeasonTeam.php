@@ -23,7 +23,7 @@ class SeasonTeam
 	private $loseInMain = [];
 	private $loseInBullets = [];
 	private $loseInOvertime = [];
-	private $goals = 0;
+	private $goals = [];
 	private $goalsFailed = 0;
 
 	/**
@@ -178,19 +178,24 @@ class SeasonTeam
 	}
 
 	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
 	 * @return int
 	 */
-	public function getGoals(): int
+	public function getGoals(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->goals;
+		if ($team === null) {
+			return array_sum($this->goals);
+		}
+		return $this->goals[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $goals
+	 * @param \Domain\Entity\SeasonTeam $team
 	 */
-	public function setGoals(int $goals)
+	public function setGoals(int $goals, \Domain\Entity\SeasonTeam $team = null)
 	{
-		$this->goals = $goals;
+		$this->goals[$team->getId()] = $goals;
 	}
 
 	/**

@@ -106,6 +106,12 @@ class Aggregator
 			return -1;
 		}
 
+		//имеющая лучшую разницу забитых и пропущенных шайб во всех играх между этими командами;
+		if ($teamA->getGoals($teamB) < $teamB->getGoals($teamA)) {
+			return 1;
+		} elseif ($teamA->getGoals($teamB) > $teamB->getGoals($teamA)) {
+			return -1;
+		}
 		return 0;
 	}
 	/**
@@ -134,6 +140,7 @@ class Aggregator
 			$stat->setGamesCount($stat->getGamesCount() + 1);
 
 			$lastEventPeriod = GameEvent::PERIOD_1;
+			$oppositeTeam = $game->getSeasonTeamA()->getId() === $seasonTeam->getId() ? $game->getSeasonTeamB() : $game->getSeasonTeamA();
 			$events = $this->gameEventRepository->findByGame($game);
 			foreach ($events as $event) {
 				switch ($event->getType()) {
@@ -143,7 +150,7 @@ class Aggregator
 					case 'goal':
 						/** @var GoalEvent $event */
 						if ($event->getMember()->getSeasonTeam()->getId() === $seasonTeam->getId()) {
-							$stat->setGoals($stat->getGoals() + 1);
+							$stat->setGoals($stat->getGoals($oppositeTeam) + 1, $oppositeTeam);
 						} else {
 							$stat->setGoalsFailed($stat->getGoalsFailed() + 1);
 						}
@@ -158,7 +165,6 @@ class Aggregator
 				}
 			}
 			$isWinner = false;
-			$oppositeTeam = $game->getSeasonTeamA()->getId() === $seasonTeam->getId() ? $game->getSeasonTeamB() : $game->getSeasonTeamA();
 			if ($game->getSeasonTeamA()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() > $gameStat->getTeamBGoals()
 				|| $game->getSeasonTeamB()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() < $gameStat->getTeamBGoals()) {
 				$isWinner = true;
