@@ -99,11 +99,25 @@ class DefaultController extends Controller
 	}
 
 	/**
-	 * @Route("/standings/{id}", name="standings")
+	 * @Route("/standings", name="standings.current")
 	 */
-	public function seasonStatistic(int $id, Request $request)
+	public function currentSeasonStatistic(Request $request)
 	{
+		$season = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+		return $this->forward('AppBundle:Default:seasonStatistic', ['year' => $season->getBeggingYear()]);
+	}
 
+	/**
+	 * @Route("/standings/{year}", name="standings.season")
+	 */
+	public function seasonStatisticAction(int $year, Request $request)
+	{
+		if ($year === null) {
+			$season = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+		} else {
+			$season = $this->get('domain.repository.season')->findByYear($year + 1);
+		}
+		return $this->render('tables.twig', ['season' => $season]);
 	}
 
 	/**

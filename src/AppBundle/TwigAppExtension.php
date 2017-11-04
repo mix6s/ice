@@ -4,6 +4,7 @@ namespace AppBundle;
 
 use Domain\Entity\Game;
 use Domain\Entity\PenaltyEvent;
+use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
 use DomainBundle\Entity\PlayerMetadata;
@@ -33,7 +34,8 @@ class TwigAppExtension extends \Twig_Extension
 	public function getFunctions()
 	{
 		return array(
-			"getCurrentSeasonStatistic" => new Twig_Function_Method($this, "getCurrentSeasonStatistic")
+			"getCurrentSeasonStatistic" => new Twig_Function_Method($this, "getCurrentSeasonStatistic"),
+			"getSeasonStatistic" => new Twig_Function_Method($this, "getSeasonStatistic")
 		);
 	}
 
@@ -68,6 +70,15 @@ class TwigAppExtension extends \Twig_Extension
 			return [];
 		}
 		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
+		return $this->getSeasonStatistic($season);
+	}
+
+	/**
+	 * @param Season $season
+	 * @return array
+	 */
+	public function getSeasonStatistic(Season $season)
+	{
 		$stat = $this->container->get('app.statistic.aggregator')->getSeasonStatistic($season);
 		$byLeague = [];
 		foreach ($stat as $item) {

@@ -3,143 +3,41 @@
 {% block content %}
     <section class="page wrapper">
         <h1>
-            Чемпионат ПЛХЛ. Сезон 2017-2018. Лига "Б".<br>
+            Чемпионат ПЛХЛ. Сезон {{ season.beggingYear  }}-{{ season.year }}<br>
             Турнирная таблица.
         </h1>
-        <div class="table-wrapper">
-            <div class="table-wrapper__header">Лига "Б"</div>
-            <table class="table">
-                <tr>
-                    <th>№</th>
-                    <th>Команда</th>
-                    <th>И</th>
-                    <th>В</th>
-                    <th>ВБ</th>
-                    <th>Н</th>
-                    <th>ПБ</th>
-                    <th>П</th>
-                    <th>ЗШ</th>
-                    <th>ПШ</th>
-                    <th>Очки</th>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Молния</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>14</td>
-                    <td>32</td>
-                </tr>
-            </table>
-        </div>
+        {% for item in getSeasonStatistic(season) %}
+            <div class="table-wrapper">
+                <div class="table-wrapper__header">{{ item.league.metadata.title }}</div>
+                <table class="table">
+                    <tr>
+                        <th>№</th>
+                        <th>Команда</th>
+                        <th>И</th>
+                        <th>В</th>
+                        <th>ВБ</th>
+                        <th>ПБ</th>
+                        <th>П</th>
+                        <th>ЗШ</th>
+                        <th>ПШ</th>
+                        <th>Очки</th>
+                    </tr>
+                    {% for num,stat in item.seasonteams %}
+                        <tr>
+                            <td>{{ num + 1 }}</td>
+                            <td><img width="30" height="30" class="sidebar-table__img" src="/avatar/{{ stat.seasonteam.team.metadata.image }}"> <a class="sidebar-table__team-link" href="{{ url('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
+                            <td>{{ stat.gamesCount }}</td>
+                            <td>{{ stat.winInMain }}</td>
+                            <td>{{ stat.winInBullets }}</td>
+                            <td>{{ stat.loseInBullets }}</td>
+                            <td>{{ stat.loseInMain }}</td>
+                            <td>{{ stat.goals }}</td>
+                            <td>{{ stat.goalsFailed }}</td>
+                            <td>{{ stat.scores }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endfor %}
     </section>
 {% endblock %}

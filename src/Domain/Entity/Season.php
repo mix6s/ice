@@ -50,6 +50,14 @@ class Season implements \JsonSerializable
 	/**
 	 * @return int
 	 */
+	public function getBeggingYear(): int
+	{
+		return $this->year - 1;
+	}
+
+	/**
+	 * @return int
+	 */
 	public function getId(): int
 	{
 		return $this->id;

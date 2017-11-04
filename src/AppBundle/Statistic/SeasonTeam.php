@@ -213,7 +213,7 @@ class SeasonTeam
 	public function getGoalsFailed(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
-			return array_sum($this->goals);
+			return array_sum($this->goalsFailed);
 		}
 		return $this->goalsFailed[$team->getId()] ?? 0;
 	}
