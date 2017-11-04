@@ -443,7 +443,10 @@ class Aggregator
 			return $this->games[$game->getId()];
 		}
 
-		$this->games[$game->getId()] = $this->cache->getItem('stat.game.' . $game->getId())->get();
+		$this->games = $this->cache->getItem('stat.games')->get();
+		if (!is_array($this->games)) {
+			$this->games = [];
+		}
 		if (!empty($this->games[$game->getId()])) {
 			return $this->games[$game->getId()];
 		}
@@ -486,9 +489,9 @@ class Aggregator
 		}
 		$stat->setWinPeriod($lastEventPeriod);
 		$this->games[$game->getId()] = $stat;
-		$cached = $this->cache->getItem('stat.game.' . $game->getId());
+		$cached = $this->cache->getItem('stat.games');
 		$cached->tag(['game.' . $game->getId()]);
-		$cached->set($stat);
+		$cached->set($this->games);
 		$this->cache->save($cached);
 		return $this->games[$game->getId()];
 	}
