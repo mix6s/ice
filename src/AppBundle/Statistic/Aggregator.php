@@ -107,9 +107,9 @@ class Aggregator
 		}
 
 		//имеющая лучшую разницу забитых и пропущенных шайб во всех играх между этими командами;
-		if ($teamA->getGoals($teamB) < $teamB->getGoals($teamA)) {
+		if ($teamA->getGoals($teamB->getSeasonTeam()) < $teamB->getGoals($teamA->getSeasonTeam())) {
 			return 1;
-		} elseif ($teamA->getGoals($teamB) > $teamB->getGoals($teamA)) {
+		} elseif ($teamA->getGoals($teamB->getSeasonTeam()) > $teamB->getGoals($teamA->getSeasonTeam())) {
 			return -1;
 		}
 		return 0;
