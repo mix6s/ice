@@ -65,6 +65,7 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 		$this->getEntityManager()->persist($game);
 		$this->getCache()->invalidateTags([
 			'game.' . $game->getId(),
+			'games',
 			'season.' . $game->getSeason()->getId(),
 			'seasonteam.' . $game->getSeasonTeamA()->getId(),
 			'seasonteam.' . $game->getSeasonTeamB()->getId(),

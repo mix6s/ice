@@ -37,7 +37,7 @@ class Aggregator
 	private $gameEventRepository;
 	private $cache;
 
-	private $games = [];
+	private $games = null;
 	private $seasonTeams = [];
 	private $seasonTeamMembers = [];
 	private $seasons = [];
@@ -439,14 +439,18 @@ class Aggregator
 	 */
 	public function getGameStatistic(Game $game): \AppBundle\Statistic\Game
 	{
+		if (empty($this->games)) {
+			$this->games = $this->cache->getItem('stat.games')->get();
+		}
+
+		if (!is_array($this->games)) {
+			$this->games = [];
+		}
+
 		if (array_key_exists($game->getId(), $this->games)) {
 			return $this->games[$game->getId()];
 		}
 
-		$this->games[$game->getId()] = $this->cache->getItem('stat.game.' . $game->getId())->get();
-		if (!empty($this->games[$game->getId()])) {
-			return $this->games[$game->getId()];
-		}
 
 		$events = $this->gameEventRepository->findByGame($game);
 		$stat = new \AppBundle\Statistic\Game();
@@ -486,9 +490,9 @@ class Aggregator
 		}
 		$stat->setWinPeriod($lastEventPeriod);
 		$this->games[$game->getId()] = $stat;
-		$cached = $this->cache->getItem('stat.game.' . $game->getId());
-		$cached->tag(['season.' . $game->getId()]);
-		$cached->set($stat);
+		$cached = $this->cache->getItem('stat.games');
+		$cached->tag(['games']);
+		$cached->set($this->games);
 		$this->cache->save($cached);
 		return $this->games[$game->getId()];
 	}
