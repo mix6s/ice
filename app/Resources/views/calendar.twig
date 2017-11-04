@@ -68,7 +68,7 @@
                         <a href="{{ url('team.index', {id: game.seasonteamA.team.id}) }}">{{ game.seasonteamA.team.metadata.title  }}</a> - <a href="{{ url('team.index', {id: game.seasonteamB.team.id}) }}">{{ game.seasonteamB.team.metadata.title }}</a>
                     </td>
                     <td>
-                        {{ game|scoreA }}:{{ game|scoreB }}
+                        <a href="{{ url('game', {id: game.id}) }}">{{ game|scoreA }}:{{ game|scoreB }}</a>
                     </td>
                 </tr>
                 {% endfor %}
