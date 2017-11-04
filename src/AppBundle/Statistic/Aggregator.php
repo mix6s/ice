@@ -37,7 +37,7 @@ class Aggregator
 	private $gameEventRepository;
 	private $cache;
 
-	private $games = [];
+	private $games = null;
 	private $seasonTeams = [];
 	private $seasonTeamMembers = [];
 	private $seasons = [];
@@ -439,17 +439,18 @@ class Aggregator
 	 */
 	public function getGameStatistic(Game $game): \AppBundle\Statistic\Game
 	{
+		if (empty($this->games)) {
+			$this->games = $this->cache->getItem('stat.games')->get();
+		}
+
+		if (!is_array($this->games)) {
+			$this->games = [];
+		}
+
 		if (array_key_exists($game->getId(), $this->games)) {
 			return $this->games[$game->getId()];
 		}
 
-		$this->games = $this->cache->getItem('stat.games')->get();
-		if (!is_array($this->games)) {
-			$this->games = [];
-		}
-		if (!empty($this->games[$game->getId()])) {
-			return $this->games[$game->getId()];
-		}
 
 		$events = $this->gameEventRepository->findByGame($game);
 		$stat = new \AppBundle\Statistic\Game();
