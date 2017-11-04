@@ -234,12 +234,14 @@ class Aggregator
 			$stat->setGamesCount($stat->getGamesCount() + 1);
 			$events = $this->gameEventRepository->findByGame($game);
 			$memberIsGoalkeeper = false;
+			$memberGameGoalsFailed = 0;
 			foreach ($events as $event) {
 				switch ($event->getType()) {
 					case 'goalkeeper':
 						/** @var GoalkeeperEvent $event */
 						if ($event->getMember()->getId() === $member->getId()) {
 							$memberIsGoalkeeper = true;
+							$memberGameGoalsFailed = $event->getGoals();
 							$stat->setGoalsFailed($stat->getGoalsFailed() + $event->getGoals());
 							$stat->setTotalSecondsTime($stat->getTotalSecondsTime() + $event->getDuration());
 						}
@@ -271,7 +273,7 @@ class Aggregator
 			}
 			if ($memberIsGoalkeeper) {
 				$stat->setGamesCountAsGoalkeeper($stat->getGamesCountAsGoalkeeper() + 1);
-				if ($stat->getGoalsFailed() === 0) {
+				if ($memberGameGoalsFailed === 0) {
 					$stat->setZeroGameCount($stat->getZeroGameCount() + 1);
 				}
 			}
