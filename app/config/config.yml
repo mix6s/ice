@@ -53,6 +53,7 @@ twig:
     form_themes:
         - 'bootstrap_3_layout.html.twig'
     globals:
+        ya_metrika: '%ya_metrika_id%'
         global: '@app.twig_app_global'
 
 # Doctrine Configuration

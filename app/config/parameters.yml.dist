@@ -21,3 +21,4 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     memcache_host: memcached
+    ya_metrika_id: 46418124
