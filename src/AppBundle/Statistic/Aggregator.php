@@ -114,6 +114,27 @@ class Aggregator
 		}
 
 		//имеющая лучшую разницу забитых и пропущенных шайб во всех матчах;
+		if ($teamA->getGoals() - $teamA->getGoalsFailed() < $teamB->getGoals() - $teamB->getGoalsFailed()) {
+			return 1;
+		} elseif ($teamA->getGoals() - $teamA->getGoalsFailed() > $teamB->getGoals() - $teamB->getGoalsFailed()) {
+			return -1;
+		}
+
+		//имеющая лучшее соотношение забитых и пропущенных шайб во всех матчах;
+		if ($teamA->getGoals() / $teamA->getGoalsFailed() < $teamB->getGoals() / $teamB->getGoalsFailed()) {
+			return 1;
+		} elseif ($teamA->getGoals() / $teamA->getGoalsFailed() > $teamB->getGoals() / $teamB->getGoalsFailed()) {
+			return -1;
+		}
+
+		//имеющая наибольшее число побед во всех матчах;
+		if ($teamA->getWinCount() < $teamB->getWinCount()) {
+			return 1;
+		} elseif ($teamA->getWinCount() > $teamB->getWinCount()) {
+			return -1;
+		}
+
+		//забросившая наибольшее количество шайб во всех матчах этапа.
 		if ($teamA->getGoals() < $teamB->getGoals()) {
 			return 1;
 		} elseif ($teamA->getGoals() > $teamB->getGoals()) {
@@ -159,7 +180,7 @@ class Aggregator
 						if ($event->getMember()->getSeasonTeam()->getId() === $seasonTeam->getId()) {
 							$stat->setGoals($stat->getGoals($oppositeTeam) + 1, $oppositeTeam);
 						} else {
-							$stat->setGoalsFailed($stat->getGoalsFailed() + 1);
+							$stat->setGoalsFailed($stat->getGoalsFailed($oppositeTeam) + 1, $oppositeTeam);
 						}
 						$lastEventPeriod = $event->getPeriod();
 						break;

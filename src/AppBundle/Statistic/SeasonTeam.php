@@ -24,7 +24,7 @@ class SeasonTeam
 	private $loseInBullets = [];
 	private $loseInOvertime = [];
 	private $goals = [];
-	private $goalsFailed = 0;
+	private $goalsFailed = [];
 
 	/**
 	 * SeasonTeam constructor.
@@ -70,6 +70,15 @@ class SeasonTeam
 	public function setWinInMain(int $winInMain, \Domain\Entity\SeasonTeam $team)
 	{
 		$this->winInMain[$team->getId()] = $winInMain;
+	}
+
+	/**
+	 * @param \Domain\Entity\SeasonTeam|null $team
+	 * @return int
+	 */
+	public function getWinCount(\Domain\Entity\SeasonTeam $team = null): int
+	{
+		return $this->getWinInMain($team) + $this->getWinInOvertime($team) + $this->getWinInBullets($team);
 	}
 
 	/**
@@ -201,17 +210,20 @@ class SeasonTeam
 	/**
 	 * @return int
 	 */
-	public function getGoalsFailed(): int
+	public function getGoalsFailed(\Domain\Entity\SeasonTeam $team = null): int
 	{
-		return $this->goalsFailed;
+		if ($team === null) {
+			return array_sum($this->goals);
+		}
+		return $this->goalsFailed[$team->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $goalsFailed
 	 */
-	public function setGoalsFailed(int $goalsFailed)
+	public function setGoalsFailed(int $goalsFailed, \Domain\Entity\SeasonTeam $team = null)
 	{
-		$this->goalsFailed = $goalsFailed;
+		$this->goalsFailed[$team->getId()] = $goalsFailed;
 	}
 
 	/**
