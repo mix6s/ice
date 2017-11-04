@@ -2,7 +2,12 @@
     <section class="leaders">
         <div class="leaders__title">Лидеры</div>
         <div class="leaders__list">
-            {% include 'blocks/leaders-item.twig' with {item: {points: '7', name: 'Очков', role: 'Бомбардир'}} %}
+            {% set best = getCurrentSeasonTop() %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: best.forward.forwardScore, name: 'Очков', role: 'Бомбардир'}, member: best.forward.member } %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: best.sniper.goals, name: 'Голов', role: 'Снайпер'}, member: best.sniper.member} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: best.assistant.assistantGoals, name: 'Пасов', role: 'Ассистент'}, member: best.assistant.member} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: best.back.forwardScore, name: 'Очков', role: 'Защитник'}, member: best.back.member} %}
+            {% include 'blocks/leaders-item.twig' with {item: {points: best.goalkeeper.reliabilityCoef, name: 'Очков', role: 'Вратарь'}, member: best.goalkeeper.member} %}
         </div>
         <div class="leaders__link">
             <a href="#">Вся статистика</a>

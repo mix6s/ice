@@ -236,6 +236,21 @@ class PlayerMetadata implements \JsonSerializable
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isPositionGoalkeeper(): bool
+	{
+		return in_array($this->position, [self::POSITION_GK]);
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPositionBack(): bool
+	{
+		return in_array($this->position, [self::POSITION_GK, self::POSITION_RB]);
+	}
+	/**
 	 * @return mixed
 	 */
 	public function getStick()

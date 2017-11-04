@@ -35,7 +35,9 @@ class TwigAppExtension extends \Twig_Extension
 	{
 		return array(
 			"getCurrentSeasonStatistic" => new Twig_Function_Method($this, "getCurrentSeasonStatistic"),
-			"getSeasonStatistic" => new Twig_Function_Method($this, "getSeasonStatistic")
+			"getSeasonStatistic" => new Twig_Function_Method($this, "getSeasonStatistic"),
+			"getSeasonTop" => new Twig_Function_Method($this, "getSeasonTop"),
+			"getCurrentSeasonTop" => new Twig_Function_Method($this, "getCurrentSeasonTop")
 		);
 	}
 
@@ -71,6 +73,29 @@ class TwigAppExtension extends \Twig_Extension
 		}
 		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
 		return $this->getSeasonStatistic($season);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCurrentSeasonTop()
+	{
+		$currentSeasonId = $this->container->get('settings.manager')->getCurrentSeasonId();
+		if (empty($currentSeasonId)) {
+			return [];
+		}
+		$season = $this->container->get('domain.repository.season')->findById($currentSeasonId);
+		return $this->getSeasonTop($season);
+	}
+
+	/**
+	 * @param Season $season
+	 * @return array
+	 */
+	public function getSeasonTop(Season $season)
+	{
+		$top = $this->container->get('app.statistic.aggregator')->getTopStatistic($season);
+		return $top;
 	}
 
 	/**

@@ -18,6 +18,7 @@ use Domain\Entity\PenaltyEvent;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
+use DomainBundle\Entity\PlayerMetadata;
 use DomainBundle\Repository\GameEventRepository;
 use DomainBundle\Repository\GameRepository;
 use DomainBundle\Repository\SeasonTeamMemberRepository;
@@ -40,6 +41,7 @@ class Aggregator
 	private $seasonTeams = [];
 	private $seasonTeamMembers = [];
 	private $seasons = [];
+	private $top = [];
 
 	public function __construct(
 		AdapterInterface $cache,
@@ -54,6 +56,117 @@ class Aggregator
 		$this->seasonTeamRepository = $seasonTeamRepository;
 		$this->seasonTeamMemberRepository = $seasonTeamMemberRepository;
 		$this->gameEventRepository = $gameEventRepository;
+	}
+
+	/**
+	 * @param Season $season
+	 * @return array
+	 */
+	public function getTopStatistic(Season $season)
+	{
+		if (array_key_exists($season->getId(), $this->top)) {
+			return $this->top[$season->getId()];
+		}
+
+		$this->top[$season->getId()] = $this->cache->getItem('stat.season.top.' . $season->getId())->get();
+		if (!empty($this->top[$season->getId()])) {
+			return $this->top[$season->getId()];
+		}
+
+		$members = $this->seasonTeamMemberRepository->findBySeason($season);
+		/** @var \AppBundle\Statistic\SeasonTeamMember $bestAssistant */
+		$bestAssistant = null;
+		/** @var \AppBundle\Statistic\SeasonTeamMember $bestForward */
+		$bestForward = null;
+		/** @var \AppBundle\Statistic\SeasonTeamMember $bestSniper */
+		$bestSniper = null;
+		/** @var \AppBundle\Statistic\SeasonTeamMember $bestBack */
+		$bestBack = null;
+		/** @var \AppBundle\Statistic\SeasonTeamMember $bestGoalkeeper */
+		$bestGoalkeeper = null;
+		foreach ($members as $member) {
+			$stat = $this->getSeasonTeamMemberStatistic($member);
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getPlayer()->getMetadata();
+			$stat->getMember()->getPlayer()->setMetadata($playerMeta);
+			if ($bestAssistant === null) {
+				$bestAssistant = $stat;
+			} elseif ($bestAssistant->getAssistantGoals() < $stat->getAssistantGoals()) {
+				$bestAssistant = $stat;
+			} elseif ($bestAssistant->getAssistantGoals() === $stat->getAssistantGoals()
+				&& $bestAssistant->getGamesCount() > $stat->getGamesCount()
+			) {
+				$bestAssistant = $stat;
+			}
+
+
+			if ($bestForward === null) {
+				$bestForward = $stat;
+			} elseif ($bestForward->getForwardScore() < $stat->getForwardScore()) {
+				$bestForward = $stat;
+			} elseif ($bestForward->getForwardScore() === $stat->getForwardScore()
+				&& $bestForward->getGoals() < $stat->getGoals()
+			) {
+				$bestForward = $stat;
+			} elseif ($bestForward->getForwardScore() === $stat->getForwardScore()
+				&& $bestForward->getGoals() === $stat->getGoals()
+				&& $bestForward->getGamesCount() > $stat->getGamesCount()
+			) {
+				$bestForward = $stat;
+			}
+
+			if ($bestSniper === null) {
+				$bestSniper = $stat;
+			} elseif ($bestSniper->getGoals() < $stat->getGoals()) {
+				$bestSniper = $stat;
+			} elseif ($bestSniper->getGoals() === $stat->getGoals()
+				&& $bestSniper->getGamesCount() > $stat->getGamesCount()
+			) {
+				$bestSniper = $stat;
+			}
+
+			if ($playerMeta->isPositionBack()) {
+				if ($bestBack === null) {
+					$bestBack = $stat;
+				} elseif ($bestBack->getForwardScore() < $stat->getForwardScore()) {
+					$bestBack = $stat;
+				} elseif ($bestBack->getForwardScore() === $stat->getForwardScore()
+					&& $bestBack->getGoals() < $stat->getGoals()
+				) {
+					$bestBack = $stat;
+				} elseif ($bestBack->getForwardScore() === $stat->getForwardScore()
+					&& $bestBack->getGoals() === $stat->getGoals()
+					&& $bestBack->getGamesCount() > $stat->getGamesCount()
+				) {
+					$bestBack = $stat;
+				}
+			}
+
+			if ($playerMeta->isPositionGoalkeeper() && $stat->getTotalSecondsTime() > 0) {
+				if ($bestGoalkeeper === null) {
+					$bestGoalkeeper = $stat;
+				} elseif ($bestBack->getReliabilityCoef() > $stat->getReliabilityCoef()) {
+					$bestBack = $stat;
+				} elseif ($bestBack->getReliabilityCoef() === $stat->getReliabilityCoef()
+					&& $bestBack->getTotalSecondsTime() < $stat->getTotalSecondsTime()
+				) {
+					$bestBack = $stat;
+				}
+			}
+		}
+
+		$this->top[$season->getId()] = [
+			'sniper' => $bestSniper,
+			'assistant' => $bestAssistant,
+			'goalkeeper' => $bestGoalkeeper,
+			'back' => $bestBack,
+			'forward' => $bestForward,
+		];
+		$cached = $this->cache->getItem('stat.season.top.' . $season->getId());
+		$cached->tag(['season.' . $season->getId()]);
+		$cached->set($this->top[$season->getId()]);
+		$this->cache->save($cached);
+		return $this->top[$season->getId()];
 	}
 
 	/**
@@ -255,7 +368,7 @@ class Aggregator
 			return $this->seasonTeamMembers[$member->getId()];
 		}
 
-		$stat = new \AppBundle\Statistic\SeasonTeamMember();
+		$stat = new \AppBundle\Statistic\SeasonTeamMember($member);
 		$games = $this->gameRepository->findBySeasonTeam($member->getSeasonTeam());
 		foreach ($games as $game) {
 			if (!in_array($member->getId(), $game->getMembersA()) && !in_array($member->getId(), $game->getMembersB())) {

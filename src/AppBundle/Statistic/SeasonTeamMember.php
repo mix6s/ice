@@ -24,6 +24,19 @@ class SeasonTeamMember
 	private $goalsFailed = 0;
 	private $zeroGameCount = 0;
 	private $totalSecondsTime = 0;
+	/**
+	 * @var \Domain\Entity\SeasonTeamMember
+	 */
+	private $member;
+
+	/**
+	 * SeasonTeamMember constructor.
+	 * @param \Domain\Entity\SeasonTeamMember $member
+	 */
+	public function __construct(\Domain\Entity\SeasonTeamMember $member)
+	{
+		$this->member = $member;
+	}
 
 	/**
 	 * @return int
@@ -178,5 +191,21 @@ class SeasonTeamMember
 	public function setGamesCountAsGoalkeeper(int $gamesCountAsGoalkeeper)
 	{
 		$this->gamesCountAsGoalkeeper = $gamesCountAsGoalkeeper;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getForwardScore()
+	{
+		return $this->getGoals() + $this->getAssistantGoals();
+	}
+
+	/**
+	 * @return \Domain\Entity\SeasonTeamMember
+	 */
+	public function getMember(): \Domain\Entity\SeasonTeamMember
+	{
+		return $this->member;
 	}
 }
