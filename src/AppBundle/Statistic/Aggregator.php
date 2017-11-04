@@ -112,6 +112,13 @@ class Aggregator
 		} elseif ($teamA->getGoals($teamB->getSeasonTeam()) > $teamB->getGoals($teamA->getSeasonTeam())) {
 			return -1;
 		}
+
+		//имеющая лучшую разницу забитых и пропущенных шайб во всех матчах;
+		if ($teamA->getGoals() < $teamB->getGoals()) {
+			return 1;
+		} elseif ($teamA->getGoals() > $teamB->getGoals()) {
+			return -1;
+		}
 		return 0;
 	}
 	/**
