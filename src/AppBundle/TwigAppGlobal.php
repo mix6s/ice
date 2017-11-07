@@ -70,7 +70,7 @@ class TwigAppGlobal implements ContainerAwareInterface
 					break;
 				}
 			}
-			$slide = $firstFutureNum - 2;
+			$slide = $firstFutureNum - 3;
 		}
 
 		return ['games' => $games, 'slide' => $slide];
