@@ -56,6 +56,19 @@
 	}
 }
 
+.games__bullet {
+	font-size: 22px;
+	display: inline-block;
+
+	&--hosts {
+		margin-right: 3px;
+	}
+
+	&--guests {
+		margin-left: 3px;
+	}
+}
+
 .games__goals {
 	font-size: 36px;
 	font-weight: 800;
