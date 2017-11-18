@@ -234,11 +234,14 @@ class Aggregator
 		}
 
 		//имеющая лучшее соотношение забитых и пропущенных шайб во всех матчах;
-		if ($teamA->getGoals() / $teamA->getGoalsFailed() < $teamB->getGoals() / $teamB->getGoalsFailed()) {
-			return 1;
-		} elseif ($teamA->getGoals() / $teamA->getGoalsFailed() > $teamB->getGoals() / $teamB->getGoalsFailed()) {
-			return -1;
-		}
+        if ($teamA->getGoalsFailed() !== 0 && $teamB->getGoalsFailed() !== 0) {
+            if ($teamA->getGoals() / $teamA->getGoalsFailed() < $teamB->getGoals() / $teamB->getGoalsFailed()) {
+                return 1;
+            } elseif ($teamA->getGoals() / $teamA->getGoalsFailed() > $teamB->getGoals() / $teamB->getGoalsFailed()) {
+                return -1;
+            }
+        }
+
 
 		//имеющая наибольшее число побед во всех матчах;
 		if ($teamA->getWinCount() < $teamB->getWinCount()) {

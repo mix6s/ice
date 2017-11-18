@@ -1,6 +1,15 @@
 <div class="content-right">
     <section class="leaders">
-        <div class="leaders__title">Лидеры</div>
+        <div class="leaders__title">
+            Лидеры
+            <div class="leaders__select">
+                <select name="" id="" class="select">
+                    <option value="">Лига А</option>
+                    <option value="">Лига Б</option>
+                    <option value="">Лига С</option>
+                </select>
+            </div>
+        </div>
         <div class="leaders__list">
            {# {% set best = getCurrentSeasonTop() %}
             {% include 'blocks/leaders-item.twig' with {item: {points: best.forward.forwardScore, name: 'Очков', role: 'Бомбардир'}, member: best.forward.member } %}
