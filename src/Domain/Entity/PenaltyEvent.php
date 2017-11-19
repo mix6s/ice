@@ -125,6 +125,23 @@ class PenaltyEvent extends GameEvent
 	}
 
 	/**
+	 * @return int
+	 */
+	public function getPenaltyTime(): int
+	{
+		switch ($this->getPenaltyTimeType()) {
+			case PenaltyEvent::PENALTY_TIME_TYPE_2:
+				return 2;
+			case PenaltyEvent::PENALTY_TIME_TYPE_5_20:
+				return 20;
+			case PenaltyEvent::PENALTY_TIME_TYPE_2_2:
+				return 4;
+			default:
+				return 0;
+		}
+	}
+
+	/**
 	 * @return string
 	 */
 	function getType(): string

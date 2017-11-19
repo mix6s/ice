@@ -8,6 +8,11 @@
 
 namespace AppBundle\Statistic;
 
+use Domain\Entity\GameEvent;
+use Domain\Entity\GoalEvent;
+use Domain\Entity\GoalkeeperEvent;
+use Domain\Entity\PenaltyEvent;
+
 
 /**
  * Class SeasonTeamMember
@@ -15,14 +20,12 @@ namespace AppBundle\Statistic;
  */
 class SeasonTeamMember
 {
-	private $gamesCount = 0;
-	private $gamesCountAsGoalkeeper = 0;
+	private $games = [];
 	private $goals = 0;
 	private $assistantGoals = 0;
 	private $penaltyTime = 0;
 
-	private $goalsFailed = 0;
-	private $zeroGameCount = 0;
+	private $goalsFailed = [];
 	private $totalSecondsTime = 0;
 	/**
 	 * @var \Domain\Entity\SeasonTeamMember
@@ -43,15 +46,18 @@ class SeasonTeamMember
 	 */
 	public function getGamesCount(): int
 	{
-		return $this->gamesCount;
+		return count($this->games);
 	}
 
 	/**
-	 * @param int $gamesCount
+	 * @param \Domain\Entity\Game $game
 	 */
-	public function setGamesCount(int $gamesCount)
+	public function setPlayedGame(\Domain\Entity\Game $game)
 	{
-		$this->gamesCount = $gamesCount;
+		if (in_array($game->getId(), $this->games)) {
+			return;
+		}
+		$this->games[] = $game->getId();
 	}
 
 	/**
@@ -111,19 +117,24 @@ class SeasonTeamMember
 	}
 
 	/**
+	 * @param \Domain\Entity\Game|null $game
 	 * @return int
 	 */
-	public function getGoalsFailed(): int
+	public function getGoalsFailed(\Domain\Entity\Game $game = null): int
 	{
-		return $this->goalsFailed;
+		if ($game === null) {
+			return array_sum($this->goalsFailed);
+		}
+		return $this->goalsFailed[$game->getId()] ?? 0;
 	}
 
 	/**
 	 * @param int $goalsFailed
+	 * @param \Domain\Entity\Game $game
 	 */
-	public function setGoalsFailed(int $goalsFailed)
+	public function setGoalsFailed(int $goalsFailed, \Domain\Entity\Game $game)
 	{
-		$this->goalsFailed = $goalsFailed;
+		$this->goalsFailed[$game->getId()] = $goalsFailed;
 	}
 
 	/**
@@ -131,15 +142,14 @@ class SeasonTeamMember
 	 */
 	public function getZeroGameCount(): int
 	{
-		return $this->zeroGameCount;
-	}
-
-	/**
-	 * @param int $zeroGameCount
-	 */
-	public function setZeroGameCount(int $zeroGameCount)
-	{
-		$this->zeroGameCount = $zeroGameCount;
+		return count(
+			array_filter(
+				$this->goalsFailed,
+				function ($goals) {
+					return $goals == 0;
+				}
+			)
+		);
 	}
 
 	/**
@@ -182,16 +192,9 @@ class SeasonTeamMember
 	 */
 	public function getGamesCountAsGoalkeeper(): int
 	{
-		return $this->gamesCountAsGoalkeeper;
+		return count($this->goalsFailed);
 	}
 
-	/**
-	 * @param int $gamesCountAsGoalkeeper
-	 */
-	public function setGamesCountAsGoalkeeper(int $gamesCountAsGoalkeeper)
-	{
-		$this->gamesCountAsGoalkeeper = $gamesCountAsGoalkeeper;
-	}
 
 	/**
 	 * @return int
@@ -207,5 +210,48 @@ class SeasonTeamMember
 	public function getMember(): \Domain\Entity\SeasonTeamMember
 	{
 		return $this->member;
+	}
+
+	/**
+	 * @param \Domain\Entity\Game $game
+	 * @param \Domain\Entity\GameEvent $event
+	 */
+	public function aggregate(\Domain\Entity\Game $game, GameEvent $event)
+	{
+		$this->setPlayedGame($game);
+		switch ($event->getType()) {
+			case 'goalkeeper':
+				/** @var GoalkeeperEvent $event */
+				if ($event->getMember()->getId() === $this->getMember()->getId()) {
+					$memberIsGoalkeeper = true;
+					$memberGameGoalsFailed = $event->getGoals();
+					$this->setGoalsFailed($this->getGoalsFailed($game) + $event->getGoals(), $game);
+					$this->setTotalSecondsTime($this->getTotalSecondsTime() + $event->getDuration());
+				}
+				break;
+			case 'goal':
+				/** @var GoalEvent $event */
+				$assistants = [];
+				if ($event->getAssistantA()) {
+					$assistants[] = $event->getAssistantA()->getId();
+				}
+				if ($event->getAssistantB()) {
+					$assistants[] = $event->getAssistantB()->getId();
+				}
+				if ($event->getMember()->getId() === $this->getMember()->getId()) {
+					$this->setGoals($this->getGoals() + 1);
+				} elseif (in_array($this->getMember()->getId(), $assistants)) {
+					$this->setAssistantGoals($this->getAssistantGoals() + 1);
+				}
+				break;
+			case 'penalty':
+				/** @var PenaltyEvent $event */
+				if ($event->getMember()->getId() === $this->getMember()->getId()) {
+					$this->setPenaltyTime($this->getPenaltyTime() + $event->getPenaltyTime());
+				}
+				break;
+			default:
+				break;
+		}
 	}
 }

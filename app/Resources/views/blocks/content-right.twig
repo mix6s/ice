@@ -1,31 +1,41 @@
 <div class="content-right">
-    <section class="leaders">
+    {% macro declension(number, forms) %}
+        {% set cases = [2, 0, 1, 1, 1, 2] %}
+        {{ forms[ ( number%100>4 and number%100<20)? 2 : cases[(number%10<5)?number%10:5] ] }}
+    {% endmacro %}
+    {% import _self as utils %}
+    {% set statistic = getCurrentSeasonStatistic() %}
+    <section class="leaders" style="display: block;">
         <div class="leaders__title">
             Лидеры
             <div class="leaders__select">
-                <select name="" id="" class="select">
-                    <option value="">Лига А</option>
-                    <option value="">Лига Б</option>
-                    <option value="">Лига С</option>
+                <select name="" id="" class="select js-change-top-list">
+                    {% for item in statistic %}
+                        <option data-list="#list_{{ item.bests.league.id }}" value="{{ item.bests.league.id }}" class="">{{ item.bests.league.metadata.title }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>
-        <div class="leaders__list">
-           {# {% set best = getCurrentSeasonTop() %}
-            {% include 'blocks/leaders-item.twig' with {item: {points: best.forward.forwardScore, name: 'Очков', role: 'Бомбардир'}, member: best.forward.member } %}
-            {% include 'blocks/leaders-item.twig' with {item: {points: best.sniper.goals, name: 'Голов', role: 'Снайпер'}, member: best.sniper.member} %}
-            {% include 'blocks/leaders-item.twig' with {item: {points: best.assistant.assistantGoals, name: 'Пасов', role: 'Ассистент'}, member: best.assistant.member} %}
-            {% include 'blocks/leaders-item.twig' with {item: {points: best.back.forwardScore, name: 'Очков', role: 'Защитник'}, member: best.back.member} %}
-            {% include 'blocks/leaders-item.twig' with {item: {points: best.goalkeeper.reliabilityCoef, name: 'Очков', role: 'Вратарь'}, member: best.goalkeeper.member} %}#}
+        {% set k = 0 %}
+        {% for item in statistic %}
+            {% set best = item.bests %}
+        <div id="list_{{ item.bests.league.id }}" class="leaders__list" style="{{ k == 0 ? '' : 'display:none' }}">
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestForward.forwardScore, name: utils.declension(best.bestForward.forwardScore, ['Очко','Очка', 'Очков']), role: 'Бомбардир'}, member: best.bestForward.member } %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestSniper.goals, name: utils.declension(best.bestSniper.goals, ['Гол','Гола', 'Голов']), role: 'Снайпер'}, member: best.bestSniper.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestAssistant.assistantGoals, name: utils.declension(best.bestAssistant.assistantGoals, ['Пас','Паса', 'Пасов']), role: 'Ассистент'}, member: best.bestAssistant.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestBack.forwardScore, name: utils.declension(best.bestBack.forwardScore, ['Очко','Очка', 'Очков']), role: 'Защитник'}, member: best.bestBack.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestGoalkeeper.reliabilityCoef, name: utils.declension(best.bestGoalkeeper.reliabilityCoef, ['Очко','Очка', 'Очков']), role: 'Вратарь'}, member: best.bestGoalkeeper.member} %}
         </div>
-        <div class="leaders__link">
+            {% set k = 1 %}
+        {% endfor %}
+      {#  <div class="leaders__link">
             <a href="#">Вся статистика</a>
-        </div>
+        </div>#}
     </section>
     <section class="sidebar-table">
         <div class="sidebar-table__title">Таблица</div>
         <div class="sidebar-table__list">
-            {% for item in getCurrentSeasonStatistic() %}
+            {% for item in statistic %}
                 {% include 'blocks/sidebar-item-table.twig' with {league: item.league, teams: item.seasonteams} %}
             {% endfor %}
         </div>

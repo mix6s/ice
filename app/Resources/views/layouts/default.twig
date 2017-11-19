@@ -106,7 +106,17 @@
 		</div>
 	</footer>
 	<script src="{{ asset('assets/js/scripts.min.js')}}"></script>
-    {% block javascript %}{% endblock %}
+    {% block javascript %}
+		<script>
+			$(document).ready(function () {
+				$('.js-change-top-list').on('change', function (e) {
+					var optionSelected = $("option:selected", this);
+					$('.leaders__list').attr('style','display: none');
+					$(optionSelected.data('list')).attr('style','dsf');
+				});
+			});
+		</script>
+	{% endblock %}
     {% include 'blocks/yandex-metrika.twig' with {id: ya_metrika} %}
 </body>
 </html>

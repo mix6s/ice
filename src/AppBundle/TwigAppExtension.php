@@ -106,13 +106,18 @@ class TwigAppExtension extends \Twig_Extension
 	{
 		$stat = $this->container->get('app.statistic.aggregator')->getSeasonStatistic($season);
 		$byLeague = [];
-		foreach ($stat as $item) {
-			if (!array_key_exists($item->getSeasonTeam()->getLeague()->getId(), $byLeague)) {
-				$byLeague[$item->getSeasonTeam()->getLeague()->getId()] = [
-					'league' => $item->getSeasonTeam()->getLeague(),
-					'seasonteams' => []
+		foreach ($stat->getBeastsByLeagues() as $beastsByLeague)
+		{
+			if (!array_key_exists($beastsByLeague->getLeague()->getId(), $byLeague)) {
+				$byLeague[$beastsByLeague->getLeague()->getId()] = [
+					'league' => $beastsByLeague->getLeague(),
+					'seasonteams' => [],
+					'bests' => $beastsByLeague
 				];
 			}
+		}
+		$seasonTeamStatistics = $stat->getSeasonTeamStatistics();
+		foreach ($seasonTeamStatistics as $item) {
 			$byLeague[$item->getSeasonTeam()->getLeague()->getId()]['seasonteams'][] = $item;
 		}
 		return $byLeague;

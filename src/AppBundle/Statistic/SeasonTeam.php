@@ -25,7 +25,7 @@ class SeasonTeam
 	private $loseInOvertime = [];
 	private $goals = [];
 	private $goalsFailed = [];
-
+	private $membersStatistic = [];
 	/**
 	 * SeasonTeam constructor.
 	 * @param \Domain\Entity\SeasonTeam $seasonTeam
@@ -243,5 +243,35 @@ class SeasonTeam
 	public function getSeasonTeam(): \Domain\Entity\SeasonTeam
 	{
 		return $this->seasonTeam;
+	}
+
+
+	/**
+	 * @param \Domain\Entity\SeasonTeamMember $member
+	 * @return SeasonTeamMember
+	 */
+	public function getMemberStatistic(\Domain\Entity\SeasonTeamMember $member): SeasonTeamMember
+	{
+		if (!array_key_exists($member->getId(), $this->membersStatistic)) {
+			return new SeasonTeamMember($member);
+		}
+		return $this->membersStatistic[$member->getId()];
+	}
+
+	/**
+	 * @param SeasonTeamMember $stat
+	 * @return SeasonTeamMember
+	 */
+	public function setMemberStatistic(SeasonTeamMember $stat)
+	{
+		return $this->membersStatistic[$stat->getMember()->getId()] = $stat;
+	}
+
+	/**
+	 * @return SeasonTeamMember[]
+	 */
+	public function getMembersStatistic(): array
+	{
+		return $this->membersStatistic;
 	}
 }

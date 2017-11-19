@@ -80,6 +80,7 @@
 {% endblock %}
 
  {% block javascript %}
+     {{ parent() }}
      <script>
 		 $(document).ready(function () {
 			 var $uploadCrop;

@@ -14,6 +14,7 @@ use Domain\Entity\Game;
 use Domain\Entity\GameEvent;
 use Domain\Entity\GoalEvent;
 use Domain\Entity\GoalkeeperEvent;
+use Domain\Entity\League;
 use Domain\Entity\PenaltyEvent;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
@@ -64,116 +65,14 @@ class Aggregator
 	 */
 	public function getTopStatistic(Season $season)
 	{
-		if (array_key_exists($season->getId(), $this->top)) {
-			return $this->top[$season->getId()];
-		}
-
-		$this->top[$season->getId()] = $this->cache->getItem('stat.season.top.' . $season->getId())->get();
-		if (!empty($this->top[$season->getId()])) {
-			return $this->top[$season->getId()];
-		}
-
-		$members = $this->seasonTeamMemberRepository->findBySeason($season);
-		/** @var \AppBundle\Statistic\SeasonTeamMember $bestAssistant */
-		$bestAssistant = null;
-		/** @var \AppBundle\Statistic\SeasonTeamMember $bestForward */
-		$bestForward = null;
-		/** @var \AppBundle\Statistic\SeasonTeamMember $bestSniper */
-		$bestSniper = null;
-		/** @var \AppBundle\Statistic\SeasonTeamMember $bestBack */
-		$bestBack = null;
-		/** @var \AppBundle\Statistic\SeasonTeamMember $bestGoalkeeper */
-		$bestGoalkeeper = null;
-		foreach ($members as $member) {
-			$stat = $this->getSeasonTeamMemberStatistic($member);
-			/** @var PlayerMetadata $playerMeta */
-			$playerMeta = $member->getPlayer()->getMetadata();
-			$stat->getMember()->getPlayer()->setMetadata($playerMeta);
-			if ($bestAssistant === null) {
-				$bestAssistant = $stat;
-			} elseif ($bestAssistant->getAssistantGoals() < $stat->getAssistantGoals()) {
-				$bestAssistant = $stat;
-			} elseif ($bestAssistant->getAssistantGoals() === $stat->getAssistantGoals()
-				&& $bestAssistant->getGamesCount() > $stat->getGamesCount()
-			) {
-				$bestAssistant = $stat;
-			}
-
-
-			if ($bestForward === null) {
-				$bestForward = $stat;
-			} elseif ($bestForward->getForwardScore() < $stat->getForwardScore()) {
-				$bestForward = $stat;
-			} elseif ($bestForward->getForwardScore() === $stat->getForwardScore()
-				&& $bestForward->getGoals() < $stat->getGoals()
-			) {
-				$bestForward = $stat;
-			} elseif ($bestForward->getForwardScore() === $stat->getForwardScore()
-				&& $bestForward->getGoals() === $stat->getGoals()
-				&& $bestForward->getGamesCount() > $stat->getGamesCount()
-			) {
-				$bestForward = $stat;
-			}
-
-			if ($bestSniper === null) {
-				$bestSniper = $stat;
-			} elseif ($bestSniper->getGoals() < $stat->getGoals()) {
-				$bestSniper = $stat;
-			} elseif ($bestSniper->getGoals() === $stat->getGoals()
-				&& $bestSniper->getGamesCount() > $stat->getGamesCount()
-			) {
-				$bestSniper = $stat;
-			}
-
-			if ($playerMeta->isPositionBack()) {
-				if ($bestBack === null) {
-					$bestBack = $stat;
-				} elseif ($bestBack->getForwardScore() < $stat->getForwardScore()) {
-					$bestBack = $stat;
-				} elseif ($bestBack->getForwardScore() === $stat->getForwardScore()
-					&& $bestBack->getGoals() < $stat->getGoals()
-				) {
-					$bestBack = $stat;
-				} elseif ($bestBack->getForwardScore() === $stat->getForwardScore()
-					&& $bestBack->getGoals() === $stat->getGoals()
-					&& $bestBack->getGamesCount() > $stat->getGamesCount()
-				) {
-					$bestBack = $stat;
-				}
-			}
-
-			if ($playerMeta->isPositionGoalkeeper() && $stat->getTotalSecondsTime() > 0) {
-				if ($bestGoalkeeper === null) {
-					$bestGoalkeeper = $stat;
-				} elseif ($bestBack->getReliabilityCoef() > $stat->getReliabilityCoef()) {
-					$bestBack = $stat;
-				} elseif ($bestBack->getReliabilityCoef() === $stat->getReliabilityCoef()
-					&& $bestBack->getTotalSecondsTime() < $stat->getTotalSecondsTime()
-				) {
-					$bestBack = $stat;
-				}
-			}
-		}
-
-		$this->top[$season->getId()] = [
-			'sniper' => $bestSniper,
-			'assistant' => $bestAssistant,
-			'goalkeeper' => $bestGoalkeeper,
-			'back' => $bestBack,
-			'forward' => $bestForward,
-		];
-		$cached = $this->cache->getItem('stat.season.top.' . $season->getId());
-		$cached->tag(['season.' . $season->getId()]);
-		$cached->set($this->top[$season->getId()]);
-		$this->cache->save($cached);
-		return $this->top[$season->getId()];
+		return;
 	}
 
 	/**
 	 * @param Season $season
-	 * @return \AppBundle\Statistic\SeasonTeam[]
+	 * @return \AppBundle\Statistic\Season
 	 */
-	public function getSeasonStatistic(Season $season)
+	public function getSeasonStatistic(Season $season): \AppBundle\Statistic\Season
 	{
 		if (array_key_exists($season->getId(), $this->seasons)) {
 			return $this->seasons[$season->getId()];
@@ -184,12 +83,19 @@ class Aggregator
 			return $this->seasons[$season->getId()];
 		}
 
-		$stat = [];
+		$stat = new \AppBundle\Statistic\Season($season);
 		$teams = $this->seasonTeamRepository->findBySeason($season);
 		foreach ($teams as $seasonTeam) {
-			$stat[] = $this->getSeasonTeamStatistic($seasonTeam);
+			$seasonTeamStat = $this->getSeasonTeamStatistic($seasonTeam);
+			$membersStat = $seasonTeamStat->getMembersStatistic();
+			$leagueBests = $stat->getBestsByLeague($seasonTeam->getLeague());
+			foreach ($membersStat as $memberStat)
+			{
+				$leagueBests->nominate($memberStat);
+			}
+			$stat->setSeasonTeamStatistic($seasonTeamStat);
+			$stat->setBestsByLeague($leagueBests);
 		}
-		usort($stat, [$this, 'sortSeasonTeams']);
 		$this->seasons[$season->getId()] = $stat;
 		$cached = $this->cache->getItem('stat.season.' . $season->getId());
 		$cached->tag(['season.' . $season->getId()]);
@@ -198,66 +104,6 @@ class Aggregator
 		return $this->seasons[$season->getId()];
 	}
 
-	/**
-	 * @param \AppBundle\Statistic\SeasonTeam $teamA
-	 * @param \AppBundle\Statistic\SeasonTeam $teamB
-	 * @return int
-	 */
-	private function sortSeasonTeams(\AppBundle\Statistic\SeasonTeam $teamA, \AppBundle\Statistic\SeasonTeam $teamB)
-	{
-		//набравшая наибольшее количество очков во всех матчах;
-		if ($teamA->getScores() < $teamB->getScores()) {
-			return 1;
-		} elseif ($teamA->getScores() > $teamB->getScores()) {
-			return -1;
-		}
-
-		//набравшая наибольшее количество очков во всех матчах между собой;
-		if ($teamA->getScores($teamB->getSeasonTeam()) < $teamB->getScores($teamA->getSeasonTeam())) {
-			return 1;
-		} elseif ($teamA->getScores($teamB->getSeasonTeam()) > $teamB->getScores($teamA->getSeasonTeam())) {
-			return -1;
-		}
-
-		//имеющая лучшую разницу забитых и пропущенных шайб во всех играх между этими командами;
-		if ($teamA->getGoals($teamB->getSeasonTeam()) < $teamB->getGoals($teamA->getSeasonTeam())) {
-			return 1;
-		} elseif ($teamA->getGoals($teamB->getSeasonTeam()) > $teamB->getGoals($teamA->getSeasonTeam())) {
-			return -1;
-		}
-
-		//имеющая лучшую разницу забитых и пропущенных шайб во всех матчах;
-		if ($teamA->getGoals() - $teamA->getGoalsFailed() < $teamB->getGoals() - $teamB->getGoalsFailed()) {
-			return 1;
-		} elseif ($teamA->getGoals() - $teamA->getGoalsFailed() > $teamB->getGoals() - $teamB->getGoalsFailed()) {
-			return -1;
-		}
-
-		//имеющая лучшее соотношение забитых и пропущенных шайб во всех матчах;
-        if ($teamA->getGoalsFailed() !== 0 && $teamB->getGoalsFailed() !== 0) {
-            if ($teamA->getGoals() / $teamA->getGoalsFailed() < $teamB->getGoals() / $teamB->getGoalsFailed()) {
-                return 1;
-            } elseif ($teamA->getGoals() / $teamA->getGoalsFailed() > $teamB->getGoals() / $teamB->getGoalsFailed()) {
-                return -1;
-            }
-        }
-
-
-		//имеющая наибольшее число побед во всех матчах;
-		if ($teamA->getWinCount() < $teamB->getWinCount()) {
-			return 1;
-		} elseif ($teamA->getWinCount() > $teamB->getWinCount()) {
-			return -1;
-		}
-
-		//забросившая наибольшее количество шайб во всех матчах этапа.
-		if ($teamA->getGoals() < $teamB->getGoals()) {
-			return 1;
-		} elseif ($teamA->getGoals() > $teamB->getGoals()) {
-			return -1;
-		}
-		return 0;
-	}
 	/**
 	 * @param SeasonTeam $seasonTeam
 	 * @return \AppBundle\Statistic\SeasonTeam
@@ -275,6 +121,7 @@ class Aggregator
 
 		$stat = new \AppBundle\Statistic\SeasonTeam($seasonTeam);
 		$games = $this->gameRepository->findBySeasonTeam($seasonTeam);
+		$seasonTeamMembers = $this->seasonTeamMemberRepository->findBySeasonTeam($seasonTeam);
 		foreach ($games as $game) {
 			if ($game->getState() !== Game::STATE_FINISHED) {
 				continue;
@@ -306,6 +153,11 @@ class Aggregator
 						break;
 					default:
 						break;
+				}
+				foreach ($seasonTeamMembers as $member) {
+					$memberStat = $stat->getMemberStatistic($member);
+					$memberStat->aggregate($game, $event);
+					$stat->setMemberStatistic($memberStat);
 				}
 			}
 			$isWinner = false;
@@ -355,85 +207,13 @@ class Aggregator
 		$this->cache->save($cached);
 		return $this->seasonTeams[$seasonTeam->getId()];
 	}
-
 	/**
 	 * @param SeasonTeamMember $member
 	 * @return \AppBundle\Statistic\SeasonTeamMember
 	 */
 	public function getSeasonTeamMemberStatistic(SeasonTeamMember $member): \AppBundle\Statistic\SeasonTeamMember
 	{
-		if (array_key_exists($member->getId(), $this->seasonTeamMembers)) {
-			return $this->seasonTeamMembers[$member->getId()];
-		}
-
-		$this->seasonTeamMembers[$member->getId()] = $this->cache->getItem('stat.member.' . $member->getId())->get();
-		if (!empty($this->seasonTeamMembers[$member->getId()])) {
-			return $this->seasonTeamMembers[$member->getId()];
-		}
-
-		$stat = new \AppBundle\Statistic\SeasonTeamMember($member);
-		$games = $this->gameRepository->findBySeasonTeam($member->getSeasonTeam());
-		foreach ($games as $game) {
-			if (!in_array($member->getId(), $game->getMembersA()) && !in_array($member->getId(), $game->getMembersB())) {
-				continue;
-			}
-
-			if ($game->getState() !== Game::STATE_FINISHED) {
-				continue;
-			}
-			$stat->setGamesCount($stat->getGamesCount() + 1);
-			$events = $this->gameEventRepository->findByGame($game);
-			$memberIsGoalkeeper = false;
-			$memberGameGoalsFailed = 0;
-			foreach ($events as $event) {
-				switch ($event->getType()) {
-					case 'goalkeeper':
-						/** @var GoalkeeperEvent $event */
-						if ($event->getMember()->getId() === $member->getId()) {
-							$memberIsGoalkeeper = true;
-							$memberGameGoalsFailed = $event->getGoals();
-							$stat->setGoalsFailed($stat->getGoalsFailed() + $event->getGoals());
-							$stat->setTotalSecondsTime($stat->getTotalSecondsTime() + $event->getDuration());
-						}
-						break;
-					case 'goal':
-						/** @var GoalEvent $event */
-						$assistants = [];
-						if ($event->getAssistantA()) {
-							$assistants[] = $event->getAssistantA()->getId();
-						}
-						if ($event->getAssistantB()) {
-							$assistants[] = $event->getAssistantB()->getId();
-						}
-						if ($event->getMember()->getId() === $member->getId()) {
-							$stat->setGoals($stat->getGoals() + 1);
-						} elseif (in_array($member->getId(), $assistants)) {
-							$stat->setAssistantGoals($stat->getAssistantGoals() + 1);
-						}
-						break;
-					case 'penalty':
-						/** @var PenaltyEvent $event */
-						if ($event->getMember()->getId() === $member->getId()) {
-							$stat->setPenaltyTime($stat->getPenaltyTime() + $this->getPenaltyTime($event->getPenaltyTimeType()));
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			if ($memberIsGoalkeeper) {
-				$stat->setGamesCountAsGoalkeeper($stat->getGamesCountAsGoalkeeper() + 1);
-				if ($memberGameGoalsFailed === 0) {
-					$stat->setZeroGameCount($stat->getZeroGameCount() + 1);
-				}
-			}
-		}
-		$this->seasonTeamMembers[$member->getId()] = $stat;
-		$cached = $this->cache->getItem('stat.member.' . $member->getId());
-		$cached->tag(['member.' . $member->getId(), 'season.' . $member->getSeasonTeam()->getSeason()->getId()]);
-		$cached->set($stat);
-		$this->cache->save($cached);
-		return $this->seasonTeamMembers[$member->getId()];
+		return $this->getSeasonTeamStatistic($member->getSeasonTeam())->getMemberStatistic($member);
 	}
 
 	/**
@@ -479,7 +259,7 @@ class Aggregator
 					break;
 				case 'penalty':
 					/** @var PenaltyEvent $event */
-					$time = $this->getPenaltyTime($event->getPenaltyTimeType());
+					$time = $event->getPenaltyTime();
 					if ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamA()->getId()) {
 						$stat->setTeamAPenaltyTime($stat->getTeamAPenaltyTime() + $time);
 					} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
@@ -498,23 +278,5 @@ class Aggregator
 		$cached->set($this->games);
 		$this->cache->save($cached);
 		return $this->games[$game->getId()];
-	}
-
-	/**
-	 * @param string $type
-	 * @return int
-	 */
-	private function getPenaltyTime(string $type): int
-	{
-		switch ($type) {
-			case PenaltyEvent::PENALTY_TIME_TYPE_2:
-				return 2;
-			case PenaltyEvent::PENALTY_TIME_TYPE_5_20:
-				return 20;
-			case PenaltyEvent::PENALTY_TIME_TYPE_2_2:
-				return 4;
-			default:
-				return 0;
-		}
 	}
 }
