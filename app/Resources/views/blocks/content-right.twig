@@ -20,11 +20,21 @@
         {% for item in statistic %}
             {% set best = item.bests %}
         <div id="list_{{ item.bests.league.id }}" class="leaders__list" style="{{ k == 0 ? '' : 'display:none' }}">
+            {% if best.bestForward %}
                 {% include 'blocks/leaders-item.twig' with {item: {points: best.bestForward.forwardScore, name: utils.declension(best.bestForward.forwardScore, ['Очко','Очка', 'Очков']), role: 'Бомбардир'}, member: best.bestForward.member } %}
+            {% endif %}
+            {% if best.bestSniper %}
                 {% include 'blocks/leaders-item.twig' with {item: {points: best.bestSniper.goals, name: utils.declension(best.bestSniper.goals, ['Гол','Гола', 'Голов']), role: 'Снайпер'}, member: best.bestSniper.member} %}
+            {% endif %}
+            {% if best.bestAssistant %}
                 {% include 'blocks/leaders-item.twig' with {item: {points: best.bestAssistant.assistantGoals, name: utils.declension(best.bestAssistant.assistantGoals, ['Пас','Паса', 'Пасов']), role: 'Ассистент'}, member: best.bestAssistant.member} %}
+            {% endif %}
+            {% if best.bestBack %}
                 {% include 'blocks/leaders-item.twig' with {item: {points: best.bestBack.forwardScore, name: utils.declension(best.bestBack.forwardScore, ['Очко','Очка', 'Очков']), role: 'Защитник'}, member: best.bestBack.member} %}
+            {% endif %}
+            {% if best.bestGoalkeeper %}
                 {% include 'blocks/leaders-item.twig' with {item: {points: best.bestGoalkeeper.reliabilityCoef, name: utils.declension(best.bestGoalkeeper.reliabilityCoef, ['Очко','Очка', 'Очков']), role: 'Вратарь'}, member: best.bestGoalkeeper.member} %}
+            {% endif %}
         </div>
             {% set k = 1 %}
         {% endfor %}

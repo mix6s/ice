@@ -45,7 +45,7 @@ class LeagueBests
 	/**
 	 * @return SeasonTeamMember
 	 */
-	public function getBestAssistant(): SeasonTeamMember
+	public function getBestAssistant()
 	{
 		return $this->bestAssistant;
 	}
@@ -53,7 +53,7 @@ class LeagueBests
 	/**
 	 * @return SeasonTeamMember
 	 */
-	public function getBestForward(): SeasonTeamMember
+	public function getBestForward()
 	{
 		return $this->bestForward;
 	}
@@ -61,7 +61,7 @@ class LeagueBests
 	/**
 	 * @return SeasonTeamMember
 	 */
-	public function getBestSniper(): SeasonTeamMember
+	public function getBestSniper()
 	{
 		return $this->bestSniper;
 	}
@@ -69,7 +69,7 @@ class LeagueBests
 	/**
 	 * @return SeasonTeamMember
 	 */
-	public function getBestBack(): SeasonTeamMember
+	public function getBestBack()
 	{
 		return $this->bestBack;
 	}
@@ -77,7 +77,7 @@ class LeagueBests
 	/**
 	 * @return SeasonTeamMember
 	 */
-	public function getBestGoalkeeper(): SeasonTeamMember
+	public function getBestGoalkeeper()
 	{
 		return $this->bestGoalkeeper;
 	}
