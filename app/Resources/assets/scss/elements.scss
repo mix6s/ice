@@ -94,6 +94,11 @@ h1 {
     border-right: 1px solid #c5dee9;
     border-bottom: 1px solid #c5dee9;
     height: 35px;
+
+    &.team-stats {
+      text-align: left;
+      padding-left: 20px;
+    }
   }
 
   &--sidebar {
