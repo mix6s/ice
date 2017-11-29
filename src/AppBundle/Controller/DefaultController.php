@@ -119,7 +119,13 @@ class DefaultController extends Controller
 		}
 		return $this->render('tables.twig', ['season' => $season]);
 	}
-
+    /**
+     * @Route("/top_stat", name="top_stat")
+     */
+    public function topStatAction(Request $request)
+    {
+        return $this->render('stat.twig');
+    }
 	/**
 	 * @Route("/calendar", name="calendar")
 	 */
