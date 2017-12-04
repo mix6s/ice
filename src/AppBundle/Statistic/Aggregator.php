@@ -92,6 +92,7 @@ class Aggregator
 			foreach ($membersStat as $memberStat)
 			{
 				$leagueBests->nominate($memberStat);
+				$leagueBests->addMember($memberStat);
 			}
 			$stat->setSeasonTeamStatistic($seasonTeamStat);
 			$stat->setBestsByLeague($leagueBests);

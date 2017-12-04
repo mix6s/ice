@@ -41,6 +41,6 @@ services:
 
   node:
     container_name: ice.node
-    image: node:4.8.4-slim
-    volumes_from:
-      - app
+    image: node:6.12.0
+    volumes:
+      - .:/var/www/ice

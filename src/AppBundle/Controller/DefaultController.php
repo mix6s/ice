@@ -120,11 +120,45 @@ class DefaultController extends Controller
 		return $this->render('tables.twig', ['season' => $season]);
 	}
     /**
-     * @Route("/top_stat", name="top_stat")
+     * @Route("/top", name="top_stat")
      */
     public function topStatAction(Request $request)
     {
-        return $this->render('stat.twig');
+    	$tops = ['forward' => 'Бомбардиры', 'sniper' => 'Снайперы', 'assistant' => 'Ассистенты', 'back' => 'Защитники', 'goalkeeper' => 'Вратари'];
+    	$top = $request->get('top', 'forward');
+    	if (!in_array($top, ['sniper', 'goalkeeper', 'assistant', 'back', 'forward'])) {
+    		 throw $this->createNotFoundException();
+		}
+		$leagues = $this->get('domain.repository.league')->findAll();
+		$leagueId = (int)$request->get('league_id', $leagues[0]->getId());
+		$league = $this->get('domain.repository.league')->findById($leagueId);
+		$season = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
+		$statistic = $this->get('app.statistic.aggregator')->getSeasonStatistic($season);
+		$leagueBests = $statistic->getBestsByLeague($league);
+		switch ($top) {
+			case 'sniper':
+				$bestList = $leagueBests->getBestSniperList();
+				break;
+			case 'goalkeeper':
+				$bestList = $leagueBests->getBestGoalkeeperList();
+				break;
+			case 'assistant':
+				$bestList = $leagueBests->getBestAssistantList();
+				break;
+			case 'back':
+				$bestList = $leagueBests->getBestBackList();
+				break;
+			case 'forward':
+				$bestList = $leagueBests->getBestForwardList();
+				break;
+		}
+        return $this->render('stat.twig', [
+        	'list' => $bestList,
+			'tops' => $tops,
+			'leagues' => $leagues,
+			'leagueId' => $leagueId,
+			'top' => $top,
+		]);
     }
 	/**
 	 * @Route("/calendar", name="calendar")

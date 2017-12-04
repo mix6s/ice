@@ -33,6 +33,11 @@ class LeagueBests
 	private $league;
 
 	/**
+	 * @var \AppBundle\Statistic\SeasonTeamMember[]
+	 */
+	private $members = [];
+
+	/**
 	 * LeagueBests constructor.
 	 * @param \Domain\Entity\League $league
 	 */
@@ -171,6 +176,127 @@ class LeagueBests
 		) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
 		}
+	}
+
+	/**
+	 * @param SeasonTeamMember $member
+	 */
+	public function addMember(SeasonTeamMember $member)
+	{
+		$this->members[] = $member;
+	}
+
+	/**
+	 * @return SeasonTeamMember[]
+	 */
+	public function getBestAssistantList(): array
+	{
+		$stats = $this->members;
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getAssistantGoals() < $memberB->getAssistantGoals()) {
+				return 1;
+			} elseif ($memberA->getAssistantGoals() === $memberB->getAssistantGoals()
+				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
+	}
+
+	/**
+	 * @return SeasonTeamMember[]
+	 */
+	public function getBestForwardList(): array
+	{
+		$stats = $this->members;
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getForwardScore() < $memberB->getForwardScore()) {
+				return 1;
+			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
+				&& $memberA->getGoals() < $memberB->getGoals()
+			) {
+				return 1;
+			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
+				&& $memberA->getGoals() === $memberB->getGoals()
+				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
+	}
+
+	/**
+	 * @return SeasonTeamMember[]
+	 */
+	public function getBestSniperList(): array
+	{
+		$stats = $this->members;
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getGoals() < $memberB->getGoals()) {
+				return 1;
+			} elseif ($memberA->getGoals() === $memberB->getGoals()
+				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
+	}
+
+	/**
+	 * @return SeasonTeamMember[]
+	 */
+	public function getBestBackList(): array
+	{
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return $playerMeta->isPositionBack();
+		});
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getForwardScore() < $memberB->getForwardScore()) {
+				return 1;
+			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
+				&& $memberA ->getGoals() < $memberB->getGoals()
+			) {
+				return 1;
+			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
+				&& $memberA->getGoals() === $memberB->getGoals()
+				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
+	}
+
+	/**
+	 * @return SeasonTeamMember[]
+	 */
+	public function getBestGoalkeeperList(): array
+	{
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return $member->getTotalSecondsTime() > 0 && $playerMeta->isPositionGoalkeeper();
+		});
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getReliabilityCoef() > $memberB->getReliabilityCoef()) {
+				return 1;
+			} elseif ($memberA->getReliabilityCoef() === $memberB->getReliabilityCoef()
+				&& $memberA->getTotalSecondsTime() < $memberB->getTotalSecondsTime()
+			) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
 	}
 
 	/**

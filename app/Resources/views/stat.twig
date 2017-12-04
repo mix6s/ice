@@ -7,45 +7,63 @@
             <div class="stat__item">
                 <label for="conference" class="label">Лига</label>
                 <select id="conference" class="select" onchange="this.form.submit()" name="league_id">
-                    <option value="" selected>Все</option>
+                    {% for  league in leagues %}
+                        <option value="{{ league.id }}" {{ league.id == leagueId ? 'selected' : ''  }}>{{ league.metadata.title }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="stat__item">
                 <label for="nomination" class="label">Номинации</label>
-                <select id="nomination" class="select" onchange="this.form.submit()" name="league_id">
-                    <option value="" selected>Бомбардиры</option>
-                    <option value="" selected>Снайперы</option>
-                    <option value="" selected>Ассистенты</option>
-                    <option value="" selected>Защитники</option>
-                    <option value="" selected>Вратари</option>
+                <select id="nomination" class="select" onchange="this.form.submit()" name="top">
+                    {% for value, name in tops %}
+                    <option value="{{ value }}" {{ value == top ? 'selected' : ''  }}>{{ name }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </form>
         <div class="table-wrapper">
-            <div class="table-wrapper__header">Бомбардиры</div>
+            <div class="table-wrapper__header">{{ tops[top] }}</div>
             <table class="table">
                 <tr>
                     <th></th>
                     <th>Игрок</th>
                     <th>Команда</th>
                     <th>Игровой №</th>
+                    {% if top != 'goalkeeper' %}
                     <th title="Количество проведенных игр">И</th>
                     <th title="Забитые голы">Ш</th>
                     <th title="Передачи">А</th>
                     <th title="Очки">О</th>
                     <th title="Штрафное время">Штр</th>
+                    {% else %}
+                        <th title="Количество проведенных игр">И</th>
+                        <th title="Сухие игры">И"0"</th>
+                        <th title="Пропущенно шайб">ПШ</th>
+                        <th title="Время на площадке">ВП</th>
+                        <th title="Коэффициент надежности = 60мин*ПШ/ВП">КН</th>
+                    {% endif %}
                 </tr>
+                {% for num, memberStat in list %}
                 <tr>
-                    <td>1</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ num + 1 }}</td>
+                    <td>{{ memberStat.member.player.metadata.fullName }}</td>
+                    <td>{{ memberStat.member.seasonTeam.team.metadata.title }}</td>
+                    <td>{{ memberStat.member.number }}</td>
+                    {% if top != 'goalkeeper' %}
+                    <td>{{ memberStat.member|memberStatistic.gamesCount }}</td>
+                    <td>{{ memberStat.member|memberStatistic.goals }}</td>
+                    <td>{{ memberStat.member|memberStatistic.assistantGoals }}</td>
+                    <td>{{ memberStat.member|memberStatistic.score }}</td>
+                    <td>{{ memberStat.member|memberStatistic.penaltyTime }}</td>
+                    {% else %}
+                        <td>{{ memberStat.member|memberStatistic.gamesCountAsGoalkeeper }}</td>
+                        <td>{{ memberStat.member|memberStatistic.zeroGameCount }}</td>
+                        <td>{{ memberStat.member|memberStatistic.goalsFailed }}</td>
+                        <td>{{ memberStat.member|memberStatistic.totalMinutesTime|number_format(0, '.', ',') }}</td>
+                        <td>{{ memberStat.member|memberStatistic.reliabilityCoef|number_format(1, '.', ',') }}</td>
+                    {% endif %}
                 </tr>
+                {% endfor %}
             </table>
         </div>
     </section>
