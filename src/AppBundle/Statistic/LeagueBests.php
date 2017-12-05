@@ -191,7 +191,11 @@ class LeagueBests
 	 */
 	public function getBestAssistantList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return !$playerMeta->isPositionGoalkeeper();
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getAssistantGoals() < $memberB->getAssistantGoals()) {
 				return 1;
@@ -210,7 +214,11 @@ class LeagueBests
 	 */
 	public function getBestForwardList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return !$playerMeta->isPositionGoalkeeper();
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getForwardScore() < $memberB->getForwardScore()) {
 				return 1;
@@ -234,7 +242,11 @@ class LeagueBests
 	 */
 	public function getBestSniperList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return !$playerMeta->isPositionGoalkeeper();
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getGoals() < $memberB->getGoals()) {
 				return 1;

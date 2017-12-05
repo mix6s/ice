@@ -248,7 +248,7 @@ class PlayerMetadata implements \JsonSerializable
 	 */
 	public function isPositionBack(): bool
 	{
-		return in_array($this->position, [self::POSITION_GK, self::POSITION_RB]);
+		return in_array($this->position, [self::POSITION_LB, self::POSITION_RB]);
 	}
 	/**
 	 * @return mixed
