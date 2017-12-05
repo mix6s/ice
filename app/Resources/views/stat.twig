@@ -26,29 +26,29 @@
             <table class="table">
                 <tr>
                     <th></th>
+                    <th>Игровой №</th>
                     <th>Игрок</th>
                     <th>Команда</th>
-                    <th>Игровой №</th>
                     {% if top != 'goalkeeper' %}
-                    <th title="Количество проведенных игр">И</th>
-                    <th title="Забитые голы">Ш</th>
-                    <th title="Передачи">А</th>
-                    <th title="Очки">О</th>
-                    <th title="Штрафное время">Штр</th>
+                    <th width="40" title="Количество проведенных игр">И</th>
+                    <th width="40" title="Забитые голы">Г</th>
+                    <th width="40" title="Передачи">А</th>
+                    <th width="40" title="Очки">О</th>
+                    <th width="40" title="Штрафное время">Штр</th>
                     {% else %}
-                        <th title="Количество проведенных игр">И</th>
-                        <th title="Сухие игры">И"0"</th>
-                        <th title="Пропущенно шайб">ПШ</th>
-                        <th title="Время на площадке">ВП</th>
-                        <th title="Коэффициент надежности = 60мин*ПШ/ВП">КН</th>
+                        <th width="50" title="Количество проведенных игр">И</th>
+                        <th width="50" title="Сухие игры">И"0"</th>
+                        <th width="50" title="Пропущенно шайб">ПШ</th>
+                        <th width="50" title="Время на площадке">ВП</th>
+                        <th width="50" title="Коэффициент надежности = 60мин*ПШ/ВП">КН</th>
                     {% endif %}
                 </tr>
                 {% for num, memberStat in list %}
                 <tr>
                     <td>{{ num + 1 }}</td>
+                    <td>{{ memberStat.member.number }}</td>
                     <td>{{ memberStat.member.player.metadata.fullName }}</td>
                     <td>{{ memberStat.member.seasonTeam.team.metadata.title }}</td>
-                    <td>{{ memberStat.member.number }}</td>
                     {% if top != 'goalkeeper' %}
                     <td>{{ memberStat.member|memberStatistic.gamesCount }}</td>
                     <td>{{ memberStat.member|memberStatistic.goals }}</td>
