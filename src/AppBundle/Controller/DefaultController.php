@@ -133,7 +133,7 @@ class DefaultController extends Controller
 			'penalty' => 'Штрафники'
 		];
 		$top = $request->get('top', 'forward');
-		if (!in_array($top, ['sniper', 'goalkeeper', 'assistant', 'back', 'forward'])) {
+		if (!in_array($top, array_keys($tops))) {
 			throw $this->createNotFoundException();
 		}
 		$leagues = $this->get('domain.repository.league')->findAll();
