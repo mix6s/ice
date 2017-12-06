@@ -9,6 +9,7 @@
 namespace Domain\Repository;
 
 
+use Domain\Entity\League;
 use Domain\Entity\Player;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
@@ -29,10 +30,18 @@ interface SeasonTeamMemberRepositoryInterface
 	/**
 	 * @param Player $player
 	 * @param Season $season
-	 * @return SeasonTeamMember
+	 * @return SeasonTeamMember[]
 	 * @throws EntityNotFoundException
 	 */
-	public function findByPlayerAndSeason(Player $player, Season $season): SeasonTeamMember;
+	public function findByPlayerAndSeason(Player $player, Season $season): array;
+
+	/**
+	 * @param Player $player
+	 * @param Season $season
+	 * @param League $league
+	 * @return SeasonTeamMember
+	 */
+	public function findByPlayerLeagueAndSeason(Player $player, Season $season, League $league): SeasonTeamMember;
 
 	/**
 	 * @param SeasonTeamMember $member

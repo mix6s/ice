@@ -10,6 +10,7 @@ namespace DomainBundle\Repository;
 
 
 use Doctrine\ORM\EntityRepository;
+use Domain\Entity\League;
 use Domain\Entity\Player;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
@@ -55,22 +56,18 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 	/**
 	 * @param Player $player
 	 * @param Season $season
-	 * @return SeasonTeamMember
+	 * @return SeasonTeamMember[]
 	 * @throws EntityNotFoundException
 	 */
-	public function findByPlayerAndSeason(Player $player, Season $season): SeasonTeamMember
+	public function findByPlayerAndSeason(Player $player, Season $season): array
 	{
-		$member = $this->createQueryBuilder('stm')
+		return $this->createQueryBuilder('stm')
 			->join('stm.seasonTeam', 'st')
 			->where('st.season = :season')
 			->andWhere('stm.player = :player')
 			->setParameters(['player' => $player, 'season' => $season])
 			->getQuery()
-			->getOneOrNullResult();
-		if (empty($member)) {
-			throw new EntityNotFoundException('SeasonTeamMember not found');
-		}
-		return $member;
+			->getResult();
 	}
 
 	/**
@@ -96,6 +93,7 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 		return $this->createQueryBuilder('stm')
 			->join('stm.seasonTeam', 'st')
 			->join('st.season', 's')
+			->join('st.league', 'l')
 			->andWhere('stm.player = :player')
 			->setParameters(['player' => $player])
 			->orderBy('s.year', 'DESC')
@@ -131,6 +129,29 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 			->join('p.metadata', 'pm')
 			->where('stm.id = :id')
 			->setParameters(['id' => $id])
+			->getQuery()
+			->getOneOrNullResult();
+		if (empty($member)) {
+			throw new EntityNotFoundException('SeasonTeamMember not found');
+		}
+		return $member;
+	}
+
+	/**
+	 * @param Player $player
+	 * @param Season $season
+	 * @param League $league
+	 * @return SeasonTeamMember
+	 * @throws EntityNotFoundException
+	 */
+	public function findByPlayerLeagueAndSeason(Player $player, Season $season, League $league): SeasonTeamMember
+	{
+		$member = $this->createQueryBuilder('stm')
+			->join('stm.seasonTeam', 'st')
+			->where('st.season = :season')
+			->andWhere('stm.player = :player')
+			->andWhere('stm.league = :league')
+			->setParameters(['player' => $player, 'season' => $season, 'league' => $league])
 			->getQuery()
 			->getOneOrNullResult();
 		if (empty($member)) {

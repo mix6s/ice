@@ -79,9 +79,10 @@ class SetSeasonTeamMembersUseCase
 				}
 
 				try {
-					$member = $this->getContainer()->getSeasonTeamMemberRepository()->findByPlayerAndSeason($player, $seasonTeam->getSeason());
+					$member = $this->getContainer()->getSeasonTeamMemberRepository()
+						->findByPlayerLeagueAndSeason($player, $seasonTeam->getSeason(), $seasonTeam->getLeague());
 					if ($member->getSeasonTeam()->getId() !== $seasonTeam->getId()) {
-						throw new DomainException(sprintf('Player with id %d already in another SeasonTeam', $player->getId()));
+						throw new DomainException(sprintf('Player with id %d already in another SeasonTeam in this Season and League', $player->getId()));
 					}
 				} catch (EntityNotFoundException $e) {
 				}

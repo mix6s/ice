@@ -38,16 +38,6 @@
                         <div class="profile__type">Вес (кг.):</div>
                         <div class="profile__value">{{ profile.weight }}</div>
                     </div>
-                    {% if member %}
-                    <div class="profile__item">
-                        <div class="profile__type">Команда:</div>
-                        <div class="profile__value"><a href="{{ url('team.index', {id: member.seasonTeam.team.id }) }}">{{ member.seasonTeam.team.metadata.title }}</a></div>
-                    </div>
-                    <div class="profile__item">
-                        <div class="profile__type">Номер:</div>
-                        <div class="profile__value">#{{ member.number }}</div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -57,9 +47,10 @@
                 <div class="profile__table-header">Статистика вратаря</div>
                 <table class="table">
                     <tr>
-                        <th>№</th>
                         <th>Сезон</th>
+                        <th>Лига</th>
                         <th>Команда</th>
+                        <th title="Игровой номер">№</th>
                         <th title="Количество проведенных игр">И</th>
                         <th title="Сухие игры">И"0"</th>
                         <th title="Пропущенно шайб">ПШ</th>
@@ -68,9 +59,10 @@
                     </tr>
                     {% for num, seasonteammember in members %}
                         <tr>
-                            <td>{{ num + 1 }}</td>
                             <td>{{ seasonteammember.seasonTeam.season.year - 1 }} - {{ seasonteammember.seasonTeam.season.year }}</td>
+                            <td>{{ seasonteammember.seasonTeam.league.metadata.title }}</td>
                             <td>{{ seasonteammember.seasonTeam.team.metadata.title }}</td>
+                            <td>{{ seasonteammember.number }}</td>
                             <td>{{ seasonteammember|memberStatistic.gamesCountAsGoalkeeper }}</td>
                             <td>{{ seasonteammember|memberStatistic.zeroGameCount }}</td>
                             <td>{{ seasonteammember|memberStatistic.goalsFailed }}</td>
@@ -83,9 +75,10 @@
             <div class="profile__table-header">Статистика игрока</div>
             <table class="table">
                 <tr>
-                    <th>№</th>
                     <th>Сезон</th>
+                    <th>Лига</th>
                     <th>Команда</th>
+                    <th title="Игровой номер">№</th>
                     <th title="Количество проведенных игр">И</th>
                     <th title="Забитые голы">Ш</th>
                     <th title="Передачи">А</th>
@@ -94,9 +87,10 @@
                 </tr>
                 {% for num, seasonteammember in members %}
                 <tr>
-                    <td>{{ num + 1 }}</td>
                     <td>{{ seasonteammember.seasonTeam.season.year - 1 }} - {{ seasonteammember.seasonTeam.season.year }}</td>
+                    <td>{{ seasonteammember.seasonTeam.league.metadata.title }}</td>
                     <td>{{ seasonteammember.seasonTeam.team.metadata.title }}</td>
+                    <td>{{ seasonteammember.number }}</td>
                     <td>{{ seasonteammember|memberStatistic.gamesCount }}</td>
                     <td>{{ seasonteammember|memberStatistic.goals }}</td>
                     <td>{{ seasonteammember|memberStatistic.assistantGoals }}</td>
