@@ -218,6 +218,9 @@ class SeasonTeamMember
 	 */
 	public function aggregate(\Domain\Entity\Game $game, GameEvent $event)
 	{
+		if (!in_array($this->member->getId(), $game->getMembersA()) && !in_array($this->member->getId(), $game->getMembersB())) {
+			return;
+		}
 		$this->setPlayedGame($game);
 		switch ($event->getType()) {
 			case 'goalkeeper':
