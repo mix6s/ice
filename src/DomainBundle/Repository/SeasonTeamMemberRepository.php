@@ -150,7 +150,7 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 			->join('stm.seasonTeam', 'st')
 			->where('st.season = :season')
 			->andWhere('stm.player = :player')
-			->andWhere('stm.league = :league')
+			->andWhere('st.league = :league')
 			->setParameters(['player' => $player, 'season' => $season, 'league' => $league])
 			->getQuery()
 			->getOneOrNullResult();
