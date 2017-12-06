@@ -8,6 +8,7 @@
 
 namespace AppBundle\Statistic;
 
+use Domain\Entity\League;
 use DomainBundle\Entity\PlayerMetadata;
 
 
@@ -28,7 +29,7 @@ class LeagueBests
 	/** @var  \AppBundle\Statistic\SeasonTeamMember */
 	private $bestGoalkeeper;
 	/**
-	 * @var \Domain\Entity\League
+	 * @var League
 	 */
 	private $league;
 
@@ -39,9 +40,9 @@ class LeagueBests
 
 	/**
 	 * LeagueBests constructor.
-	 * @param \Domain\Entity\League $league
+	 * @param League $league
 	 */
-	public function __construct(\Domain\Entity\League $league)
+	public function __construct(League $league)
 	{
 
 		$this->league = $league;
@@ -184,6 +185,18 @@ class LeagueBests
 	public function addMember(SeasonTeamMember $member)
 	{
 		$this->members[] = $member;
+	}
+
+	public function getBestPenaltyList(): array
+	{
+		$stats = $this->members;
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getPenaltyTime() > $memberB->getPenaltyTime()) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
 	}
 
 	/**
@@ -329,9 +342,9 @@ class LeagueBests
 		}
 	}
 	/**
-	 * @return \Domain\Entity\League
+	 * @return League
 	 */
-	public function getLeague(): \Domain\Entity\League
+	public function getLeague(): League
 	{
 		return $this->league;
 	}
