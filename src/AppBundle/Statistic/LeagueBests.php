@@ -189,7 +189,9 @@ class LeagueBests
 
 	public function getBestPenaltyList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			return !empty($member->getPenaltyTime());
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getPenaltyTime() < $memberB->getPenaltyTime()) {
 				return 1;
