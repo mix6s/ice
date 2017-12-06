@@ -191,7 +191,7 @@ class LeagueBests
 	{
 		$stats = $this->members;
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getPenaltyTime() > $memberB->getPenaltyTime()) {
+			if ($memberA->getPenaltyTime() < $memberB->getPenaltyTime()) {
 				return 1;
 			}
 			return -1;
