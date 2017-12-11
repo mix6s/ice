@@ -25,6 +25,8 @@ class Season
 	 */
 	private $season;
 
+	private $sortContext = [];
+
 	/**
 	 * Season constructor.
 	 * @param \Domain\Entity\Season $season
@@ -69,7 +71,33 @@ class Season
 	{
 		$stats = $this->seasonTeamStatistics;
 		usort($stats, [$this, 'sortSeasonTeams']);
-		return $stats;
+
+		$byScore = [];
+		/** @var \AppBundle\Statistic\SeasonTeam $stat */
+		foreach ($stats as $stat) {
+			$score = $stat->getScores();
+			if (!array_key_exists($score, $byScore)) {
+				$byScore[$score] = [];
+			}
+			$byScore[$score][] = $stat;
+		}
+		$sorted = [];
+		foreach ($byScore as $score => $items) {
+			if (count($items) > 1) {
+				$context = [];
+				/** @var \AppBundle\Statistic\SeasonTeam $item */
+				foreach ($items as $item) {
+					$context[] = $item->getSeasonTeam()->getId();
+				}
+				SeasonTeam::$context = $context;
+				usort($items, [$this, 'sortSeasonTeams']);
+			}
+			foreach ($items as $item) {
+				$sorted[] = $item;
+			}
+		}
+		SeasonTeam::$context = [];
+		return $sorted;
 	}
 
 	/**
@@ -99,6 +127,7 @@ class Season
 	 */
 	private function sortSeasonTeams(\AppBundle\Statistic\SeasonTeam $teamA, \AppBundle\Statistic\SeasonTeam $teamB)
 	{
+
 		//набравшая наибольшее количество очков во всех матчах;
 		if ($teamA->getScores() < $teamB->getScores()) {
 			return 1;

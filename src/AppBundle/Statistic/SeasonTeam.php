@@ -15,6 +15,8 @@ namespace AppBundle\Statistic;
  */
 class SeasonTeam
 {
+	public static $context = [];
+
 	private $seasonTeam;
 	private $gamesCount = 0;
 	private $winInMain = [];
@@ -58,6 +60,11 @@ class SeasonTeam
 	public function getWinInMain(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->winInMain, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->winInMain);
 		}
 		return $this->winInMain[$team->getId()] ?? 0;
@@ -88,6 +95,11 @@ class SeasonTeam
 	public function getWinInBullets(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->winInBullets, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->winInBullets);
 		}
 		return $this->winInBullets[$team->getId()] ?? 0;
@@ -109,6 +121,11 @@ class SeasonTeam
 	public function getWinInOvertime(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->winInOvertime, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->winInOvertime);
 		}
 		return $this->winInOvertime[$team->getId()] ?? 0;
@@ -130,6 +147,11 @@ class SeasonTeam
 	public function getLoseInMain(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->loseInMain, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->loseInMain);
 		}
 		return $this->loseInMain[$team->getId()] ?? 0;
@@ -151,6 +173,11 @@ class SeasonTeam
 	public function getLoseInBullets(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->loseInBullets, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->loseInBullets);
 		}
 		return $this->loseInBullets[$team->getId()] ?? 0;
@@ -172,6 +199,11 @@ class SeasonTeam
 	public function getLoseInOvertime(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->loseInOvertime, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->loseInOvertime);
 		}
 		return $this->loseInOvertime[$team->getId()] ?? 0;
@@ -193,6 +225,11 @@ class SeasonTeam
 	public function getGoals(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->goals, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->goals);
 		}
 		return $this->goals[$team->getId()] ?? 0;
@@ -213,6 +250,11 @@ class SeasonTeam
 	public function getGoalsFailed(\Domain\Entity\SeasonTeam $team = null): int
 	{
 		if ($team === null) {
+			if (!empty(self::$context)) {
+				return array_sum(array_filter($this->goalsFailed, function ($id) {
+					return in_array($id, self::$context);
+				}, ARRAY_FILTER_USE_KEY));
+			}
 			return array_sum($this->goalsFailed);
 		}
 		return $this->goalsFailed[$team->getId()] ?? 0;
