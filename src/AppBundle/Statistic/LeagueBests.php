@@ -8,6 +8,7 @@
 
 namespace AppBundle\Statistic;
 
+use Domain\Entity\League;
 use DomainBundle\Entity\PlayerMetadata;
 
 
@@ -28,7 +29,7 @@ class LeagueBests
 	/** @var  \AppBundle\Statistic\SeasonTeamMember */
 	private $bestGoalkeeper;
 	/**
-	 * @var \Domain\Entity\League
+	 * @var League
 	 */
 	private $league;
 
@@ -39,9 +40,9 @@ class LeagueBests
 
 	/**
 	 * LeagueBests constructor.
-	 * @param \Domain\Entity\League $league
+	 * @param League $league
 	 */
-	public function __construct(\Domain\Entity\League $league)
+	public function __construct(League $league)
 	{
 
 		$this->league = $league;
@@ -186,12 +187,30 @@ class LeagueBests
 		$this->members[] = $member;
 	}
 
+	public function getBestPenaltyList(): array
+	{
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			return !empty($member->getPenaltyTime());
+		});
+		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
+			if ($memberA->getPenaltyTime() < $memberB->getPenaltyTime()) {
+				return 1;
+			}
+			return -1;
+		});
+		return $stats;
+	}
+
 	/**
 	 * @return SeasonTeamMember[]
 	 */
 	public function getBestAssistantList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return !$playerMeta->isPositionGoalkeeper();
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getAssistantGoals() < $memberB->getAssistantGoals()) {
 				return 1;
@@ -210,7 +229,11 @@ class LeagueBests
 	 */
 	public function getBestForwardList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return !$playerMeta->isPositionGoalkeeper();
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getForwardScore() < $memberB->getForwardScore()) {
 				return 1;
@@ -234,7 +257,11 @@ class LeagueBests
 	 */
 	public function getBestSniperList(): array
 	{
-		$stats = $this->members;
+		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
+			/** @var PlayerMetadata $playerMeta */
+			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
+			return !$playerMeta->isPositionGoalkeeper();
+		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getGoals() < $memberB->getGoals()) {
 				return 1;
@@ -317,9 +344,9 @@ class LeagueBests
 		}
 	}
 	/**
-	 * @return \Domain\Entity\League
+	 * @return League
 	 */
-	public function getLeague(): \Domain\Entity\League
+	public function getLeague(): League
 	{
 		return $this->league;
 	}

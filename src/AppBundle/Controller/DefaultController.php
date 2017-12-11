@@ -124,10 +124,17 @@ class DefaultController extends Controller
      */
     public function topStatAction(Request $request)
     {
-    	$tops = ['forward' => 'Бомбардиры', 'sniper' => 'Снайперы', 'assistant' => 'Ассистенты', 'back' => 'Защитники', 'goalkeeper' => 'Вратари'];
-    	$top = $request->get('top', 'forward');
-    	if (!in_array($top, ['sniper', 'goalkeeper', 'assistant', 'back', 'forward'])) {
-    		 throw $this->createNotFoundException();
+		$tops = [
+			'forward' => 'Бомбардиры',
+			'sniper' => 'Снайперы',
+			'assistant' => 'Ассистенты',
+			'back' => 'Защитники',
+			'goalkeeper' => 'Вратари',
+			'penalty' => 'Штрафники'
+		];
+		$top = $request->get('top', 'forward');
+		if (!in_array($top, array_keys($tops))) {
+			throw $this->createNotFoundException();
 		}
 		$leagues = $this->get('domain.repository.league')->findAll();
 		$leagueId = (int)$request->get('league_id', $leagues[0]->getId());
@@ -150,6 +157,9 @@ class DefaultController extends Controller
 				break;
 			case 'forward':
 				$bestList = $leagueBests->getBestForwardList();
+				break;
+			case 'penalty':
+				$bestList = $leagueBests->getBestPenaltyList();
 				break;
 		}
         return $this->render('stat.twig', [

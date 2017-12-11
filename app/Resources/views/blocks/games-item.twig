@@ -8,11 +8,13 @@
                 {% if game|gameStatistic.isWinByBullets and game|scoreA > game|scoreB  %}
                     <span class="games__bullet games__bullet--hosts">Б</span>{#тут пометка Б если выграла по булитам команда А#}
                 {% endif %}
-                {{ game|scoreA}}</div>
+                {{ game|scoreA}}
+            </div>
             <div class="games__team">{{  game.seasonTeamA.team.metadata.title }}</div>
         </div>
         <div class="games__score games__score--guests">
-            <div class="games__goals">{{ game|scoreB }}
+            <div class="games__goals">
+                {{ game|scoreB }}
                 {% if game|gameStatistic.isWinByBullets and game|scoreA < game|scoreB  %}
                     <span class="games__bullet games__bullet--guests">Б</span>{#тут пометка Б если выграла по булитам команда Б#}
                 {% endif %}

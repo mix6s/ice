@@ -77,14 +77,6 @@ class ProfileController extends Controller
 		if (!$player) {
 			throw $this->createNotFoundException();
 		}
-		try {
-			$season = $this->get('domain.repository.season')->findById($this->get('settings.manager')->getCurrentSeasonId());
-			$seasonTeamMember = $this->get('domain.repository.seasonteammember')->findByPlayerAndSeason($player, $season);
-		} catch (EntityNotFoundException $e) {
-			$seasonTeamMember = null;
-		}
-
-		$seasonTeams = $this->get('domain.repository.seasonteam')->findByPlayer($player);
 		$members = $this->get('domain.repository.seasonteammember')->findByPlayer($player);
 		$isCurrentPlayer = false;
 		/** @var User $user */
@@ -97,7 +89,6 @@ class ProfileController extends Controller
 		}
 		return $this->render('profile.twig', [
 			'profile' => $player->getMetadata(),
-			'member' => $seasonTeamMember,
 			'isCurrentPlayer' => $isCurrentPlayer,
 			'members' => $members
 		]);
