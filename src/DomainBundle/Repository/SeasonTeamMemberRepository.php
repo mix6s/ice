@@ -38,6 +38,7 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 			->join('stm.player', 'p')
 			->join('p.metadata', 'pm')
 			->setParameters(['seasonTeam' => $seasonTeam])
+			->orderBy('stm.number')
 			->getQuery()
 			->getResult();
 	}
@@ -66,6 +67,7 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 			->where('st.season = :season')
 			->andWhere('stm.player = :player')
 			->setParameters(['player' => $player, 'season' => $season])
+			->orderBy('stm.number')
 			->getQuery()
 			->getResult();
 	}
@@ -80,6 +82,7 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 			->join('stm.seasonTeam', 'st')
 			->where('st.season = :season')
 			->setParameters(['season' => $season])
+			->orderBy('stm.number')
 			->getQuery()
 			->getResult();
 	}
@@ -97,6 +100,7 @@ class SeasonTeamMemberRepository extends EntityRepository implements SeasonTeamM
 			->andWhere('stm.player = :player')
 			->setParameters(['player' => $player])
 			->orderBy('s.year', 'DESC')
+			->addOrderBy('stm.number')
 			->getQuery()
 			->getResult();
 	}
