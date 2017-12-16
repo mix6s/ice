@@ -51,6 +51,12 @@
 	align-items: center;
 	border-bottom: 1px solid #c5dee9;
 	box-sizing: border-box;
+
+	&:last-child {
+		.leaders__points-count {
+			font-size: 21px;
+		}
+	}
 }
 
 .leaders__img {

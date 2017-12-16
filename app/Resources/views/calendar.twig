@@ -70,13 +70,13 @@
                     <td>
                         <a href="{{ url('game', {id: game.id}) }}">
                             {% if game|gameStatistic.isWinByBullets and game|scoreA > game|scoreB  %}
-                                Б
+                                (Б)
                             {% endif %}
                             {{ game|scoreA }}
                             :
                             {{ game|scoreB }}
                             {% if game|gameStatistic.isWinByBullets and game|scoreA < game|scoreB  %}
-                                Б
+                                (Б)
                             {% endif %}
                         </a>
                     </td>
