@@ -170,9 +170,9 @@ class LeagueBests
 	{
 		if ($this->bestGoalkeeper === null) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
-		} elseif ($this->bestGoalkeeper->getReliabilityCoef() > $bestGoalkeeper->getReliabilityCoef()) {
+		} elseif ($this->bestGoalkeeper->getReflectedBulletsPercent() < $bestGoalkeeper->getReflectedBulletsPercent()) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
-		} elseif ($this->bestGoalkeeper->getReliabilityCoef() === $bestGoalkeeper->getReliabilityCoef()
+		} elseif ($this->bestGoalkeeper->getReflectedBulletsPercent() === $bestGoalkeeper->getReflectedBulletsPercent()
 			&& $this->bestGoalkeeper->getTotalSecondsTime() < $bestGoalkeeper->getTotalSecondsTime()
 		) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
@@ -314,9 +314,9 @@ class LeagueBests
 			return $member->getTotalSecondsTime() > 0 && $playerMeta->isPositionGoalkeeper();
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getReliabilityCoef() > $memberB->getReliabilityCoef()) {
+			if ($memberA->getReflectedBulletsPercent() < $memberB->getReflectedBulletsPercent()) {
 				return 1;
-			} elseif ($memberA->getReliabilityCoef() === $memberB->getReliabilityCoef()
+			} elseif ($memberA->getReflectedBulletsPercent() === $memberB->getReflectedBulletsPercent()
 				&& $memberA->getTotalSecondsTime() < $memberB->getTotalSecondsTime()
 			) {
 				return 1;

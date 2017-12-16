@@ -22,6 +22,7 @@ class SeasonTeamMember
 {
 	private $games = [];
 	private $goals = 0;
+	private $bullets = 0;
 	private $assistantGoals = 0;
 	private $penaltyTime = 0;
 
@@ -182,6 +183,17 @@ class SeasonTeamMember
 	/**
 	 * @return float
 	 */
+	public function getReflectedBulletsPercent(): float
+	{
+		if ($this->getBullets() === 0) {
+			return 0;
+		}
+		return ($this->getBullets() - $this->getGoalsFailed()) / $this->getBullets() * 100;
+	}
+
+	/**
+	 * @return float
+	 */
 	public function getTotalMinutesTime(): float
 	{
 		return $this->getTotalSecondsTime() / 60;
@@ -228,6 +240,7 @@ class SeasonTeamMember
 				if ($event->getMember()->getId() === $this->getMember()->getId()) {
 					$memberIsGoalkeeper = true;
 					$memberGameGoalsFailed = $event->getGoals();
+					$this->setBullets($this->getBullets() + $event->getBullets());
 					$this->setGoalsFailed($this->getGoalsFailed($game) + $event->getGoals(), $game);
 					$this->setTotalSecondsTime($this->getTotalSecondsTime() + $event->getDuration());
 				}
@@ -256,5 +269,21 @@ class SeasonTeamMember
 			default:
 				break;
 		}
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getBullets(): int
+	{
+		return $this->bullets;
+	}
+
+	/**
+	 * @param int $bullets
+	 */
+	public function setBullets(int $bullets)
+	{
+		$this->bullets = $bullets;
 	}
 }

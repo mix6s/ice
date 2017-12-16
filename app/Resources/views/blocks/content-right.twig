@@ -33,7 +33,7 @@
                 {% include 'blocks/leaders-item.twig' with {item: {points: best.bestBack.forwardScore, name: utils.declension(best.bestBack.forwardScore, ['Очко','Очка', 'Очков']), role: 'Защитник'}, member: best.bestBack.member} %}
             {% endif %}
             {% if best.bestGoalkeeper %}
-                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestGoalkeeper.reliabilityCoef, name: utils.declension(best.bestGoalkeeper.reliabilityCoef, ['КН','КН', 'КН']), role: 'Вратарь'}, member: best.bestGoalkeeper.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestGoalkeeper.reflectedBulletsPercent|number_format(1, '.', ','), name: '%ОБ', role: 'Вратарь'}, member: best.bestGoalkeeper.member} %}
             {% endif %}
         </div>
             {% set k = 1 %}

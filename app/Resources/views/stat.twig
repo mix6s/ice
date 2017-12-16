@@ -41,6 +41,7 @@
                         <th width="50" title="Пропущенно шайб">ПШ</th>
                         <th width="50" title="Время на площадке">ВП</th>
                         <th width="50" title="Коэффициент надежности = 60мин*ПШ/ВП">КН</th>
+                        <th width="50" title="Процент отраженных бросков">%ОБ</th>
                     {% endif %}
                 </tr>
                 {% for num, memberStat in list %}
@@ -61,6 +62,7 @@
                         <td>{{ memberStat.member|memberStatistic.goalsFailed }}</td>
                         <td>{{ memberStat.member|memberStatistic.totalMinutesTime|number_format(0, '.', ',') }}</td>
                         <td>{{ memberStat.member|memberStatistic.reliabilityCoef|number_format(1, '.', ',') }}</td>
+                        <td>{{ memberStat.member|memberStatistic.reflectedBulletsPercent|number_format(1, '.', ',') }}</td>
                     {% endif %}
                 </tr>
                 {% endfor %}
