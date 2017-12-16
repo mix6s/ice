@@ -19,6 +19,16 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="play_off_places" class="col-sm-3 control-label">Кол. мест плей-офф</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="play_off_places" placeholder="Кол. мест плей-офф" v-model="league.metadata.play_off_places">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
          <div class="has-error" v-if="error">
             <div class="alert alert-danger text-center" role="alert">{{ error }}</div>

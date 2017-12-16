@@ -35,6 +35,11 @@ class LeagueMetadata implements \JsonSerializable
 	private $title;
 
 	/**
+	 * @ORM\Column(type="integer", nullable=true)
+	 */
+	private $playOffPlaces;
+
+	/**
 	 * @return mixed
 	 */
 	public function getTitle()
@@ -52,11 +57,15 @@ class LeagueMetadata implements \JsonSerializable
 
 	/**
 	 * @param $data
+	 * @todo move to policy in another bundle
 	 */
 	public function updateFromData($data)
 	{
 		if (isset($data['title'])) {
 			$this->setTitle($data['title']);
+		}
+		if (isset($data['play_off_places'])) {
+			$this->setPlayOffPlaces($data['play_off_places']);
 		}
 	}
 
@@ -79,7 +88,24 @@ class LeagueMetadata implements \JsonSerializable
 	{
 		return [
 			'id' => $this->getId(),
-			'title' => $this->getTitle()
+			'title' => $this->getTitle(),
+			'play_off_places' => $this->getPlayOffPlaces()
 		];
+	}
+
+	/**
+	 * @return integer|null
+	 */
+	public function getPlayOffPlaces()
+	{
+		return $this->playOffPlaces;
+	}
+
+	/**
+	 * @param integer $playOffPlaces
+	 */
+	public function setPlayOffPlaces($playOffPlaces)
+	{
+		$this->playOffPlaces = $playOffPlaces;
 	}
 }
