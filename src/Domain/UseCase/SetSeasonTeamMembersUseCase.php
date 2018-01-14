@@ -78,14 +78,6 @@ class SetSeasonTeamMembersUseCase
 					throw new DomainException(sprintf('Player with id %d already in this SeasonTeam', $player->getId()));
 				}
 
-				try {
-					$member = $this->getContainer()->getSeasonTeamMemberRepository()
-						->findByPlayerLeagueAndSeason($player, $seasonTeam->getSeason(), $seasonTeam->getLeague());
-					if ($member->getSeasonTeam()->getId() !== $seasonTeam->getId()) {
-						throw new DomainException(sprintf('Player with id %d already in another SeasonTeam in this Season and League', $player->getId()));
-					}
-				} catch (EntityNotFoundException $e) {
-				}
 				$memberId = $this->getContainer()->getSeasonTeamMemberRepository()->getNextId();
 				$member = SeasonTeamMember::create($memberId, $seasonTeam, $player, $number, $memberDTO->getType());
 
