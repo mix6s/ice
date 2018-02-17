@@ -7,6 +7,32 @@
                 <button v-on:click="showAddGamePopup" class="btn btn-primary">Создать игру</button>
             </div>
         </div>
+		<div class="row mb-10">
+			<div class="col-xs-3 ">
+				<div class="form-group">
+					<input ref="fromDt" v-model="fromDt" placeholder="Начиная с даты" class="form-control">
+				</div>
+			</div>
+			<div class="col-xs-3 ">
+				<div class="form-group">
+					<input ref="toDt" v-model="toDt" placeholder="Заканчивая датой" class="form-control">
+				</div>
+			</div>
+			<div class="col-xs-3 ">
+				<div class="form-group">
+					<select ref="status" v-model="status" class="form-control">
+						<option value="">Все</option>
+						<option value="0">Не завершенные</option>
+						<option value="1">Завершенные</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-xs-3 ">
+				<div class="form-group">
+					<button v-on:click="applyFilters" class="btn btn-info">Применить</button>
+				</div>
+			</div>
+		</div>
         <div class="row">
             <div v-for="game in games" class="col-sm-6">
 				<game @bus="handle" :game="game"></game>
@@ -36,7 +62,10 @@
 		var app = new Vue({
 			el: '#app',
 			data: {
-				games: []
+				games: [],
+				toDt: '{{ filter.toDt ? filter.toDt.format('d.m.Y H:i') : '' }}',
+				fromDt: '{{ filter.fromDt ? filter.fromDt.format('d.m.Y H:i') : '' }}',
+				status: '{{ filter.status }}'
 			},
 			computed: {},
 			methods: {
@@ -48,6 +77,20 @@
 						return !!game;
 					})
 				},
+				applyFilters: function () {
+                    const self = this;
+                    $.ajax({
+                        url: '/control/games',
+                        data: {from_dt: self.fromDt, to_dt: self.toDt, status: self.status},
+                        type: 'get',
+                        success: function (response) {
+                            self.setGames(response.games);
+                        },
+                        complete: function (response) {
+
+                        }
+                    });
+                },
 				handle: function (data) {
 					this.$emit(data.name, data.value);
 				}
@@ -80,17 +123,33 @@
 				;
 			},
 			mounted: function () {
-				const self = this;
-				$.ajax({
-					url: '/control/games',
-					type: 'get',
-					success: function (response) {
-						self.setGames(response.games);
-					},
-					complete: function (response) {
+                var self = this;
+                self.applyFilters();
 
-					}
-				});
+                $(self.$refs.toDt)
+                    .datetimepicker({
+                        locale: 'ru',
+                    })
+                    .on('dp.change', function (e) {
+                       if (e.date) {
+                            self.toDt = e.date.format("DD.MM.YYYY HH:mm");
+                        }
+
+                    })
+                    .trigger('dp.change')
+                ;
+                $(self.$refs.fromDt)
+                    .datetimepicker({
+                        locale: 'ru',
+                    })
+                    .on('dp.change', function (e) {
+                    	if (e.date) {
+                            self.fromDt = e.date.format("DD.MM.YYYY HH:mm");
+                        }
+
+                    })
+                    .trigger('dp.change')
+                ;
 			}
 		});
     </script>

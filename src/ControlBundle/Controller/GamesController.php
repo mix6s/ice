@@ -14,6 +14,7 @@ use Domain\DTO\GoalkeeperData;
 use Domain\DTO\PenaltyEventData;
 use Domain\DTO\Request\SaveGameEventsRequest;
 use Domain\Entity\GameEvent;
+use DomainBundle\DTO\GamesFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,10 +32,17 @@ class GamesController extends Controller
 	 */
 	public function listAction(Request $request)
 	{
+		$filter = GamesFilter::fromData([
+			'from_dt' => $request->get('from_dt', (new \DateTime())->sub(new \DateInterval('P7D'))->format('Y-m-d 00:00:00')),
+			'to_dt' => $request->get('to_dt'),
+			'status' => $request->get('status'),
+		]);
 		if (!$request->isXmlHttpRequest()) {
-			return $this->render('@Control/games/list.html.twig');
+			return $this->render('@Control/games/list.html.twig', [
+				'filter' => $filter
+			]);
 		}
-		$games = $this->get('domain.repository.game')->findAllGames();
+		$games = $this->get('domain.repository.game')->findGamesByFilter($filter);
 		return $this->json([
 			'games' => $games,
 		]);
