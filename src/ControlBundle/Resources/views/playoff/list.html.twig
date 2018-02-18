@@ -1,0 +1,73 @@
+{% extends 'ControlBundle::layout.html.twig' %}
+
+{% block body %}
+    <div class="container" id="app" xmlns:v-on="http://www.w3.org/1999/xhtml">
+        <div class="row mb-10">
+            <div class="col-md-12">
+                <button v-on:click="showAddPlayoffPopup" class="btn btn-primary">Добавить</button>
+            </div>
+        </div>
+        <div class="row">
+            <div v-for="playoff in playoffItems" class="col-xs-12 col-sm-12 col-md-6">
+
+            </div>
+        </div>
+        <modal ref="modal" @bus="handle"></modal>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ include('@Control/playoff/vue/playoff-item.html.twig') }}
+    {{ include('@Control/playoff/vue/playoff-modal.vue.twig') }}
+    {{ include('@Control/vue/modal-layout.vue.twig') }}
+    {{ include('@Control/vue/edit-modal.vue.twig') }}
+    {{ include('@Control/vue/member.vue.twig') }}
+    <script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				playoffItems: []
+			},
+			computed: {
+
+			},
+			methods: {
+				setPlayoffItems: function (playoffItems) {
+					this.playoffItems = playoffItems.filter(function (t) {
+						return !!t;
+					})
+				},
+				load: function () {
+					const _this = this;
+					$.ajax({
+						url: '/control/playoff',
+						type: 'get',
+						success: function (response) {
+							_this.setPlayoffItems(response.playoffItems);
+						},
+						complete: function (response) {
+
+						}
+					});
+				},
+				showAddPlayoffPopup: function () {
+					//this.$refs.modal.show('playoffModal', {}, 'modal-lg');
+				},
+				handle: function (data) {
+					this.$emit(data.name, data.value);
+				}
+			},
+			created: function () {
+				this
+					.$on('deleted', function (seasonteam) {
+
+					})
+				;
+			},
+			mounted: function () {
+				this.load();
+			}
+		});
+    </script>
+{% endblock %}

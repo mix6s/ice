@@ -16,6 +16,7 @@ use Domain\Entity\SeasonTeam;
 use Domain\Exception\EntityNotFoundException;
 use Domain\Repository\GameRepositoryInterface;
 use DomainBundle\CacheTrait;
+use DomainBundle\DTO\GamesFilter;
 use DomainBundle\Identity\GameIdentity;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
@@ -112,6 +113,33 @@ class GameRepository extends EntityRepository implements GameRepositoryInterface
 			->select('g')
 			->orderBy('g.datetime', 'DESC')
 			->getQuery()
+			->getResult();
+	}
+
+
+	/**
+	 * @return Game[]
+	 */
+	public function findGamesByFilter(GamesFilter $filter)
+	{
+		$builder = $this->getEntityManager()->createQueryBuilder()
+			->from('Domain:Game', 'g')
+			->select('g')
+			->orderBy('g.datetime', 'DESC');
+
+		if ($filter->hasStatus()) {
+			$builder->andWhere('g.state = :state')->setParameter('state', $filter->getStatus());
+		}
+
+		if ($filter->hasFromDt()) {
+			$builder->andWhere('g.datetime >= :fromDt')->setParameter('fromDt', $filter->getFromDt());
+		}
+
+		if ($filter->hasToDt()) {
+			$builder->andWhere('g.datetime <= :toDt')->setParameter('toDt', $filter->getToDt());
+		}
+
+		return $builder->getQuery()
 			->getResult();
 	}
 
