@@ -5,6 +5,9 @@
   "main": "index.html",
   "author": "Max Pushkarev",
   "license": "MIT",
+  "scripts": {
+    "build": "gulp build"
+  },
   "devDependencies": {
     "autoprefixer": "~6.3.6",
     "browser-sync": "2.11.1",

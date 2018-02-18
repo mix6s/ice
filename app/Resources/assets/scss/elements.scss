@@ -140,12 +140,33 @@ h1 {
     }
   }
 
+  &--playoff {
+    td:first-child,
+    th:first-child {
+      padding-left: 10px;
+    }
+  }
+
   &--summary {
     tr {
       &:last-child {
         font-weight: 700;
       }
     }
+  }
+}
+
+.table__row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.table__cell {
+  width: 40px;
+
+  &--wide {
+    width: 120px;
   }
 }
 
