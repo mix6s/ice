@@ -311,7 +311,7 @@ class LeagueBests
 		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
 			/** @var PlayerMetadata $playerMeta */
 			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
-			return $member->getTotalSecondsTime() > 0 && $playerMeta->isPositionGoalkeeper();
+			return $member->getTotalSecondsTime() > 0 && $playerMeta->isPositionGoalkeeper() && $member->getGamesCount() >= 8;
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getReflectedBulletsPercent() < $memberB->getReflectedBulletsPercent()) {
@@ -339,7 +339,7 @@ class LeagueBests
 		if ($playerMeta->isPositionBack()) {
 			$this->setBestBack($member);
 		}
-		if ($playerMeta->isPositionGoalkeeper() && $member->getTotalSecondsTime() > 0) {
+		if ($playerMeta->isPositionGoalkeeper() && $member->getTotalSecondsTime() > 0 && $member->getGamesCount() >= 8) {
 			$this->setBestGoalkeeper($member);
 		}
 	}
