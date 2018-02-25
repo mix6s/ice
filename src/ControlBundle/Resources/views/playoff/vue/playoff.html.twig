@@ -1,0 +1,76 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-6">
+                <h3 class="panel-title">Плейофф {{ playoff.league.metadata.title}} {{ playoff.season.year - 1 }}/{{ playoff.season.year }}</h3>
+            </div>
+            <div class="col-xs-6 text-right">
+               <button v-on:click="removePlayoff" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Этап</th>
+            <th>Команда</th>
+            <th>И1</th>
+            <th>И2</th>
+            <th>И3</th>
+            <th>СС</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in items">
+            <td colspan="4"></td>
+        </tr>
+         <tr>
+            <td colspan="4"><button v-on:click="showPlayOffItemPopup" class="btn btn-xs btn-primary">Добавить группу</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('playoff', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['playoff',  'items'],
+		data: function () {
+			return {
+				deleteInProgress: false
+			}
+		},
+		methods: {
+			showPlayOffItemPopup: function (event, item) {
+				if (!item) {
+					item = {
+						playoff: this.playoff
+                    };
+				}
+				this.$emit('bus', {name: 'show-playoff-item-popup', value: {item: item}});
+			},
+			removePlayoff: function () {
+				var _this = this;
+				_this.deleteInProgress = true;
+				$.ajax({
+					url: '/control/playoff/delete/' + _this.playoff.id,
+					type: 'get',
+					success: function (response) {
+						_this.$emit('bus', {name: 'playoff-deleted', value: _this.playoff});
+					},
+					error: function (jqXHR) {
+					},
+					complete: function () {
+						_this.deleteInProgress = false;
+					}
+				});
+			},
+		}
+	});
+</script>

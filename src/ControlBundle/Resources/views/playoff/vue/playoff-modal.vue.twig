@@ -1,0 +1,193 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
+<div class="modal-content" id="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Новый Плейофф</h4>
+    </div>
+    <div class="modal-body">
+     <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Сезон</label>
+                 <div class="col-sm-4">
+                        <select ref="seasonSelectpicker"  class="form-control" title="Выбрать">
+                               <option v-if="playoff.season" selected="selected" :value="playoff.season.id">{{(playoff.season.year - 1) + '/' + playoff.season.year}}</option>
+                        </select>
+                   </div>
+            </div>
+        </div>
+      <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Лига</label>
+                <div class="col-sm-4">
+                        <select ref="leagueSelectpicker"  class="form-control" title="Выбрать">
+                               <option v-if="playoff.league" selected="selected" :value="playoff.league.id">{{playoff.league.metadata.title}}</option>
+                        </select>
+                   </div>
+            </div>
+        </div>
+         <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Дата начала</label>
+                <div class="col-sm-4">
+                        <input id="startAt" ref="datePicker" v-model="startAtFormatted" placeholder="Дата начала" class="form-control">
+                   </div>
+            </div>
+        </div>
+        <div class="has-error" v-if="error">
+            <span class="help-block">{{ error }}</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('playoffModal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		data: function () {
+			return {
+				playoff: {
+					id: null,
+					season: null,
+					league: null,
+					start_at: undefined,
+				},
+                error: null,
+				saveInProgress: null
+			}
+		},
+		computed:{
+			startAtMoment: function () {
+				return moment(this.playoff.start_at);
+			},
+			startAtFormatted: function () {
+				return this.startAtMoment.format('DD.MM.YYYY HH:mm')
+			},
+		},
+		methods: {
+
+			save: function () {
+				const self = this;
+				self.saveInProgress = true;
+				$.ajax({
+					url: '/control/playoff/new',
+					data: this.playoff,
+					type: 'post',
+					success: function (response) {
+						self.$emit('bus', {name: 'new-playoff', value: response});
+					},
+					error: function (jqXHR) {
+						resp = jqXHR.responseJSON ? jqXHR.responseJSON : {error: 'Ошибка сервера'};
+						self.error = resp.error;
+					},
+					complete: function () {
+						self.saveInProgress = false;
+					}
+				});
+			},
+			init: function () {
+				const self = this;
+				let typeaheadQuery = function (type, query, process) {
+					$.ajax({
+						url: '/control/typeahead?'+type + '=' + query,
+						success: function (response) {
+							process(response);
+						}
+					});
+				};
+				let throttledTypeaheadQuery = _.throttle(typeaheadQuery, 500);
+
+				let $season = $(this.$refs.seasonSelectpicker)
+					.selectpicker({
+						liveSearch: true,
+					})
+					.ajaxSelectPicker({
+						ajax: {
+							url: '/control/typeahead',
+							data: function () {
+								return {
+									season: {% raw %}'{{{q}}}'{% endraw %}
+								};
+							}
+						},
+						locale: {
+							emptyTitle: 'Выбрать'
+						},
+						preprocessData: function (data) {
+							return data.map(function (item) {
+								return {
+									'value': item.season.id,
+									'text': item.name,
+									'disabled': false
+								}
+							});
+						},
+						preserveSelected: false
+					})
+					.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+						self.playoff.season = {id: $season.selectpicker('val')};
+					})
+				;
+				let $league = $(this.$refs.leagueSelectpicker)
+					.selectpicker({
+						liveSearch: true,
+					})
+					.ajaxSelectPicker({
+						ajax: {
+							url: '/control/typeahead',
+							data: function () {
+								return {
+									league: {% raw %}'{{{q}}}'{% endraw %}
+								};
+							}
+						},
+						locale: {
+							emptyTitle: 'Выбрать'
+						},
+						preprocessData: function (data) {
+							return data.map(function (item) {
+								return {
+									'value': item.league.id,
+									'text': item.name,
+									'disabled': false
+								}
+							});
+						},
+						preserveSelected: false
+					})
+					.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+						self.playoff.league = {id: $league.selectpicker('val'), metadata: {title: $league.text()}};
+					})
+				;
+				
+				
+				$(self.$refs.datePicker)
+					.datetimepicker({
+						defaultDate: this.startAtMoment,
+						locale: 'ru',
+					})
+					.on('dp.change', function (e) {
+						if (!self.playoff.start_at) {
+							self.playoff.start_at = moment().format('YYYY-MM-DD HH:mm');
+						} else if (e.date) {
+							self.playoff.start_at = e.date.format("YYYY-MM-DD HH:mm");
+						}
+
+					})
+					.trigger('dp.change')
+				;
+			}
+		},
+		mounted: function () {
+			this.init(this.$parent.data);
+		}
+	});
+</script>

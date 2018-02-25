@@ -57,6 +57,16 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Domain\Entity\SeasonTeamMember
+    domain.repository.playoff:
+        class: DomainBundle\Repository\PlayOffRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\PlayOff
+    domain.repository.playoffitem:
+        class: DomainBundle\Repository\PlayOffitemRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - Domain\Entity\PlayOffItem
     #usecases
     domain.use_case.create_season_use_case:
        class: Domain\UseCase\CreateSeasonUseCase
@@ -111,4 +121,14 @@ services:
 
     domain.use_case.remove_game_use_case:
         class: Domain\UseCase\RemoveGameUseCase
+        arguments: ['@domain.container']
+
+    domain.use_case.create_play_off_use_case:
+      class: Domain\UseCase\CreatePlayOffUseCase
+      arguments: ['@domain.container']
+    domain.use_case.remove_play_off_use_case:
+        class: Domain\UseCase\RemovePlayOffUseCase
+        arguments: ['@domain.container']
+    domain.use_case.create_play_off_grid_item_use_case:
+        class: Domain\UseCase\CreatePlayOffGridItemUseCase
         arguments: ['@domain.container']

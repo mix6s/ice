@@ -12,6 +12,8 @@ class RemovePlayOffUseCase
 
 	public function execute(RemovePlayOffRequest $request): RemovePlayOffResponse
 	{
+		$playOff = $this->getContainer()->getPlayOffRepository()->findById($request->getId());
+		$this->getContainer()->getPlayOffRepository()->remove($playOff);
 		return new RemovePlayOffResponse();
 	}
 }

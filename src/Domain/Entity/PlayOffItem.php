@@ -4,7 +4,7 @@
 namespace Domain\Entity;
 
 
-class PlayOffGridItem implements \JsonSerializable
+class PlayOffItem implements \JsonSerializable
 {
 	/**
 	 * @var int
@@ -58,7 +58,7 @@ class PlayOffGridItem implements \JsonSerializable
 	{
 		return [
 			'id' => $this->id,
-			'play_off' => $this->playOff,
+			'playoff' => $this->playOff,
 			'rank' => $this->rank,
 			'seasonteamA' => $this->seasonTeamA,
 			'seasonteamB' => $this->seasonTeamB,

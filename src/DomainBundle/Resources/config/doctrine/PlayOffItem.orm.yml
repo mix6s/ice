@@ -1,0 +1,31 @@
+Domain\Entity\PlayOffItem:
+    type: entity
+    repositoryClass: DomainBundle\Repository\PlayOffItemRepository
+    id:
+        id:
+            type: integer
+            generator: { strategy: NONE }
+    fields:
+        rank:
+            type: integer
+    manyToOne:
+        playOff:
+            targetEntity: Domain\Entity\PlayOff
+            joinColumn:
+                name: playoff_id
+                referencedColumnName: id
+        seasonTeamA:
+            targetEntity: Domain\Entity\SeasonTeam
+            joinColumn:
+                name: seasonteam_a_id
+                referencedColumnName: id
+        seasonTeamB:
+            targetEntity: Domain\Entity\SeasonTeam
+            joinColumn:
+                name: seasonteam_b_id
+                referencedColumnName: id
+        winner:
+            targetEntity: Domain\Entity\SeasonTeam
+            joinColumn:
+                name: winner_id
+                referencedColumnName: id

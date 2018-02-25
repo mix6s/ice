@@ -1,0 +1,21 @@
+Domain\Entity\PlayOff:
+    type: entity
+    repositoryClass: DomainBundle\Repository\PlayOffRepository
+    id:
+        id:
+            type: integer
+            generator: { strategy: NONE }
+    fields:
+        startAt:
+            type: datetime
+    manyToOne:
+        season:
+            targetEntity: Domain\Entity\Season
+            joinColumn:
+                name: season_id
+                referencedColumnName: id
+        league:
+            targetEntity: Domain\Entity\League
+            joinColumn:
+                name: league_id
+                referencedColumnName: id

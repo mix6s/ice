@@ -85,7 +85,9 @@ class ControlController extends Controller
 			if (!empty($options['seasonId'])) {
 				$qb->andWhere('st.season = :seasonId')->setParameter('seasonId', $options['seasonId']);
 			}
-
+			if (!empty($options['leagueId'])) {
+				$qb->andWhere('st.league = :leagueId')->setParameter('leagueId', $options['leagueId']);
+			}
 			$teams = $qb
 				->getQuery()
 				->getResult();

@@ -13,6 +13,8 @@ use Domain\Repository\GameEventRepositoryInterface;
 use Domain\Repository\GameRepositoryInterface;
 use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
+use Domain\Repository\PlayOffItemRepositoryInterface;
+use Domain\Repository\PlayOffRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
 use Domain\Repository\SeasonTeamMemberRepositoryInterface;
 use Domain\Repository\SeasonTeamRepositoryInterface;
@@ -63,4 +65,11 @@ interface ContainerInterface
 	 * @return GameEventRepositoryInterface
 	 */
 	public function getGameEventRepository(): GameEventRepositoryInterface;
+
+	/**
+	 * @return PlayOffRepositoryInterface
+	 */
+	public function getPlayOffRepository(): PlayOffRepositoryInterface;
+
+	public function getPlayOffItemRepository(): PlayOffItemRepositoryInterface;
 }

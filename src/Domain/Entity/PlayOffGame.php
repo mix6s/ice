@@ -12,7 +12,7 @@ class PlayOffGame implements \JsonSerializable
 	 */
 	private $id;
 	/**
-	 * @var PlayOffGridItem
+	 * @var PlayOffItem
 	 */
 	private $item;
 	/**
@@ -24,7 +24,7 @@ class PlayOffGame implements \JsonSerializable
 	 */
 	private $winner;
 
-	public function __construct(int $id, PlayOffGridItem $item, Game $game, SeasonTeam $winner = null)
+	public function __construct(int $id, PlayOffItem $item, Game $game, SeasonTeam $winner = null)
 	{
 		$this->id = $id;
 		$this->item = $item;

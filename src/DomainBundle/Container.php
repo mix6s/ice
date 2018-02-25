@@ -14,6 +14,8 @@ use Domain\Repository\GameEventRepositoryInterface;
 use Domain\Repository\GameRepositoryInterface;
 use Domain\Repository\LeagueRepositoryInterface;
 use Domain\Repository\PlayerRepositoryInterface;
+use Domain\Repository\PlayOffItemRepositoryInterface;
+use Domain\Repository\PlayOffRepositoryInterface;
 use Domain\Repository\SeasonRepositoryInterface;
 use Domain\Repository\SeasonTeamMemberRepositoryInterface;
 use Domain\Repository\SeasonTeamRepositoryInterface;
@@ -90,5 +92,18 @@ class Container implements ContainerInterface
 	public function getGameEventRepository(): GameEventRepositoryInterface
 	{
 		return $this->container->get('domain.repository.game.events');
+	}
+
+	/**
+	 * @return PlayOffRepositoryInterface
+	 */
+	public function getPlayOffRepository(): PlayOffRepositoryInterface
+	{
+		return $this->container->get('domain.repository.playoff');
+	}
+
+	public function getPlayOffItemRepository(): PlayOffItemRepositoryInterface
+	{
+		return $this->container->get('domain.repository.playoffitem');
 	}
 }

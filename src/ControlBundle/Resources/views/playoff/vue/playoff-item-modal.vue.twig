@@ -1,0 +1,168 @@
+<template>
+    {% block vue_template %}
+        {% verbatim %}
+<div class="modal-content" id="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Новая группа</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Этап</label>
+                 <div class="col-sm-4">
+                        <select ref="rankSelect"  v-model="item.rank" class="form-control" title="Выбрать">
+                               <option value="8">1/8</option>
+                               <option value="4">1/4</option>
+                               <option value="2">1/2</option>
+                               <option value="1">Финал</option>
+                        </select>
+                   </div>
+            </div>
+        </div>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Команда А</label>
+                 <div class="col-sm-4">
+                        <select ref="teamASelectpicker"  class="form-control" title="Выбрать">
+                               <option v-if="item.seasonteamA" selected="selected" :value="item.seasonteamA.id">{{ item.seasonteamA.team.metadata.title}}</option>
+                        </select>
+                   </div>
+            </div>
+        </div>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Команда B</label>
+                 <div class="col-sm-4">
+                        <select ref="teamBSelectpicker"  class="form-control" title="Выбрать">
+                               <option v-if="item.seasonteamB" selected="selected" :value="item.seasonteamB.id">{{ item.seasonteamB.team.metadata.title}}</option>
+                        </select>
+                   </div>
+            </div>
+        </div>
+         <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Победитель</label>
+                 <div class="col-sm-4">
+                        <select ref="winnerSelectpicker"  class="form-control" title="Выбрать">
+                               <option v-if="item.winner" selected="selected" :value="item.winner.id">{{ item.winner.team.metadata.title}}</option>
+                        </select>
+                   </div>
+            </div>
+        </div>
+        <div class="has-error" v-if="error">
+            <span class="help-block">{{ error }}</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" v-on:click="save" :disabled="saveInProgress" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+    {% endverbatim %}
+    {% endblock %}
+</template>
+
+<script>
+	Vue.component('playoffItemModal', {
+		template: '{{ block('vue_template')|escape('js') }}',
+		data: function () {
+			return {
+				item: {},
+                error: null,
+				saveInProgress: null
+			}
+		},
+		computed:{
+			startAtMoment: function () {
+				return moment(this.playoff.start_at);
+			},
+			startAtFormatted: function () {
+				return this.startAtMoment.format('DD.MM.YYYY HH:mm')
+			},
+		},
+		methods: {
+
+			save: function () {
+				const self = this;
+				self.saveInProgress = true;
+				$.ajax({
+					url: '/control/playoff/item/new',
+					data: this.item,
+					type: 'post',
+					success: function (response) {
+						self.$emit('bus', {name: 'new-playoff-item', value: response});
+					},
+					error: function (jqXHR) {
+						resp = jqXHR.responseJSON ? jqXHR.responseJSON : {error: 'Ошибка сервера'};
+						self.error = resp.error;
+					},
+					complete: function () {
+						self.saveInProgress = false;
+					}
+				});
+			},
+			init: function (data) {
+				const self = this;
+                if (data.item) {
+					self.item = data.item;
+				}
+				let pickers = [this.$refs.teamASelectpicker, this.$refs.teamBSelectpicker, this.$refs.winnerSelectpicker];
+				for (teamIndex in pickers) {
+					$(pickers[teamIndex])
+						.selectpicker({
+							liveSearch: true
+						})
+						.ajaxSelectPicker({
+							cache: false,
+							ajax: {
+								url: '/control/typeahead',
+								data: function () {
+									return {
+										seasonteam: {% raw %}'{{{q}}}'{% endraw %},
+										options: {
+											seasonId: self.item.playoff ? self.item.playoff.season.id : '',
+											leagueId: self.item.playoff ? self.item.playoff.league.id : '',
+										}
+									};
+								}
+							},
+							locale: {
+								emptyTitle: 'Выбрать'
+							},
+							preprocessData: function (data) {
+								return data.map(function (item) {
+									return {
+										'value': item.seasonteam.id,
+										'text': item.name,
+										'disabled': false,
+										'data': {
+											'subtext': (item.seasonteam.season.year - 1) + '/' + item.seasonteam.season.year
+										},
+									}
+								});
+							},
+							preserveSelected: false
+						})
+					;
+					$(this.$refs.teamASelectpicker)
+						.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+							self.item.seasonteamA = {id: $(self.$refs.teamASelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
+						});
+					$(this.$refs.teamBSelectpicker)
+						.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+							self.item.seasonteamB = {id:  $(self.$refs.teamBSelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
+						});
+					$(this.$refs.winnerSelectpicker)
+						.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+							self.item.winner = {id: $(self.$refs.winnerSelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
+						});
+				}
+			}
+		},
+		mounted: function () {
+			this.init(this.$parent.data);
+		}
+	});
+</script>

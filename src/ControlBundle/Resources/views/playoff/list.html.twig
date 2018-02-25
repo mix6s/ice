@@ -9,17 +9,29 @@
         </div>
         <div class="row">
             <div v-for="playoff in playoffItems" class="col-xs-12 col-sm-12 col-md-6">
-
+				<playoff @bus="handle" :playoff="playoff"></playoff>
             </div>
         </div>
         <modal ref="modal" @bus="handle"></modal>
     </div>
 {% endblock %}
 
+{% block css %}
+    {{ parent() }}
+	<link href="{{ asset('backend/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('backend/css/bootstrap-select.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('backend/css/ajax-bootstrap-select.min.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
-    {{ include('@Control/playoff/vue/playoff-item.html.twig') }}
+	<script src="{{ asset('backend/js/moment-with-locales.js') }}"></script>
+	<script src="{{ asset('backend/js/bootstrap-datetimepicker.min.js') }}"></script>
+	<script src="{{ asset('backend/js/bootstrap-select.min.js') }}"></script>
+	<script src="{{ asset('backend/js/ajax-bootstrap-select.min.js') }}"></script>
+    {{ include('@Control/playoff/vue/playoff.html.twig') }}
     {{ include('@Control/playoff/vue/playoff-modal.vue.twig') }}
+    {{ include('@Control/playoff/vue/playoff-item-modal.vue.twig') }}
     {{ include('@Control/vue/modal-layout.vue.twig') }}
     {{ include('@Control/vue/edit-modal.vue.twig') }}
     {{ include('@Control/vue/member.vue.twig') }}
@@ -52,7 +64,10 @@
 					});
 				},
 				showAddPlayoffPopup: function () {
-					//this.$refs.modal.show('playoffModal', {}, 'modal-lg');
+					this.$refs.modal.show('playoffModal', {});
+				},
+				showAddPlayoffItemPopup: function (data) {
+					this.$refs.modal.show('playoffItemModal', data);
 				},
 				handle: function (data) {
 					this.$emit(data.name, data.value);
@@ -62,6 +77,18 @@
 				this
 					.$on('deleted', function (seasonteam) {
 
+					})
+					.$on('show-playoff-item-popup', function (data) {
+						this.showAddPlayoffItemPopup(data);
+					})
+					.$on('new-playoff', function (data) {
+						this.playoffItems.push(data.playoff);
+						this.$refs.modal.hide();
+					})
+					.$on('playoff-deleted', function (playoff) {
+						this.setPlayoffItems(this.playoffItems.filter(function (pf) {
+							return pf && pf.id !== playoff.id;
+						}));
 					})
 				;
 			},
