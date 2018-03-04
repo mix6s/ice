@@ -74,14 +74,15 @@ class GamesController extends Controller
 		$game = $this->get('domain.use_case.save_game_use_case')->execute(
 			$gameRequestData['id'],
 			$gameRequestData['type'],
-			$gameRequestData['place'],
+			$gameRequestData['place'] ?? '',
 			$gameRequestData['datetime'],
 			$gameRequestData['season']['id'],
 			$gameRequestData['seasonteamA']['id'],
 			$gameRequestData['seasonteamB']['id'],
-			$gameRequestData['state'] == 'false' || empty($gameRequestData['state']) ? 0 : 1,
+			!array_key_exists('state', $gameRequestData) ||$gameRequestData['state'] == 'false' || empty($gameRequestData['state']) ? 0 : 1,
 			$gameRequestData['membersA'] ?? [],
-			$gameRequestData['membersB'] ?? []
+			$gameRequestData['membersB'] ?? [],
+			$gameRequestData['playoff_item']['id'] ?? null
 		);
 
 		$eventsChangeRequest = new SaveGameEventsRequest($game->getId());

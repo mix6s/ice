@@ -29,7 +29,7 @@ class PlayOffController extends Controller
 			->leftJoin('pl.league', 'l')
 			->leftJoin('l.metadata', 'lm')
 			->leftJoin('Domain:PlayOffItem', 'pli', 'WITH', 'pli.playOff = pl.id')
-			->leftJoin('Domain:Game', 'g', 'WITH', 'g.playOffItem = pl.id')
+			->leftJoin('Domain:Game', 'g', 'WITH', 'g.playOffItem = pli.id')
 			->orderBy('pl.id', 'desc');
 
 		return $this->json([

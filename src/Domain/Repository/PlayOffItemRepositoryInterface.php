@@ -22,4 +22,6 @@ interface PlayOffItemRepositoryInterface
 	 * @param PlayOffItem $item
 	 */
 	public function remove(PlayOffItem $item);
+
+	public function findById(int $playOffItemId): PlayOffItem;
 }

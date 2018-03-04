@@ -57,7 +57,7 @@
                    <label class="col-sm-3 control-label">Сезон</label>
                    <div class="col-sm-4">
                         <select ref="seasonSelectpicker"  class="form-control" title="Выбрать">
-                               <option v-if="props.game" selected="selected" :value="props.game.season.id">{{(props.game.season.year - 1) + '/' + props.game.season.year}}</option>
+                               <option v-if="props.game && props.game.season" selected="selected" :value="props.game.season.id">{{(props.game.season.year - 1) + '/' + props.game.season.year}}</option>
                         </select>
                    </div>
                </div>
@@ -68,7 +68,7 @@
                <div class="form-group">
                     <div class="col-sm-12">
                         <select ref="teamASelectpicker"  class="form-control" title="Команда хозяева">
-                            <option v-if="props.game" selected="selected" :value="props.game.seasonteamA.id">{{props.game.seasonteamA.team.metadata.title }}</option>
+                            <option v-if="props.game && props.game.seasonteamA" selected="selected" :value="props.game.seasonteamA.id">{{props.game.seasonteamA.team.metadata.title }}</option>
                         </select>
                     </div>
                     <div class="col-sm-12">
@@ -80,7 +80,7 @@
                <div class="form-group">
                   <div class="col-sm-12">
                         <select ref="teamBSelectpicker"  class="form-control" title="Команда гости">
-                        <option v-if="props.game" selected="selected" :value="props.game.seasonteamB.id">{{props.game.seasonteamB.team.metadata.title }}</option>
+                        <option v-if="props.game && props.game.seasonteamB" selected="selected" :value="props.game.seasonteamB.id">{{props.game.seasonteamB.team.metadata.title }}</option>
                         </select>
                     </div>
                     <div class="col-sm-12">
@@ -284,13 +284,13 @@
             loadMembers: function(seasonteamA, seasonteamB) {
 				var self = this;
 				$.when(
-					seasonteamA.id && $.ajax({
+					seasonteamA && seasonteamA.id && $.ajax({
 						url: '/control/seasonteam/members/' + seasonteamA.id,
 						success: function(data) {
 							self.membersA = data;
 						}
 					}),
-					seasonteamB.id && $.ajax({
+					seasonteamA && seasonteamB.id && $.ajax({
 						url: '/control/seasonteam/members/' + seasonteamB.id,
 						success: function(data) {
 							self.membersB = data;

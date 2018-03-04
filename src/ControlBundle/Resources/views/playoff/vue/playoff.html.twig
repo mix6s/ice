@@ -4,10 +4,10 @@
 <div class="panel panel-primary">
     <div class="panel-heading">
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-9">
                 <h3 class="panel-title">Плейофф {{ playoff.league.metadata.title}} {{ playoff.season.year - 1 }}/{{ playoff.season.year }}</h3>
             </div>
-            <div class="col-xs-6 text-right">
+            <div class="col-xs-3 text-right">
                <button v-on:click="removePlayoff" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
             </div>
         </div>
@@ -26,11 +26,15 @@
         <tbody v-for="item in items">
         <tr>
             <td rowspan="2">{{itemRank(item)}}</td>
-            <td><button v-on:click="showPlayOffItemPopup(item)" class="btn btn-link">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : ''}}</button></td>
-            <td rowspan="2"><button v-on:click="showAddGamePopup(item)">Игра</button></td>
+            <td><button v-on:click="showPlayOffItemPopup(item)" class="btn btn-default">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : 'Выбрать'}}</button></td>
+            <td rowspan="2"><button class="btn btn-default" v-on:click="showAddGamePopup(item)">
+            {{ getGameByNum(item, 0) != null  ? '' : 'Выбрать'}}
+            </button></td>
+            <td rowspan="2"><button class="btn btn-default" v-on:click="showAddGamePopup(item)">Игра</button></td>
+            <td rowspan="2"><button class="btn btn-default" v-on:click="showAddGamePopup(item)">Игра</button></td>
         </tr>
         <tr>
-            <td><button v-on:click="showPlayOffItemPopup(item)"  class="btn btn-link">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : ''}}</button></td>
+            <td><button v-on:click="showPlayOffItemPopup(item)"  class="btn btn-default">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : 'Выбрать'}}</button></td>
         </tr>
         </tbody>
         <tfoot>
@@ -62,6 +66,7 @@
 							membersA: {},
 							membersB: {},
 							datetime: undefined,
+                            type: 'playoff',
 							season: this.playoff.season,
 							seasonteamA: item.seasonteamA,
 							seasonteamB: item.seasonteamB,
@@ -72,12 +77,12 @@
 			},
 			getGameByNum: function(item, num) {
 			    var games = this.getGames(item);
-			    return games[num];
+			    return games[num] ? games[num] : null;
             },
 			getGames: function (item) {
 				const self = this;
                 return self.games.filter(function (t) {
-                	return t.playoff_item_id == item.id;
+                	return t.hasOwnProperty('playoff_item') && t.playoff_item.id == item.id;
                 })
             },
 			itemRank: function (item) {

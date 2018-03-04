@@ -60,12 +60,12 @@
 					const items = this.getPlayoffItems(playoff);
 					var games = [];
 					var itemIds = [];
-					for (item in items) {
-						itemIds.push(item.id);
+					for (index in items) {
+						itemIds.push(items[index].id);
 					}
-					for (game in this.playoffsGames) {
-						if (itemIds.indexOf(game.playoff_item_id)) {
-							games.push(game);
+					for (index in this.playoffsGames) {
+						if (itemIds.indexOf(this.playoffsGames[index].playoff_item.id)) {
+							games.push(this.playoffsGames[index]);
 						}
 					}
 					return games;
