@@ -8,8 +8,8 @@
             </div>
         </div>
         <div class="row">
-            <div v-for="playoff in playoffItems" class="col-xs-12 col-sm-12 col-md-6">
-				<playoff @bus="handle" :playoff="playoff"></playoff>
+            <div v-for="playoff in playoffs" class="col-xs-12 col-sm-12 col-md-6">
+				<playoff @bus="handle" :playoff="playoff" :items="getPlayoffItems(playoff)" :games="getPlayoffGames(playoff)"></playoff>
             </div>
         </div>
         <modal ref="modal" @bus="handle"></modal>
@@ -21,6 +21,7 @@
 	<link href="{{ asset('backend/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
 	<link href="{{ asset('backend/css/bootstrap-select.min.css') }}" rel="stylesheet">
 	<link href="{{ asset('backend/css/ajax-bootstrap-select.min.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block javascripts %}
@@ -35,18 +36,52 @@
     {{ include('@Control/vue/modal-layout.vue.twig') }}
     {{ include('@Control/vue/edit-modal.vue.twig') }}
     {{ include('@Control/vue/member.vue.twig') }}
+    {{ include('@Control/games/vue/event.vue.twig') }}
+    {{ include('@Control/games/vue/member-list.vue.twig') }}
+    {{ include('@Control/games/vue/game-modal.vue.twig') }}
     <script>
 		var app = new Vue({
 			el: '#app',
 			data: {
-				playoffItems: []
+				playoffs: [],
+				playoffsItems: [],
+				playoffsGames: []
 			},
 			computed: {
 
 			},
 			methods: {
-				setPlayoffItems: function (playoffItems) {
-					this.playoffItems = playoffItems.filter(function (t) {
+				getPlayoffItems: function (playoff) {
+					return this.playoffsItems.filter(function (t) {
+						return playoff.id == t.playoff.id;
+					})
+				},
+				getPlayoffGames: function (playoff) {
+					const items = this.getPlayoffItems(playoff);
+					var games = [];
+					var itemIds = [];
+					for (item in items) {
+						itemIds.push(item.id);
+					}
+					for (game in this.playoffsGames) {
+						if (itemIds.indexOf(game.playoff_item_id)) {
+							games.push(game);
+						}
+					}
+					return games;
+				},
+				setPlayoffs: function (playoffs) {
+					this.playoffs = playoffs.filter(function (t) {
+						return !!t;
+					})
+				},
+				setPlayoffsItems: function (items) {
+					this.playoffsItems = items.filter(function (t) {
+						return !!t;
+					})
+				},
+				setPlayoffsGames: function (games) {
+					this.playoffsGames = games.filter(function (t) {
 						return !!t;
 					})
 				},
@@ -56,7 +91,9 @@
 						url: '/control/playoff',
 						type: 'get',
 						success: function (response) {
-							_this.setPlayoffItems(response.playoffItems);
+							_this.setPlayoffsItems(response.playoffsItems);
+							_this.setPlayoffsGames(response.playoffsGames);
+							_this.setPlayoffs(response.playoffs);
 						},
 						complete: function (response) {
 
@@ -71,7 +108,7 @@
 				},
 				handle: function (data) {
 					this.$emit(data.name, data.value);
-				}
+				},
 			},
 			created: function () {
 				this
@@ -81,12 +118,19 @@
 					.$on('show-playoff-item-popup', function (data) {
 						this.showAddPlayoffItemPopup(data);
 					})
+					.$on('show-game-popup', function (data) {
+						this.$refs.modal.show('gameModal', data, 'modal-lg');
+					})
 					.$on('new-playoff', function (data) {
-						this.playoffItems.push(data.playoff);
+						this.playoffs.push(data.playoff);
+						this.$refs.modal.hide();
+					})
+					.$on('new-playoff-item', function (data) {
+						this.playoffsItems.push(data.item);
 						this.$refs.modal.hide();
 					})
 					.$on('playoff-deleted', function (playoff) {
-						this.setPlayoffItems(this.playoffItems.filter(function (pf) {
+						this.setPlayoffs(this.playoffs.filter(function (pf) {
 							return pf && pf.id !== playoff.id;
 						}));
 					})

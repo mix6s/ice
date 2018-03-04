@@ -21,6 +21,11 @@ Domain\Entity\Game:
             type: array
             nullable: true
     manyToOne:
+        playOffItem:
+            targetEntity: Domain\Entity\PlayOffItem
+            joinColumn:
+                name: playoff_item_id
+                referencedColumnName: id
         season:
             targetEntity: Domain\Entity\Season
             joinColumn:

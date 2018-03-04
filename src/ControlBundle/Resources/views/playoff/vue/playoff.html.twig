@@ -23,14 +23,21 @@
             <th>СС</th>
         </tr>
         </thead>
-        <tbody>
-        <tr v-for="item in items">
-            <td colspan="4"></td>
+        <tbody v-for="item in items">
+        <tr>
+            <td rowspan="2">{{itemRank(item)}}</td>
+            <td><button v-on:click="showPlayOffItemPopup(item)" class="btn btn-link">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : ''}}</button></td>
+            <td rowspan="2"><button v-on:click="showAddGamePopup(item)">Игра</button></td>
         </tr>
-         <tr>
-            <td colspan="4"><button v-on:click="showPlayOffItemPopup" class="btn btn-xs btn-primary">Добавить группу</button></td>
+        <tr>
+            <td><button v-on:click="showPlayOffItemPopup(item)"  class="btn btn-link">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : ''}}</button></td>
         </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><button v-on:click="showPlayOffItemPopup" class="btn btn-xs btn-primary">Добавить группу</button></td>
+        </tr>
+        </tfoot>
     </table>
 </div>
 {% endverbatim %}
@@ -40,13 +47,49 @@
 <script>
 	Vue.component('playoff', {
 		template: '{{ block('vue_template')|escape('js') }}',
-		props: ['playoff',  'items'],
+		props: ['playoff',  'items', 'games'],
 		data: function () {
 			return {
 				deleteInProgress: false
 			}
 		},
 		methods: {
+			showAddGamePopup: function (item) {
+				this.$emit('bus', {
+					name: 'show-game-popup', value: {
+						game: {
+							id: null,
+							membersA: {},
+							membersB: {},
+							datetime: undefined,
+							season: this.playoff.season,
+							seasonteamA: item.seasonteamA,
+							seasonteamB: item.seasonteamB,
+							playoff_item: item.id
+						}
+					}
+				});
+			},
+			getGameByNum: function(item, num) {
+			    var games = this.getGames(item);
+			    return games[num];
+            },
+			getGames: function (item) {
+				const self = this;
+                return self.games.filter(function (t) {
+                	return t.playoff_item_id == item.id;
+                })
+            },
+			itemRank: function (item) {
+				switch (item.rank) {
+                    case 1:
+                    	return 'Финал';
+                    case 2:
+                    	return 'Полуфинал';
+                    default:
+                        return '1/' + item.rank;
+                }
+            },
 			showPlayOffItemPopup: function (event, item) {
 				if (!item) {
 					item = {

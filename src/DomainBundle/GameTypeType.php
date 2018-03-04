@@ -28,6 +28,9 @@ class GameTypeType extends Type
 
 	public function convertToPHPValue($value, AbstractPlatform $platform)
 	{
+		if ($value == null) {
+			 return null;
+		}
 		return GameType::resolve($value);
 	}
 

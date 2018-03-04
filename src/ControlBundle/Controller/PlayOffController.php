@@ -25,11 +25,23 @@ class PlayOffController extends Controller
 		$qb = $em->createQueryBuilder();
 		$qb
 			->from('Domain:PlayOff', 'pl')
-			//->leftJoin('Domain:SeasonTeam', 'st', 'WITH', 'st.league = l.id')
+			->leftJoin('pl.season', 's')
+			->leftJoin('pl.league', 'l')
+			->leftJoin('l.metadata', 'lm')
+			->leftJoin('Domain:PlayOffItem', 'pli', 'WITH', 'pli.playOff = pl.id')
+			->leftJoin('Domain:Game', 'g', 'WITH', 'g.playOffItem = pl.id')
 			->orderBy('pl.id', 'desc');
 
 		return $this->json([
-			'playoffItems' => $qb->select('pl')->getQuery()->getResult(),
+			'playoffs' => array_values(array_filter($qb->select('pl')->getQuery()->getResult(), function ($item) {
+				return $item !== null;
+			})),
+			'playoffsItems' => array_values(array_filter($qb->select('pli')->getQuery()->getResult(), function ($item) {
+				return $item !== null;
+			})),
+			'playoffsGames' => array_values(array_filter($qb->select('g')->getQuery()->getResult(), function ($item) {
+				return $item !== null;
+			})),
 		]);
 	}
 

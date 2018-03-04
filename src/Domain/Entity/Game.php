@@ -33,28 +33,15 @@ class Game implements \JsonSerializable
 	private $state;
 	private $membersA;
 	private $membersB;
+	private $playOffItem;
 
 	/**
 	 * Game constructor.
 	 * @param int $id
-	 * @param \DateTime $datetime
-	 * @param GameType $type
-	 * @param string $place
-	 * @param Season $season
-	 * @param SeasonTeam $seasonTeamA
-	 * @param SeasonTeam $seasonTeamB
 	 */
-	private function __construct(
-		int $id,
-		\DateTime $datetime,
-		GameType $type,
-		string $place,
-		Season $season,
-		SeasonTeam $seasonTeamA,
-		SeasonTeam $seasonTeamB
-	) {
-		$this->id = $id;
-		$this->modify($datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB, self::STATE_DEFAULT);
+	private function __construct()
+	{
+
 	}
 
 	/**
@@ -76,7 +63,10 @@ class Game implements \JsonSerializable
 		SeasonTeam $seasonTeamA,
 		SeasonTeam $seasonTeamB
 	) {
-		return new self($id, $datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB);
+		$game = new self();
+		$game->id = $id;
+		$game->modify($datetime, $type, $place, $season, $seasonTeamA, $seasonTeamB, self::STATE_DEFAULT);
+		return $game;
 	}
 
 	/**
@@ -135,7 +125,8 @@ class Game implements \JsonSerializable
 			'metadata' => $this->getMetadata(),
 			'state' => $this->getState(),
 			'membersA' => $this->getMembersA(),
-			'membersB' => $this->getMembersB()
+			'membersB' => $this->getMembersB(),
+			'playoff_item' => $this->getPlayOffItem()
 		];
 	}
 
@@ -239,5 +230,21 @@ class Game implements \JsonSerializable
 	public function setMembersB(array $membersB)
 	{
 		$this->membersB = $membersB;
+	}
+
+	/**
+	 * @return PlayOffItem|null
+	 */
+	public function getPlayOffItem()
+	{
+		return $this->playOffItem;
+	}
+
+	/**
+	 * @param PlayOffItem|null $playOffItem
+	 */
+	public function setPlayOffItem(PlayOffItem $playOffItem = null)
+	{
+		$this->playOffItem = $playOffItem;
 	}
 }

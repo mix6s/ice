@@ -186,7 +186,8 @@
 					datetime: undefined,
 					season: {},
 					seasonteamA: {},
-					seasonteamB: {}
+					seasonteamB: {},
+					playoff_item: null,
 				},
                 membersA: [],
                 membersB: [],
@@ -212,7 +213,8 @@
                     membersB: this.game.membersB,
                     season: {id: this.game.season.id},
                     seasonteamA: {id: this.game.seasonteamA.id},
-                    seasonteamB: {id: this.game.seasonteamB.id}
+                    seasonteamB: {id: this.game.seasonteamB.id},
+                    playoff_item: {id: this.game.playoff_item}
                 };
 
 			    for (var i in this.events) {
