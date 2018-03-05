@@ -5,7 +5,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Новый Плейофф</h4>
+        <h4 class="modal-title">Плейофф</h4>
     </div>
     <div class="modal-body">
      <div class="form-horizontal">
@@ -13,7 +13,7 @@
                 <label class="col-sm-3 control-label">Сезон</label>
                  <div class="col-sm-4">
                         <select ref="seasonSelectpicker"  class="form-control" title="Выбрать">
-                               <option v-if="playoff.season" selected="selected" :value="playoff.season.id">{{(playoff.season.year - 1) + '/' + playoff.season.year}}</option>
+                               <option v-if="props.playoff && props.playoff.season" selected="selected" :value="props.playoff.season.id">{{(props.playoff.season.year - 1) + '/' + props.playoff.season.year}}</option>
                         </select>
                    </div>
             </div>
@@ -23,7 +23,7 @@
                 <label class="col-sm-3 control-label">Лига</label>
                 <div class="col-sm-4">
                         <select ref="leagueSelectpicker"  class="form-control" title="Выбрать">
-                               <option v-if="playoff.league" selected="selected" :value="playoff.league.id">{{playoff.league.metadata.title}}</option>
+                               <option v-if="props.playoff && props.playoff.league" selected="selected" :value="props.playoff.league.id">{{props.playoff.league.metadata.title}}</option>
                         </select>
                    </div>
             </div>
@@ -52,6 +52,7 @@
 <script>
 	Vue.component('playoffModal', {
 		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['props'],
 		data: function () {
 			return {
 				playoff: {
@@ -93,7 +94,7 @@
 					}
 				});
 			},
-			init: function () {
+			init: function (data) {
 				const self = this;
 				let typeaheadQuery = function (type, query, process) {
 					$.ajax({

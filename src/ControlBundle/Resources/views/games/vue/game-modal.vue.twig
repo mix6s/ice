@@ -68,7 +68,7 @@
                <div class="form-group">
                     <div class="col-sm-12">
                         <select ref="teamASelectpicker"  class="form-control" title="Команда хозяева">
-                            <option v-if="props.game && props.game.seasonteamA" selected="selected" :value="props.game.seasonteamA.id">{{props.game.seasonteamA.team.metadata.title }}</option>
+                            <option v-if="props.game && props.game.seasonteamA && props.game.seasonteamA.team" selected="selected" :value="props.game.seasonteamA.id">{{props.game.seasonteamA.team.metadata.title }}</option>
                         </select>
                     </div>
                     <div class="col-sm-12">
@@ -80,7 +80,7 @@
                <div class="form-group">
                   <div class="col-sm-12">
                         <select ref="teamBSelectpicker"  class="form-control" title="Команда гости">
-                        <option v-if="props.game && props.game.seasonteamB" selected="selected" :value="props.game.seasonteamB.id">{{props.game.seasonteamB.team.metadata.title }}</option>
+                        <option v-if="props.game && props.game.seasonteamB && props.game.seasonteamB.team" selected="selected" :value="props.game.seasonteamB.id">{{props.game.seasonteamB.team.metadata.title }}</option>
                         </select>
                     </div>
                     <div class="col-sm-12">
@@ -212,8 +212,8 @@
                     membersA: this.game.membersA,
                     membersB: this.game.membersB,
                     season: {id: this.game.season.id},
-                    seasonteamA: {id: this.game.seasonteamA.id},
-                    seasonteamB: {id: this.game.seasonteamB.id},
+                    seasonteamA: {id: this.game.seasonteamA ? this.game.seasonteamA.id : null},
+                    seasonteamB: {id: this.game.seasonteamB ? this.game.seasonteamB.id : null},
                     playoff_item: {id: this.game.playoff_item}
                 };
 
@@ -290,7 +290,7 @@
 							self.membersA = data;
 						}
 					}),
-					seasonteamA && seasonteamB.id && $.ajax({
+					seasonteamB && seasonteamB.id && $.ajax({
 						url: '/control/seasonteam/members/' + seasonteamB.id,
 						success: function(data) {
 							self.membersB = data;
@@ -410,11 +410,17 @@
 			}
 			$(this.$refs.teamASelectpicker)
 				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					if (!self.game.seasonteamA) {
+						self.game.seasonteamA = {};
+					}
 					self.game.seasonteamA.id = $(self.$refs.teamASelectpicker).selectpicker('val');
 					self.loadMembers(self.game.seasonteamA, {})
 				});
 			$(this.$refs.teamBSelectpicker)
 				.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					if (!self.game.seasonteamB) {
+						self.game.seasonteamB = {};
+					}
 					self.game.seasonteamB.id = $(self.$refs.teamBSelectpicker).selectpicker('val');
 					self.loadMembers({}, self.game.seasonteamB)
 				});

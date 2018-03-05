@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="row">
-            <div v-for="playoff in playoffs" class="col-xs-12 col-sm-12 col-md-6">
+            <div v-for="playoff in playoffs" class="col-xs-12 col-sm-12 col-md-12">
 				<playoff @bus="handle" :playoff="playoff" :items="getPlayoffItems(playoff)" :games="getPlayoffGames(playoff)"></playoff>
             </div>
         </div>
@@ -111,12 +111,30 @@
 				},
 			},
 			created: function () {
+				var self = this;
 				this
 					.$on('deleted', function (seasonteam) {
 
 					})
+					.$on('gameSaved', function (game) {
+						var exist = false;
+						for (index in self.playoffsGames) {
+							if (self.playoffsGames[index] && self.playoffsGames[index].id == game.id) {
+								self.playoffsGames[index] = game;
+								exist = true;
+								self.$forceUpdate();
+								return;
+							}
+						}
+						if (!exist) {
+							self.playoffsGames.push(game);
+						}
+					})
 					.$on('show-playoff-item-popup', function (data) {
 						this.showAddPlayoffItemPopup(data);
+					})
+					.$on('show-playoff-popup', function (data) {
+						this.$refs.modal.show('playoffModal', data);
 					})
 					.$on('show-game-popup', function (data) {
 						this.$refs.modal.show('gameModal', data, 'modal-lg');

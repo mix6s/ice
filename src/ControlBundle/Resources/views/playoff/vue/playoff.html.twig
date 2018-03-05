@@ -8,7 +8,9 @@
                 <h3 class="panel-title">Плейофф {{ playoff.league.metadata.title}} {{ playoff.season.year - 1 }}/{{ playoff.season.year }}</h3>
             </div>
             <div class="col-xs-3 text-right">
+            <button v-on:click="editPlayoff" class="btn btn-xs btn-default" title="Изменить"><i class="fa fa-edit" aria-hidden="true"></i></button>
                <button v-on:click="removePlayoff" class="btn btn-xs btn-danger" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+
             </div>
         </div>
     </div>
@@ -27,11 +29,14 @@
         <tr>
             <td rowspan="2">{{itemRank(item)}}</td>
             <td><button v-on:click="showPlayOffItemPopup(item)" class="btn btn-default">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : 'Выбрать'}}</button></td>
-            <td rowspan="2"><button class="btn btn-default" v-on:click="showAddGamePopup(item)">
-            {{ getGameByNum(item, 0) != null  ? '' : 'Выбрать'}}
-            </button></td>
-            <td rowspan="2"><button class="btn btn-default" v-on:click="showAddGamePopup(item)">Игра</button></td>
-            <td rowspan="2"><button class="btn btn-default" v-on:click="showAddGamePopup(item)">Игра</button></td>
+            <td v-for="i in [0,1,2]" rowspan="2">
+            <button v-if="getGameByNum(item, i) == null" class="btn btn-default" v-on:click="showAddGamePopup(item)">
+            {{ getGameByNum(item, i) != null  ? '' : 'Создать'}}
+            </button>
+            <button class="btn btn-link" v-else=""  v-on:click="showEditGamePopup(item, i)">
+            {{ getGameByNum(item, i).datetime }}
+                </button>
+            </td>
         </tr>
         <tr>
             <td><button v-on:click="showPlayOffItemPopup(item)"  class="btn btn-default">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : 'Выбрать'}}</button></td>
@@ -58,6 +63,21 @@
 			}
 		},
 		methods: {
+			editPlayoff: function () {
+				this.$emit('bus', {
+					name: 'show-playoff-popup', value: {
+						playoff: this.playoff
+					}
+				});
+			},
+			showEditGamePopup: function (item, num) {
+				var game = this.getGameByNum(item, num);
+				this.$emit('bus', {
+					name: 'show-game-popup', value: {
+						game: game
+					}
+				});
+			},
 			showAddGamePopup: function (item) {
 				this.$emit('bus', {
 					name: 'show-game-popup', value: {
