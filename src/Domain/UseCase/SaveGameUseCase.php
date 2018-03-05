@@ -47,7 +47,7 @@ class SaveGameUseCase
 		}
 		$game->setMembersA($membersA);
 		$game->setMembersB($membersB);
-		if ($playOffItemId !== null) {
+		if (!empty($playOffItemId)) {
 			$playOff = $this->getContainer()->getPlayOffItemRepository()->findById((int)$playOffItemId);
 			$game->setPlayOffItem($playOff);
 		}
