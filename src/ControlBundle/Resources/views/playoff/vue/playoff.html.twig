@@ -27,24 +27,30 @@
         </thead>
         <tbody v-for="item in items">
         <tr>
-            <td rowspan="2">{{itemRank(item)}}</td>
-            <td><button v-on:click="showPlayOffItemPopup(item)" class="btn btn-default">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : 'Выбрать'}}</button></td>
-            <td v-for="i in [0,1,2]" rowspan="2">
-            <button v-if="getGameByNum(item, i) == null" class="btn btn-default" v-on:click="showAddGamePopup(item)">
+            <td rowspan="2" style="vertical-align: middle;" class="text-center"><span class="label label-info">{{itemRank(item)}}</span></td>
+            <td><button v-on:click="showPlayOffItemPopup(item)" v-bind:class="[item.seasonteamA ? 'btn-default' : 'btn-link']" class="btn btn-sm">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : 'Выбрать'}}</button></td>
+            <td v-for="i in [0,1,2]" rowspan="2" style="vertical-align: middle;">
+            <div  v-if="getGameByNum(item, i) == null">
+             <button class="btn btn-link btn-xs" v-on:click="showAddGamePopup(item)">
             {{ getGameByNum(item, i) != null  ? '' : 'Создать'}}
             </button>
-            <button class="btn btn-link" v-else=""  v-on:click="showEditGamePopup(item, i)">
-            {{ getGameByNum(item, i).datetime }}
-                </button>
+            </div>
+             <div  v-else="" class="text-center">
+                <small class=""><i class="fa fa-circle-o" aria-hidden="true"></i></small><br>
+                 <button class="btn btn-sm btn-default"  v-on:click="showEditGamePopup(item, i)">
+                {{ getGameByNum(item, i).datetime }}
+                </button><br>
+                 <small class=""><i class="fa fa-circle" aria-hidden="true"></i></small>
+            </div>
             </td>
         </tr>
         <tr>
-            <td><button v-on:click="showPlayOffItemPopup(item)"  class="btn btn-default">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : 'Выбрать'}}</button></td>
+            <td><button v-on:click="showPlayOffItemPopup(item)" v-bind:class="[item.seasonteamB ? 'btn-default' : 'btn-link']"  class="btn btn-sm">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : 'Выбрать'}}</button></td>
         </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="4"><button v-on:click="showPlayOffItemPopup" class="btn btn-xs btn-primary">Добавить группу</button></td>
+            <td colspan="4"><button v-on:click="showPlayOffItemPopup()" class="btn btn-xs btn-primary">Добавить группу</button></td>
         </tr>
         </tfoot>
     </table>
@@ -54,6 +60,7 @@
 </template>
 
 <script>
+    var gamesCache = {};
 	Vue.component('playoff', {
 		template: '{{ block('vue_template')|escape('js') }}',
 		props: ['playoff',  'items', 'games'],
@@ -96,8 +103,12 @@
 				});
 			},
 			getGameByNum: function(item, num) {
+				if (gamesCache[num]) {
+					return gamesCache[num];
+                }
 			    var games = this.getGames(item);
-			    return games[num] ? games[num] : null;
+				gamesCache[num] = games[num] ? games[num] : null;
+			    return gamesCache[num];
             },
 			getGames: function (item) {
 				const self = this;
@@ -115,12 +126,14 @@
                         return '1/' + item.rank;
                 }
             },
-			showPlayOffItemPopup: function (event, item) {
+			showPlayOffItemPopup: function (item) {
 				if (!item) {
 					item = {
 						playoff: this.playoff
                     };
 				}
+				item = Object.assign({}, item);
+
 				this.$emit('bus', {name: 'show-playoff-item-popup', value: {item: item}});
 			},
 			removePlayoff: function () {

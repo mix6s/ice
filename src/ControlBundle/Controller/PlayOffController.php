@@ -3,8 +3,8 @@
 namespace ControlBundle\Controller;
 
 
-use Domain\DTO\Request\CreatePlayOffGridItemRequest;
-use Domain\DTO\Request\CreatePlayOffRequest;
+use Domain\DTO\Request\SavePlayOffItemRequest;
+use Domain\DTO\Request\SavePlayOffRequest;
 use Domain\DTO\Request\RemovePlayOffRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,29 +47,29 @@ class PlayOffController extends Controller
 	}
 
 	/**
-	 * @Route("/playoff/new", name="control.playoff.new")
+	 * @Route("/playoff/save", name="control.playoff.save")
 	 */
-	public function playoffNewAction(Request $request)
+	public function playoffSaveAction(Request $request)
 	{
 		$season = $request->request->get('season');
 		$league = $request->request->get('league');
 		$startAt = new \DateTime($request->get('start_at'));
 		$playoff = $this->get('domain.use_case.create_play_off_use_case')
-			->execute(new CreatePlayOffRequest($season['id'], $league['id'], $startAt))
+			->execute(new SavePlayOffRequest($season['id'], $league['id'], $startAt, $request->request->get('id')))
 			->getPlayOff();
 		$this->get('doctrine.orm.entity_manager')->flush();
 		return $this->json(['playoff' => $playoff]);
 	}
 
 	/**
-	 * @Route("/playoff/item/new", name="control.playoff.item.new")
+	 * @Route("/playoff/item/save", name="control.playoff.item.save")
 	 */
-	public function playoffItemNewAction(Request $request)
+	public function playoffItemSaveAction(Request $request)
 	{
-		$createRequest = new CreatePlayOffGridItemRequest($request->request->get('playoff', ['id' => null])['id'], $request->request->get('rank'));
-		$createRequest->setSeasonteamAId($request->request->get('seasonteamA', ['id' => null])['id']);
-		$createRequest->setSeasonteamBId($request->request->get('seasonteamB', ['id' => null])['id']);
-		$createRequest->setWinnerId($request->request->get('winner', ['id' => null])['id']);
+		$createRequest = new SavePlayOffItemRequest($request->request->get('playoff', ['id' => null])['id'], $request->request->get('rank'), $request->request->get('id'));
+		$createRequest->setSeasonteamAId($request->request->get('seasonteamA', ['id' => null])['id'] ?? null);
+		$createRequest->setSeasonteamBId($request->request->get('seasonteamB', ['id' => null])['id'] ?? null);
+		$createRequest->setWinnerId($request->request->get('winner', ['id' => null])['id'] ?? null);
 		$item = $this->get('domain.use_case.create_play_off_grid_item_use_case')
 			->execute($createRequest)
 			->getItem();

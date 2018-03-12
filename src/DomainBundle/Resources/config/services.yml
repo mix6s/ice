@@ -124,11 +124,11 @@ services:
         arguments: ['@domain.container']
 
     domain.use_case.create_play_off_use_case:
-      class: Domain\UseCase\CreatePlayOffUseCase
+      class: Domain\UseCase\SavePlayOffUseCase
       arguments: ['@domain.container']
     domain.use_case.remove_play_off_use_case:
         class: Domain\UseCase\RemovePlayOffUseCase
         arguments: ['@domain.container']
     domain.use_case.create_play_off_grid_item_use_case:
-        class: Domain\UseCase\CreatePlayOffGridItemUseCase
+        class: Domain\UseCase\SavePlayOffItemUseCase
         arguments: ['@domain.container']

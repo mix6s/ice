@@ -12,7 +12,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">Этап</label>
                  <div class="col-sm-4">
-                        <select ref="rankSelect"  v-model="item.rank" class="form-control" title="Выбрать">
+                        <select ref="rankSelect"  v-model="props.item.rank" class="form-control" title="Выбрать">
                                <option value="8">1/8</option>
                                <option value="4">1/4</option>
                                <option value="2">1/2</option>
@@ -26,7 +26,7 @@
                 <label class="col-sm-3 control-label">Команда А</label>
                  <div class="col-sm-4">
                         <select ref="teamASelectpicker"  class="form-control" title="Выбрать">
-                               <option v-if="item.seasonteamA" selected="selected" :value="item.seasonteamA.id">{{ item.seasonteamA.team.metadata.title}}</option>
+                               <option v-if="props.item.seasonteamA" selected="selected" :value="props.item.seasonteamA.id">{{ props.item.seasonteamA.team.metadata.title}}</option>
                         </select>
                    </div>
             </div>
@@ -36,7 +36,7 @@
                 <label class="col-sm-3 control-label">Команда B</label>
                  <div class="col-sm-4">
                         <select ref="teamBSelectpicker"  class="form-control" title="Выбрать">
-                               <option v-if="item.seasonteamB" selected="selected" :value="item.seasonteamB.id">{{ item.seasonteamB.team.metadata.title}}</option>
+                               <option v-if="props.item.seasonteamB" selected="selected" :value="props.item.seasonteamB.id">{{ props.item.seasonteamB.team.metadata.title}}</option>
                         </select>
                    </div>
             </div>
@@ -46,7 +46,7 @@
                 <label class="col-sm-3 control-label">Победитель</label>
                  <div class="col-sm-4">
                         <select ref="winnerSelectpicker"  class="form-control" title="Выбрать">
-                               <option v-if="item.winner" selected="selected" :value="item.winner.id">{{ item.winner.team.metadata.title}}</option>
+                               <option v-if="props.item.winner" selected="selected" :value="props.item.winner.id">{{ props.item.winner.team.metadata.title}}</option>
                         </select>
                    </div>
             </div>
@@ -67,9 +67,9 @@
 <script>
 	Vue.component('playoffItemModal', {
 		template: '{{ block('vue_template')|escape('js') }}',
+		props: ['props'],
 		data: function () {
 			return {
-				item: {},
                 error: null,
 				saveInProgress: null
 			}
@@ -88,8 +88,8 @@
 				const self = this;
 				self.saveInProgress = true;
 				$.ajax({
-					url: '/control/playoff/item/new',
-					data: this.item,
+					url: '{{ path('control.playoff.item.save') }}',
+					data: this.props.item,
 					type: 'post',
 					success: function (response) {
 						self.$emit('bus', {name: 'new-playoff-item', value: response});
@@ -105,9 +105,6 @@
 			},
 			init: function (data) {
 				const self = this;
-                if (data.item) {
-					self.item = data.item;
-				}
 				let pickers = [this.$refs.teamASelectpicker, this.$refs.teamBSelectpicker, this.$refs.winnerSelectpicker];
 				for (teamIndex in pickers) {
 					$(pickers[teamIndex])
@@ -122,8 +119,8 @@
 									return {
 										seasonteam: {% raw %}'{{{q}}}'{% endraw %},
 										options: {
-											seasonId: self.item.playoff ? self.item.playoff.season.id : '',
-											leagueId: self.item.playoff ? self.item.playoff.league.id : '',
+											seasonId: self.props.item.playoff ? self.props.item.playoff.season.id : '',
+											leagueId: self.props.item.playoff ? self.props.item.playoff.league.id : '',
 										}
 									};
 								}
@@ -148,15 +145,15 @@
 					;
 					$(this.$refs.teamASelectpicker)
 						.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-							self.item.seasonteamA = {id: $(self.$refs.teamASelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
+							self.props.item.seasonteamA = {id: $(self.$refs.teamASelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
 						});
 					$(this.$refs.teamBSelectpicker)
 						.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-							self.item.seasonteamB = {id:  $(self.$refs.teamBSelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
+							self.props.item.seasonteamB = {id:  $(self.$refs.teamBSelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
 						});
 					$(this.$refs.winnerSelectpicker)
 						.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-							self.item.winner = {id: $(self.$refs.winnerSelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
+							self.props.item.winner = {id: $(self.$refs.winnerSelectpicker).selectpicker('val'), team: {metadata:{title: ''}}};
 						});
 				}
 			}

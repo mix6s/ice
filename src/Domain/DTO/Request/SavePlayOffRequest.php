@@ -4,7 +4,7 @@
 namespace Domain\DTO\Request;
 
 
-class CreatePlayOffRequest
+class SavePlayOffRequest
 {
 	/** @var  int */
 	private $seasonId;
@@ -12,12 +12,17 @@ class CreatePlayOffRequest
 	private $leagueId;
 	/** @var  \DateTime */
 	private $startAt;
+	/**
+	 * @var int
+	 */
+	private $id;
 
-	public function __construct(int $seasonId, int $leagueId, \DateTime $startAt)
+	public function __construct(int $seasonId, int $leagueId, \DateTime $startAt, $id = null)
 	{
 		$this->seasonId = $seasonId;
 		$this->leagueId = $leagueId;
 		$this->startAt = $startAt;
+		$this->id = $id;
 	}
 
 	/**
@@ -44,5 +49,16 @@ class CreatePlayOffRequest
 		return $this->startAt;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
 
+	public function hasId(): bool
+	{
+		return !empty($this->id);
+	}
 }

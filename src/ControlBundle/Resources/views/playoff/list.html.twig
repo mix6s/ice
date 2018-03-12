@@ -101,7 +101,12 @@
 					});
 				},
 				showAddPlayoffPopup: function () {
-					this.$refs.modal.show('playoffModal', {});
+					this.$refs.modal.show('playoffModal', {playoff: {
+						id: null,
+						season: null,
+						league: null,
+						start_at: undefined
+					}});
 				},
 				showAddPlayoffItemPopup: function (data) {
 					this.$refs.modal.show('playoffItemModal', data);
@@ -140,11 +145,35 @@
 						this.$refs.modal.show('gameModal', data, 'modal-lg');
 					})
 					.$on('new-playoff', function (data) {
-						this.playoffs.push(data.playoff);
+						var exist = false;
+						for (index in self.playoffs) {
+							if (self.playoffs[index] && self.playoffs[index].id == data.playoff.id) {
+								self.playoffs[index] = data.playoff;
+								exist = true;
+								this.$refs.modal.hide();
+								self.$forceUpdate();
+								return;
+							}
+						}
+						if (!exist) {
+							this.playoffs.push(data.playoff);
+						}
 						this.$refs.modal.hide();
 					})
 					.$on('new-playoff-item', function (data) {
-						this.playoffsItems.push(data.item);
+						var exist = false;
+						for (index in self.playoffsItems) {
+							if (self.playoffsItems[index] && self.playoffsItems[index].id == data.item.id) {
+								self.playoffsItems[index] = data.item;
+								exist = true;
+								this.$refs.modal.hide();
+								self.$forceUpdate();
+								return;
+							}
+						}
+						if (!exist) {
+							this.playoffsItems.push(data.item);
+						}
 						this.$refs.modal.hide();
 					})
 					.$on('playoff-deleted', function (playoff) {

@@ -4,7 +4,7 @@
 namespace Domain\DTO\Request;
 
 
-class CreatePlayOffGridItemRequest
+class SavePlayOffItemRequest
 {
 	/**
 	 * @var int
@@ -26,11 +26,16 @@ class CreatePlayOffGridItemRequest
 	 * @var int|null
 	 */
 	private $winnerId;
+	/**
+	 * @var null
+	 */
+	private $id;
 
-	public function __construct(int $playoffId, int $rank)
+	public function __construct(int $playoffId, int $rank, $id = null)
 	{
 		$this->playoffId = $playoffId;
 		$this->rank = $rank;
+		$this->id = $id;
 	}
 
 	/**
@@ -123,5 +128,18 @@ class CreatePlayOffGridItemRequest
 			return;
 		}
 		$this->winnerId = (int)$winnerId;
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	public function hasId(): bool
+	{
+		return !empty($this->id);
 	}
 }

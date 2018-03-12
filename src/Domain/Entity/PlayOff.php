@@ -47,4 +47,12 @@ class PlayOff implements \JsonSerializable
 			'start_at' => $this->startAt->format('Y-m-d H:i')
 		];
 	}
+
+	/**
+	 * @param \DateTime $startAt
+	 */
+	public function setStartAt(\DateTime $startAt)
+	{
+		$this->startAt = $startAt;
+	}
 }

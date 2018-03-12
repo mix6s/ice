@@ -55,19 +55,13 @@
 		props: ['props'],
 		data: function () {
 			return {
-				playoff: {
-					id: null,
-					season: null,
-					league: null,
-					start_at: undefined,
-				},
                 error: null,
 				saveInProgress: null
 			}
 		},
 		computed:{
 			startAtMoment: function () {
-				return moment(this.playoff.start_at);
+				return moment(this.props.playoff.start_at);
 			},
 			startAtFormatted: function () {
 				return this.startAtMoment.format('DD.MM.YYYY HH:mm')
@@ -79,8 +73,8 @@
 				const self = this;
 				self.saveInProgress = true;
 				$.ajax({
-					url: '/control/playoff/new',
-					data: this.playoff,
+					url: '{{ path('control.playoff.save') }}',
+					data: this.props.playoff,
 					type: 'post',
 					success: function (response) {
 						self.$emit('bus', {name: 'new-playoff', value: response});
@@ -134,7 +128,7 @@
 						preserveSelected: false
 					})
 					.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-						self.playoff.season = {id: $season.selectpicker('val')};
+						self.props.playoff.season = {id: $season.selectpicker('val')};
 					})
 				;
 				let $league = $(this.$refs.leagueSelectpicker)
@@ -165,7 +159,7 @@
 						preserveSelected: false
 					})
 					.on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-						self.playoff.league = {id: $league.selectpicker('val'), metadata: {title: $league.text()}};
+						self.props.playoff.league = {id: $league.selectpicker('val'), metadata: {title: $league.text()}};
 					})
 				;
 				
@@ -176,10 +170,10 @@
 						locale: 'ru',
 					})
 					.on('dp.change', function (e) {
-						if (!self.playoff.start_at) {
-							self.playoff.start_at = moment().format('YYYY-MM-DD HH:mm');
+						if (!self.props.playoff.start_at) {
+							self.props.playoff.start_at = moment().format('YYYY-MM-DD HH:mm');
 						} else if (e.date) {
-							self.playoff.start_at = e.date.format("YYYY-MM-DD HH:mm");
+							self.props.playoff.start_at = e.date.format("YYYY-MM-DD HH:mm");
 						}
 
 					})
