@@ -22,35 +22,48 @@
             <th>И1</th>
             <th>И2</th>
             <th>И3</th>
-            <th>СС</th>
+            <th></th>
         </tr>
         </thead>
-        <tbody v-for="item in items">
-        <tr>
-            <td rowspan="2" style="vertical-align: middle;" class="text-center"><span class="label label-info">{{itemRank(item)}}</span></td>
-            <td><button v-on:click="showPlayOffItemPopup(item)" v-bind:class="[item.seasonteamA ? 'btn-default' : 'btn-link']" class="btn btn-sm">{{ item.seasonteamA ? item.seasonteamA.team.metadata.title : 'Выбрать'}}</button></td>
-            <td v-for="i in [0,1,2]" rowspan="2" style="vertical-align: middle;">
-            <div  v-if="getGameByNum(item, i) == null">
-             <button class="btn btn-link btn-xs" v-on:click="showAddGamePopup(item)">
-            {{ getGameByNum(item, i) != null  ? '' : 'Создать'}}
-            </button>
-            </div>
-             <div  v-else="" class="text-center">
-                <small class=""><i class="fa fa-circle-o" aria-hidden="true"></i></small><br>
-                 <button class="btn btn-sm btn-default"  v-on:click="showEditGamePopup(item, i)">
-                {{ getGameByNum(item, i).datetime }}
-                </button><br>
-                 <small class=""><i class="fa fa-circle" aria-hidden="true"></i></small>
-            </div>
+        <tbody>
+        <tr v-for="item in items">
+            <td style="vertical-align: middle;" class="text-center">
+                <span class="label label-info">{{itemRank(item)}}</span>
             </td>
-        </tr>
-        <tr>
-            <td><button v-on:click="showPlayOffItemPopup(item)" v-bind:class="[item.seasonteamB ? 'btn-default' : 'btn-link']"  class="btn btn-sm">{{ item.seasonteamB ? item.seasonteamB.team.metadata.title : 'Выбрать'}}</button></td>
+            <td>
+                <button v-on:click="showPlayOffItemPopup(item)" v-bind:class="[item.seasonteamA ? 'btn-default' : 'btn-link']" class="btn btn-sm btn-block">
+                <small v-if="item.seasonteamA && item.winner && item.seasonteamA.id == item.winner.id"><i class="fa fa-star" aria-hidden="true"></i></small>
+                {{ item.seasonteamA ? item.seasonteamA.team.metadata.title : 'Выбрать'}}
+                </button>
+                <button v-on:click="showPlayOffItemPopup(item)" v-bind:class="[item.seasonteamB ? 'btn-default' : 'btn-link']"  class="btn btn-sm btn-block">
+                <small v-if="item.seasonteamB && item.winner && item.seasonteamB.id == item.winner.id"><i class="fa fa-star" aria-hidden="true"></i></small>
+                {{ item.seasonteamB ? item.seasonteamB.team.metadata.title : 'Выбрать'}}
+                </button>
+            </td>
+            <td v-for="i in [0,1,2]" style="vertical-align: middle;">
+                <div  v-if="getGameByNum(item, i) == null">
+                 <button class="btn btn-link btn-block btn-xs" v-on:click="showAddGamePopup(item)">
+                     {{ getGameByNum(item, i) != null  ? '' : 'Создать'}}
+                </button>
+                </div>
+                 <div v-else="" class="text-center">
+                    <small v-if="getGameByNum(item, i).state == 1"><i v-bind:class="[getGameByNum(item, i).winner.id == getGameByNum(item, i).seasonteamA.id ? 'fa-circle': 'fa-circle-o']" class="fa" aria-hidden="true"></i></small>
+                    <small v-else=""><i class="fa fa-minus" aria-hidden="true"></i></small>
+                    <button class="btn btn-sm btn-default btn-block"  v-on:click="showEditGamePopup(item, i)">
+                    {{ getGameByNum(item, i).datetime }}
+                    </button>
+                    <small v-if="getGameByNum(item, i).state == 1"><i v-bind:class="[getGameByNum(item, i).winner.id == getGameByNum(item, i).seasonteamB.id ? 'fa-circle': 'fa-circle-o']" class="fa" aria-hidden="true"></i></small>
+                    <small v-else=""><i class="fa fa-minus" aria-hidden="true"></i></small>
+                </div>
+            </td>
+            <td style="vertical-align: middle;">
+                <button class="btn btn-xs btn-danger" v-on:click="removePlayoffItem(item)"><i aria-hidden="true" class="fa fa-trash-o"></i></button>
+            </td>
         </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="4"><button v-on:click="showPlayOffItemPopup()" class="btn btn-xs btn-primary">Добавить группу</button></td>
+            <td colspan="6"><button v-on:click="showPlayOffItemPopup()" class="btn btn-xs btn-primary">Добавить группу</button></td>
         </tr>
         </tfoot>
     </table>
@@ -103,12 +116,13 @@
 				});
 			},
 			getGameByNum: function(item, num) {
-				if (gamesCache[num]) {
-					return gamesCache[num];
+				var key = item.id + '_' + num;
+				if (gamesCache[key]) {
+					return gamesCache[key];
                 }
 			    var games = this.getGames(item);
-				gamesCache[num] = games[num] ? games[num] : null;
-			    return gamesCache[num];
+				gamesCache[key] = games[num] ? games[num] : null;
+			    return gamesCache[key];
             },
 			getGames: function (item) {
 				const self = this;
@@ -135,6 +149,22 @@
 				item = Object.assign({}, item);
 
 				this.$emit('bus', {name: 'show-playoff-item-popup', value: {item: item}});
+			},
+			removePlayoffItem: function (item) {
+				var _this = this;
+				_this.deleteInProgress = true;
+				$.ajax({
+					url: '/control/playoff/item/delete/' + item.id,
+					type: 'get',
+					success: function (response) {
+						_this.$emit('bus', {name: 'playoff-item-deleted', value: item});
+					},
+					error: function (jqXHR) {
+					},
+					complete: function () {
+						_this.deleteInProgress = false;
+					}
+				});
 			},
 			removePlayoff: function () {
 				var _this = this;

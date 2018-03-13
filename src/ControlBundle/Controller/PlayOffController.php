@@ -31,7 +31,8 @@ class PlayOffController extends Controller
 			->leftJoin('Domain:PlayOffItem', 'pli', 'WITH', 'pli.playOff = pl.id')
 			->leftJoin('Domain:Game', 'g', 'WITH', 'g.playOffItem = pli.id')
 			->orderBy('pl.id', 'desc')
-			->addOrderBy('pli.rank','ASC');
+			->addOrderBy('pli.rank','ASC')
+			->addOrderBy('pli.id','ASC');
 
 		return $this->json([
 			'playoffs' => array_values(array_filter($qb->select('pl')->getQuery()->getResult(), function ($item) {
@@ -83,6 +84,17 @@ class PlayOffController extends Controller
 	public function playoffDeleteAction($id)
 	{
 		$this->get('domain.use_case.remove_play_off_use_case')->execute(new RemovePlayOffRequest($id));
+		$this->get('doctrine.orm.entity_manager')->flush();
+		return $this->json([]);
+	}
+
+	/**
+	 * @Route("/playoff/item/delete/{id}", name="control.playoff.item.delete")
+	 */
+	public function playoffItemDeleteAction($id)
+	{
+		$item = $this->get('domain.repository.playoffitem')->findById($id);
+		$this->get('domain.repository.playoffitem')->remove($item);
 		$this->get('doctrine.orm.entity_manager')->flush();
 		return $this->json([]);
 	}

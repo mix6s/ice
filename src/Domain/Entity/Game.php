@@ -34,6 +34,8 @@ class Game implements \JsonSerializable
 	private $membersA;
 	private $membersB;
 	private $playOffItem;
+	private $scoreA = 0;
+	private $scoreB = 0;
 
 	/**
 	 * Game constructor.
@@ -117,11 +119,14 @@ class Game implements \JsonSerializable
 		return [
 			'id' => $this->getId(),
 			'place' => $this->getPlace(),
+			'scoreA' => $this->getScoreA(),
+			'scoreB' => $this->getScoreB(),
 			'datetime' => $this->getDatetime()->format('Y-m-d H:i'),
 			'type' => (string)$this->getType(),
 			'season' => $this->getSeason(),
 			'seasonteamA' => $this->getSeasonTeamA(),
 			'seasonteamB' => $this->getSeasonTeamB(),
+			'winner' => $this->getWinnerSeasonTeam(),
 			'metadata' => $this->getMetadata(),
 			'state' => $this->getState(),
 			'membersA' => $this->getMembersA(),
@@ -246,5 +251,47 @@ class Game implements \JsonSerializable
 	public function setPlayOffItem(PlayOffItem $playOffItem = null)
 	{
 		$this->playOffItem = $playOffItem;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getScoreA(): int
+	{
+		return $this->scoreA;
+	}
+
+	/**
+	 * @param int $scoreA
+	 */
+	public function setScoreA(int $scoreA)
+	{
+		$this->scoreA = $scoreA;
+	}
+
+	/**
+	 * @return SeasonTeam|null
+	 */
+	public function getWinnerSeasonTeam()
+	{
+		if ($this->getState() !== self::STATE_FINISHED) {
+			return null;
+		}
+		return $this->scoreA > $this->scoreB ? $this->getSeasonTeamA() : $this->getSeasonTeamB();
+	}
+	/**
+	 * @return int
+	 */
+	public function getScoreB(): int
+	{
+		return $this->scoreB;
+	}
+
+	/**
+	 * @param int $scoreB
+	 */
+	public function setScoreB(int $scoreB)
+	{
+		$this->scoreB = $scoreB;
 	}
 }

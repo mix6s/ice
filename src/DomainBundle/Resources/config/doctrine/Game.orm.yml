@@ -20,6 +20,10 @@ Domain\Entity\Game:
         membersB:
             type: array
             nullable: true
+        scoreA:
+            type: integer
+        scoreB:
+            type: integer
     manyToOne:
         playOffItem:
             targetEntity: Domain\Entity\PlayOffItem

@@ -41,6 +41,8 @@ class SaveGameEventsUseCase
 			$this->getContainer()->getGameEventRepository()->remove($event);
 		}
 		$events = [];
+		$scoreA = 0;
+		$scoreB = 0;
 		foreach ($request->getGameEventsData() as $eventData) {
 			$eventId = $this->getContainer()->getGameEventRepository()->getNextId();
 			if ($eventData instanceof GoalEventData) {
@@ -58,6 +60,11 @@ class SaveGameEventsUseCase
 				}
 				$secondsFromStart = $eventData->getSecondsFromStart();
 				$event = new GoalEvent($eventId, $eventData->getPeriod(), $game, $secondsFromStart, $member, $assistantA, $assistantB);
+				if ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamA()->getId()) {
+					$scoreA++;
+				} elseif ($event->getMember()->getSeasonTeam()->getId() === $game->getSeasonTeamB()->getId()) {
+					$scoreB++;
+				}
 			} elseif ($eventData instanceof GoalkeeperData) {
 				$member = $this->getContainer()->getSeasonTeamMemberRepository()->findById($eventData->getMemberId());
 				$event = new GoalkeeperEvent($eventId, $game, $eventData->getBullets(), $eventData->getGoals(), $eventData->getDuration(), $member);
@@ -72,6 +79,9 @@ class SaveGameEventsUseCase
 			$this->getContainer()->getGameEventRepository()->save($event);
 			$events[] = $event;
 		}
+		$game->setScoreA($scoreA);
+		$game->setScoreB($scoreB);
+		$this->getContainer()->getGameRepository()->save($game);
 		return $events;
 	}
 }

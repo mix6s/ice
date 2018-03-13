@@ -176,6 +176,11 @@
 						}
 						this.$refs.modal.hide();
 					})
+					.$on('playoff-item-deleted', function (item) {
+						this.setPlayoffsItems(this.playoffsItems.filter(function (pf) {
+							return pf && pf.id !== item.id;
+						}));
+					})
 					.$on('playoff-deleted', function (playoff) {
 						this.setPlayoffs(this.playoffs.filter(function (pf) {
 							return pf && pf.id !== playoff.id;
