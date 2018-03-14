@@ -89,4 +89,52 @@ class PlayOffItem implements \JsonSerializable
 	{
 		$this->winner = $winner;
 	}
+
+	/**
+	 * @return int
+	 */
+	public function getId(): int
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return PlayOff
+	 */
+	public function getPlayOff(): PlayOff
+	{
+		return $this->playOff;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getRank(): int
+	{
+		return $this->rank;
+	}
+
+	/**
+	 * @return SeasonTeam|null
+	 */
+	public function getSeasonTeamA()
+	{
+		return $this->seasonTeamA;
+	}
+
+	/**
+	 * @return SeasonTeam|null
+	 */
+	public function getSeasonTeamB()
+	{
+		return $this->seasonTeamB;
+	}
+
+	/**
+	 * @return SeasonTeam|null
+	 */
+	public function getWinner()
+	{
+		return $this->winner;
+	}
 }

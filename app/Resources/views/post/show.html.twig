@@ -2,10 +2,10 @@
 
 {% block content %}
     <section class="page wrapper">
-        {% set currentUrl = url('blog_post_show', {id: post.id}) %}
+        {% set currentUrl = path('blog_post_show', {id: post.id}) %}
         {% set currentTitle = post.title %}
         {% set current = {'url': currentUrl, 'title': currentTitle} %}
-        {% set parentUrl = url('blog_index') %}
+        {% set parentUrl = path('blog_index') %}
         {% set parentTitle = 'Новости' %}
         {% set parent = {'url': parentUrl, 'title': parentTitle} %}
         {% include 'blocks/breadcrumbs.twig' with {current: current, parent: parent} %}

@@ -6,13 +6,13 @@
     </div>
     <div class="all-news__content">
         <div class="all-news__title">
-            <a href="{{ url('blog_post_show', { id: post.id }) }}" class="all-news__title-link">{{ post.title }}</a>
+            <a href="{{ path('blog_post_show', { id: post.id }) }}" class="all-news__title-link">{{ post.title }}</a>
         </div>
         <div class="all-news__decs">
             {{ post.shortDescription }}
         </div>
         <div class="all-news__link-wrapper">
-            <a href="{{ url('blog_post_show', {id:post.id}) }}" class="all-news__link">Продолжение</a>
+            <a href="{{ path('blog_post_show', {id:post.id}) }}" class="all-news__link">Продолжение</a>
         </div>
     </div>
 </div>

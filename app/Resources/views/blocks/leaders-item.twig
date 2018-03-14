@@ -1,13 +1,13 @@
 <div class="leaders__item">
     <div class="leaders__img">
-        <a href="{{ url('profile.index', {id: member.player.id }) }}" class="leaders__img-link">
+        <a href="{{ path('profile.index', {id: member.player.id }) }}" class="leaders__img-link">
             <img width="48px" src="{{ asset('avatar/' ~ member.player.metadata.image) }}" alt="{{ member.player.metadata.fullName }}">
         </a>
     </div>
     <div class="leaders__info">
         <div class="leaders__info-role">{{ item.role }}</div>
-        <div class="leaders__info-name"><a href="{{ url('profile.index', {id: member.player.id }) }}" class="leaders__info-name-link">{{ member.player.metadata.firstName }} {{ member.player.metadata.surname }}</a></div>
-        <div class="leaders__info-number"><a href="{{ url('team.index', {id: member.seasonTeam.team.id }) }}" class="leaders__info-number-link">#{{ member.number }} {{ member.seasonTeam.team.metadata.title }}</a></div>
+        <div class="leaders__info-name"><a href="{{ path('profile.index', {id: member.player.id }) }}" class="leaders__info-name-link">{{ member.player.metadata.firstName }} {{ member.player.metadata.surname }}</a></div>
+        <div class="leaders__info-number"><a href="{{ path('team.index', {id: member.seasonTeam.team.id }) }}" class="leaders__info-number-link">#{{ member.number }} {{ member.seasonTeam.team.metadata.title }}</a></div>
     </div>
     <div class="leaders__points">
         <div class="leaders__points-count">{{ item.points }}</div>

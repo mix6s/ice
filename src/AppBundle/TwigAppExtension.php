@@ -4,6 +4,8 @@ namespace AppBundle;
 
 use Domain\Entity\Game;
 use Domain\Entity\PenaltyEvent;
+use Domain\Entity\PlayOff;
+use Domain\Entity\PlayOffItem;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
@@ -33,12 +35,12 @@ class TwigAppExtension extends \Twig_Extension
 
 	public function getFunctions()
 	{
-		return array(
+		return [
 			"getCurrentSeasonStatistic" => new Twig_Function_Method($this, "getCurrentSeasonStatistic"),
 			"getSeasonStatistic" => new Twig_Function_Method($this, "getSeasonStatistic"),
 			"getSeasonTop" => new Twig_Function_Method($this, "getSeasonTop"),
 			"getCurrentSeasonTop" => new Twig_Function_Method($this, "getCurrentSeasonTop")
-		);
+		];
 	}
 
 	/**
@@ -105,6 +107,23 @@ class TwigAppExtension extends \Twig_Extension
 	public function getSeasonStatistic(Season $season)
 	{
 		$stat = $this->container->get('app.statistic.aggregator')->getSeasonStatistic($season);
+		$em = $this->container->get('doctrine.orm.entity_manager');
+		$qb = $em->createQueryBuilder();
+		$qb
+			->from('Domain:PlayOff', 'pl')
+			->leftJoin('pl.season', 's')
+			->leftJoin('pl.league', 'l')
+			->leftJoin('l.metadata', 'lm')
+			->leftJoin('Domain:PlayOffItem', 'pli', 'WITH', 'pli.playOff = pl.id')
+			->leftJoin('Domain:Game', 'g', 'WITH', 'g.playOffItem = pli.id')
+			->where('s.id = :season_id')
+			->setParameter('season_id', $season->getId())
+			->orderBy('s.year', 'DESC')
+			->addOrderBy('lm.title','ASC')
+			->addOrderBy('pli.rank','ASC')
+			->addOrderBy('pli.id','ASC')
+			->addOrderBy('g.datetime','ASC');
+
 		$byLeague = [];
 		foreach ($stat->getBeastsByLeagues() as $beastsByLeague)
 		{
@@ -112,6 +131,9 @@ class TwigAppExtension extends \Twig_Extension
 				$byLeague[$beastsByLeague->getLeague()->getId()] = [
 					'league' => $beastsByLeague->getLeague(),
 					'seasonteams' => [],
+					'playoff' => null,
+					'playoffItems' => [],
+					'playoffGames' => [],
 					'bests' => $beastsByLeague
 				];
 			}
@@ -120,6 +142,37 @@ class TwigAppExtension extends \Twig_Extension
 		foreach ($seasonTeamStatistics as $item) {
 			$byLeague[$item->getSeasonTeam()->getLeague()->getId()]['seasonteams'][] = $item;
 		}
+
+		$playoffs = array_values(array_filter($qb->select('pl')->getQuery()->getResult(), function ($item) {
+			return $item !== null;
+		}));
+		/** @var PlayOff $playoff */
+		foreach ($playoffs as $playoff) {
+			$byLeague[$playoff->getLeague()->getId()]['playoff'] = $playoff;
+		}
+
+		$playoffsItems = array_values(array_filter($qb->select('pli')->getQuery()->getResult(), function ($item) {
+			return $item !== null;
+		}));
+		/** @var PlayOffItem $item */
+		foreach ($playoffsItems as $item) {
+			if (!array_key_exists($item->getRank(), $byLeague[$item->getPlayOff()->getLeague()->getId()]['playoffItems'])) {
+				$byLeague[$item->getPlayOff()->getLeague()->getId()]['playoffItems'][$item->getRank()] = [];
+			}
+			$byLeague[$item->getPlayOff()->getLeague()->getId()]['playoffItems'][$item->getRank()][] = $item;
+		}
+
+		$playoffsGames = array_values(array_filter($qb->select('g')->getQuery()->getResult(), function ($item) {
+			return $item !== null;
+		}));
+		/** @var Game $game */
+		foreach ($playoffsGames as $game) {
+			if (!array_key_exists($game->getPlayOffItem()->getId(), $byLeague[$game->getPlayOffItem()->getPlayOff()->getLeague()->getId()]['playoffGames'])) {
+				$byLeague[$game->getPlayOffItem()->getPlayOff()->getLeague()->getId()]['playoffGames'][$game->getPlayOffItem()->getId()] = [];
+			}
+			$byLeague[$game->getPlayOffItem()->getPlayOff()->getLeague()->getId()]['playoffGames'][$game->getPlayOffItem()->getId()][] = $game;
+		}
+		dump($byLeague);
 		return $byLeague;
 	}
 

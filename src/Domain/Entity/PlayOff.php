@@ -48,11 +48,32 @@ class PlayOff implements \JsonSerializable
 		];
 	}
 
+	public function isStarted(): bool
+	{
+		return time() > $this->startAt->getTimestamp();
+	}
+
 	/**
 	 * @param \DateTime $startAt
 	 */
 	public function setStartAt(\DateTime $startAt)
 	{
 		$this->startAt = $startAt;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId(): int
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return League
+	 */
+	public function getLeague(): League
+	{
+		return $this->league;
 	}
 }

@@ -30,9 +30,11 @@ class PlayOffController extends Controller
 			->leftJoin('l.metadata', 'lm')
 			->leftJoin('Domain:PlayOffItem', 'pli', 'WITH', 'pli.playOff = pl.id')
 			->leftJoin('Domain:Game', 'g', 'WITH', 'g.playOffItem = pli.id')
-			->orderBy('pl.id', 'desc')
+			->orderBy('s.year', 'DESC')
+			->addOrderBy('lm.title','ASC')
 			->addOrderBy('pli.rank','ASC')
-			->addOrderBy('pli.id','ASC');
+			->addOrderBy('pli.id','ASC')
+			->addOrderBy('g.datetime','ASC');
 
 		return $this->json([
 			'playoffs' => array_values(array_filter($qb->select('pl')->getQuery()->getResult(), function ($item) {

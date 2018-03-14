@@ -46,11 +46,11 @@
         <div class="sidebar-table__title">Таблица</div>
         <div class="sidebar-table__list">
             {% for item in statistic %}
-                {% include 'blocks/sidebar-item-table.twig' with {league: item.league, teams: item.seasonteams} %}
+                {% include 'blocks/sidebar-item-table.twig' with {league: item.league, teams: item.seasonteams, playoff: item.playoff, playoffItems: item.playoffItems, playoffGames: item.playoffGames} %}
             {% endfor %}
         </div>
         <div class="sidebar-table__link">
-            <a href="{{ url('standings.current') }}">Вся статистика</a>
+            <a href="{{ path('standings.current') }}">Вся статистика</a>
         </div>
     </section>
 </div>

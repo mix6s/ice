@@ -1,17 +1,17 @@
 <div class="media-item">
     <div class="media-item__img">
         {% if album.mainImage is defined %}
-            <a href="{{ url('media.album', {id: album.id}) }}" class="media-item__link">
+            <a href="{{ path('media.album', {id: album.id}) }}" class="media-item__link">
                 <img src="{{ asset('/uploads/album_images/' ~ album.mainImage.path) }}" alt="">
             </a>
         {% else %}
-            <a href="{{ url('media.album', {id: album.id}) }}" class="media-item__link">
+            <a href="{{ path('media.album', {id: album.id}) }}" class="media-item__link">
                 <img src="/assets/img/media/m-7.jpg" alt="">
             </a>
         {% endif %}
     </div>
     <p class="media-item__desc">
-        <a href="{{ url('media.album', {id: album.id}) }}" class="media-item__link">
+        <a href="{{ path('media.album', {id: album.id}) }}" class="media-item__link">
             {{ album.title }}
         </a>
     </p>

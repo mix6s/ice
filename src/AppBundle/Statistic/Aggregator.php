@@ -19,6 +19,7 @@ use Domain\Entity\PenaltyEvent;
 use Domain\Entity\Season;
 use Domain\Entity\SeasonTeam;
 use Domain\Entity\SeasonTeamMember;
+use Domain\ValueObject\GameType;
 use DomainBundle\Entity\PlayerMetadata;
 use DomainBundle\Repository\GameEventRepository;
 use DomainBundle\Repository\GameRepository;
@@ -124,6 +125,9 @@ class Aggregator
 		$games = $this->gameRepository->findBySeasonTeam($seasonTeam);
 		$seasonTeamMembers = $this->seasonTeamMemberRepository->findBySeasonTeam($seasonTeam);
 		foreach ($games as $game) {
+			if (!$game->getType()->isEquals(GameType::regular())) {
+				continue;
+			}
 			if ($game->getState() !== Game::STATE_FINISHED) {
 				continue;
 			}

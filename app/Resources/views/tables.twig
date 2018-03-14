@@ -25,7 +25,7 @@
                     {% for num,stat in item.seasonteams %}
                         <tr>
                             <td  class="{{ num < item.league.metadata.playOffPlaces ? 'table-playoff' : '' }}">{{ num + 1 }}</td>
-                            <td class="team-stats"><img width="30" height="30" class="sidebar-table__img" src="/avatar/{{ stat.seasonteam.team.metadata.image }}"> <a class="sidebar-table__team-link" href="{{ url('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
+                            <td class="team-stats"><img width="30" height="30" class="sidebar-table__img" src="/avatar/{{ stat.seasonteam.team.metadata.image }}"> <a class="sidebar-table__team-link" href="{{ path('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
                             <td>{{ stat.gamesCount }}</td>
                             <td>{{ stat.winInMain }}</td>
                             <td>{{ stat.winInBullets }}</td>

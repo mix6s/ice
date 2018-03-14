@@ -76,4 +76,9 @@ final class GameType
 	{
 		return $this->type;
 	}
+
+	public function isEquals(GameType $type): bool
+	{
+		return (string)$this === (string)$type;
+	}
 }

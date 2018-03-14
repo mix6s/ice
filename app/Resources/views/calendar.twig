@@ -65,10 +65,10 @@
                         <div>{{ game.place }}</div>
                     </td>
                     <td>
-                        <a href="{{ url('team.index', {id: game.seasonteamA.team.id}) }}">{{ game.seasonteamA.team.metadata.title  }}</a> - <a href="{{ url('team.index', {id: game.seasonteamB.team.id}) }}">{{ game.seasonteamB.team.metadata.title }}</a>
+                        <a href="{{ path('team.index', {id: game.seasonteamA.team.id}) }}">{{ game.seasonteamA.team.metadata.title  }}</a> - <a href="{{ path('team.index', {id: game.seasonteamB.team.id}) }}">{{ game.seasonteamB.team.metadata.title }}</a>
                     </td>
                     <td>
-                        <a href="{{ url('game', {id: game.id}) }}">
+                        <a href="{{ path('game', {id: game.id}) }}">
                             {% if game|gameStatistic.isWinByBullets and game|scoreA > game|scoreB  %}
                                 (Б)
                             {% endif %}

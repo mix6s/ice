@@ -1,19 +1,19 @@
 <div class="news-item">
     <div class="news-item__img">
-        <a href="{{ url('blog_post_show', {id: post.id}) }}" class="news-item__img-link">
+        <a href="{{ path('blog_post_show', {id: post.id}) }}" class="news-item__img-link">
             <img src="{{ asset('/uploads/post_images/' ~ post.imageUrl)}}" alt="" class="all-news__img">
         </a>
     </div>
     <div class="news-item__content">
         <div class="news-item__title">
-            <a href="{{ url('blog_post_show', {id: post.id}) }}" class="news-item__title-link">{{ post.title }}</a>
+            <a href="{{ path('blog_post_show', {id: post.id}) }}" class="news-item__title-link">{{ post.title }}</a>
         </div>
         <p class="news-item__desc">
             {{ post.shortDescription }}
         </p>
         <div class="news-item__info">
             <div class="news-item__date">{{ post.postedAt|localizeddate('none', 'none', 'ru_RU', null, "d MMMM")}}</div>
-            <a href="{{ url('blog_post_show', {id: post.id}) }}" class="news-item__link">Продолжение</a>
+            <a href="{{ path('blog_post_show', {id: post.id}) }}" class="news-item__link">Продолжение</a>
         </div>
     </div>
 </div>

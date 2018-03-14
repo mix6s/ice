@@ -1,53 +1,87 @@
 <div class="sidebar-table__item">
     <div class="sidebar-table__header">{{ league.metadata.title }}</div>
-    <table class="table table--sidebar">
-        <tr>
-            <th>№</th>
-            <th>Команда</th>
-            <th>И</th>
-            <th>В</th>
-            <th>О</th>
-        </tr>
-        {% for num,stat in teams %}
-        <tr>
-            <td class="{{ num < league.metadata.playOffPlaces ? 'table-playoff' : '' }}">{{ num + 1 }}</td>
-            <td><img width="30" height="30" class="sidebar-table__img" src="/avatar/{{ stat.seasonteam.team.metadata.image }}"> <a class="sidebar-table__team-link" href="{{ url('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
-            <td>{{ stat.gamesCount }}</td>
-            <td>{{ stat.winInMain }}</td>
-            <td>{{ stat.scores }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    {% if playoff != null and playoff.isStarted %}
+        <table class="table table--sidebar table--playoff">
+            {% for rank,items in playoffItems %}
+                <tr>
+                    <th colspan="5" style="text-align: center">
+                        {% if rank == 1 %}
+                            Финал
+                        {% else %}
+                            1/{{ rank }} финала
+                        {% endif %}
+                    </th>
+                </tr>
+                <tr>
+                    <th style="width: 120px;">Команда</th>
+                    <th style="width: 40px;">И1</th>
+                    <th style="width: 40px;">И2</th>
+                    <th style="width: 40px;">И3</th>
+                    <th>СС</th>
+                </tr>
+                {% for item in items %}
+                    {% set scoreA = 0 %}
+                    {% set scoreB = 0 %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="table__row">
+                                <div class="table__cell table__cell--wide">
+                                    {% if item.seasonTeamA is not empty %}
+                                        <a class="sidebar-table__team-link" href="{{ path('team.index', {id: item.seasonTeamA.team.id}) }}">{{ item.seasonTeamA.team.metadata.title }}</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                    <br>
+                                    {% if item.seasonTeamB is not empty %}
+                                        <a class="sidebar-table__team-link" href="{{ path('team.index', {id: item.seasonTeamB.team.id}) }}">{{ item.seasonTeamB.team.metadata.title }}</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                                {% for num in [0,1,2] %}
+                                <div class="table__cell">
+                                    {% if playoffGames[item.id] is not defined or playoffGames[item.id][num] is not defined %}
+                                        -
+                                    {% elseif playoffGames[item.id][num].state != 1 %}
+                                        <a href="{{ path('game', {id: playoffGames[item.id][num].id }) }}">-:-</a>
+                                    {% else %}
+                                        {% if playoffGames[item.id][num].scoreA > playoffGames[item.id][num].scoreB %}
+                                            {% set scoreA = scoreA + 1 %}
+                                        {% else %}
+                                            {% set scoreB = scoreB + 1 %}
+                                        {% endif %}
+                                        <a href="{{ path('game', {id: playoffGames[item.id][num].id }) }}">{{ playoffGames[item.id][num].scoreA }}:{{ playoffGames[item.id][num].scoreB }}</a>
 
-    {#<table class="table table--sidebar table--playoff">
-        <tr>
-            <th style="width: 120px;">Команда</th>
-            <th style="width: 40px;">И1</th>
-            <th style="width: 40px;">И2</th>
-            <th style="width: 40px;">И3</th>
-            <th>СС</th>
-        </tr>
-        <tr>
-            <td colspan="5">
-                <div class="table__row">
-                    <div class="table__cell table__cell--wide">
-                        Молния<br>
-                        Железобетон-2
-                    </div>
-                    <div class="table__cell">
-                        3:0
-                    </div>
-                    <div class="table__cell">
-                        4:10
-                    </div>
-                    <div class="table__cell">
-                        -
-                    </div>
-                    <div class="table__cell">
-                        2:0
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>#}
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                                <div class="table__cell">
+                                    {{ scoreA }}:{{ scoreB }}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    {% else %}
+        <table class="table table--sidebar">
+            <tr>
+                <th>№</th>
+                <th>Команда</th>
+                <th>И</th>
+                <th>В</th>
+                <th>О</th>
+            </tr>
+            {% for num,stat in teams %}
+                <tr>
+                    <td class="{{ num < league.metadata.playOffPlaces ? 'table-playoff' : '' }}">{{ num + 1 }}</td>
+                    <td><img width="30" height="30" class="sidebar-table__img" src="/avatar/{{ stat.seasonteam.team.metadata.image }}"> <a class="sidebar-table__team-link" href="{{ path('team.index', {id: stat.seasonteam.team.id}) }}">{{ stat.seasonteam.team.metadata.title }}</a></td>
+                    <td>{{ stat.gamesCount }}</td>
+                    <td>{{ stat.winInMain }}</td>
+                    <td>{{ stat.scores }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 </div>

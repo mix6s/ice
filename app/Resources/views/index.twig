@@ -4,7 +4,7 @@
     <section class="news wrapper">
         <div class="news__title">
             Новости
-            <a href="{{ url('blog_index')}}" class="news__title-link">Все новости</a>
+            <a href="{{ path('blog_index')}}" class="news__title-link">Все новости</a>
         </div>
         <div class="news__list">
             {% for post in posts %}
@@ -16,7 +16,7 @@
         <section class="media wrapper">
             <div class="media__title">
                 Медиа
-                <a href="{{ url('media.index') }}" class="media__title-link">Все материалы</a>
+                <a href="{{ path('media.index') }}" class="media__title-link">Все материалы</a>
             </div>
             <div class="media__list">
                 {% for album in albums %}
