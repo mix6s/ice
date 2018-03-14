@@ -172,7 +172,6 @@ class TwigAppExtension extends \Twig_Extension
 			}
 			$byLeague[$game->getPlayOffItem()->getPlayOff()->getLeague()->getId()]['playoffGames'][$game->getPlayOffItem()->getId()][] = $game;
 		}
-		dump($byLeague);
 		return $byLeague;
 	}
 
