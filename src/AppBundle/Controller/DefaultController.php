@@ -220,7 +220,7 @@ class DefaultController extends Controller
 				);
 		}
 		$games = $builder
-			->orderBy('g.datetime', 'ASC')
+			->orderBy('g.datetime', 'DESC')
 			->getQuery()
 			->getResult()
 		;
