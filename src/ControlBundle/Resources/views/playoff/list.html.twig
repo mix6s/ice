@@ -64,7 +64,7 @@
 						itemIds.push(items[index].id);
 					}
 					for (index in this.playoffsGames) {
-						if (itemIds.indexOf(this.playoffsGames[index].playoff_item.id)) {
+						if (itemIds.indexOf(this.playoffsGames[index].playoff_item.id) !== false) {
 							games.push(this.playoffsGames[index]);
 						}
 					}
