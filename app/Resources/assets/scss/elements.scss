@@ -145,6 +145,10 @@ h1 {
     th:first-child {
       padding-left: 10px;
     }
+
+    td {
+      //padding: 0;
+    }
   }
 
   &--summary {
