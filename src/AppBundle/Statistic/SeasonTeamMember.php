@@ -13,7 +13,6 @@ use Domain\Entity\GoalEvent;
 use Domain\Entity\GoalkeeperEvent;
 use Domain\Entity\PenaltyEvent;
 
-
 /**
  * Class SeasonTeamMember
  * @package AppBundle\Statistic
@@ -21,17 +20,20 @@ use Domain\Entity\PenaltyEvent;
 class SeasonTeamMember
 {
 	private $games = [];
-	private $goals = 0;
-	private $bullets = 0;
-	private $assistantGoals = 0;
-	private $penaltyTime = 0;
+	private $goals = [];
+	private $bullets = [];
+	private $assistantGoals = [];
+	private $penaltyTime = [];
 
 	private $goalsFailed = [];
-	private $totalSecondsTime = 0;
+	private $goalsFailedByType = [];
+	private $totalSecondsTime = [];
 	/**
 	 * @var \Domain\Entity\SeasonTeamMember
 	 */
 	private $member;
+	private $zeroGamesCount = [];
+	private $gamesCountAsGoalkeeper = [];
 
 	/**
 	 * SeasonTeamMember constructor.
@@ -43,177 +45,222 @@ class SeasonTeamMember
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getGamesCount(): int
+	public function getGamesCount(string $type = null): int
 	{
-		return count($this->games);
+		if ($type === null) {
+			$count = 0;
+			array_walk($this->games, function (array $games) use ($count) {
+				$count += count($games);
+			});
+			return $count;
+		}
+		return count($this->games[$type] ?? []);
 	}
 
 	/**
 	 * @param \Domain\Entity\Game $game
 	 */
-	public function setPlayedGame(\Domain\Entity\Game $game)
+	private function setPlayedGame(\Domain\Entity\Game $game)
 	{
-		if (in_array($game->getId(), $this->games)) {
+		if (!array_key_exists((string)$game->getType(), $this->games)) {
+			$this->games[(string)$game->getType()] = [];
+		}
+		if (in_array($game->getId(), $this->games[(string)$game->getType()])) {
 			return;
 		}
-		$this->games[] = $game->getId();
+		$this->games[(string)$game->getType()][] = $game->getId();
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getGoals(): int
+	public function getGoals(string $type = null): int
 	{
-		return $this->goals;
+		if ($type === null) {
+			return array_sum($this->goals);
+		}
+		return $this->goals[(string)$type] ?? 0;
 	}
 
 	/**
 	 * @param int $goals
+	 * @param string|null $type
 	 */
-	public function setGoals(int $goals)
+	private function setGoals(int $goals, string $type)
 	{
-		$this->goals = $goals;
+		$this->goals[(string)$type] = $goals;
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getAssistantGoals(): int
+	public function getAssistantGoals(string $type = null): int
 	{
-		return $this->assistantGoals;
+		if ($type === null) {
+			return array_sum($this->assistantGoals);
+		}
+		return $this->assistantGoals[(string)$type] ?? 0;
 	}
 
 	/**
 	 * @param int $assistantGoals
+	 * @param string|null $type
 	 */
-	public function setAssistantGoals(int $assistantGoals)
+	private function setAssistantGoals(int $assistantGoals, string $type)
 	{
-		$this->assistantGoals = $assistantGoals;
+		$this->assistantGoals[(string)$type] = $assistantGoals;
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getPenaltyTime(): int
+	public function getPenaltyTime(string $type = null): int
 	{
-		return $this->penaltyTime;
+		if ($type === null) {
+			return array_sum($this->penaltyTime);
+		}
+		return $this->penaltyTime[(string)$type] ?? 0;
 	}
 
 	/**
 	 * @param int $penaltyTime
+	 * @param string $type
 	 */
-	public function setPenaltyTime(int $penaltyTime)
+	private function setPenaltyTime(int $penaltyTime, string $type)
 	{
-		$this->penaltyTime = $penaltyTime;
+		$this->penaltyTime[(string)$type] = $penaltyTime;
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getScore(): int
+	public function getScore(string $type = null): int
 	{
-		return $this->getAssistantGoals() + $this->getGoals();
+		return $this->getAssistantGoals($type) + $this->getGoals($type);
 	}
 
+
 	/**
-	 * @param \Domain\Entity\Game|null $game
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getGoalsFailed(\Domain\Entity\Game $game = null): int
+	public function getGoalsFailedByType(string $type = null): int
 	{
-		if ($game === null) {
-			return array_sum($this->goalsFailed);
+		if ($type === null) {
+			return array_sum($this->goalsFailedByType);
 		}
-		return $this->goalsFailed[$game->getId()] ?? 0;
+		return $this->goalsFailedByType[(string)$type] ?? 0;
 	}
+
 
 	/**
 	 * @param int $goalsFailed
-	 * @param \Domain\Entity\Game $game
+	 * @param string $type
 	 */
-	public function setGoalsFailed(int $goalsFailed, \Domain\Entity\Game $game)
+	private function setGoalsFailedByType(int $goalsFailed, string $type)
 	{
-		$this->goalsFailed[$game->getId()] = $goalsFailed;
+		$this->goalsFailedByType[(string)$type] = $goalsFailed;
+		if ($goalsFailed === 0) {
+			$this->zeroGamesCount[(string)$type] = ($this->zeroGamesCount[(string)$type] ?? 0) + 1;
+		}
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getZeroGameCount(): int
+	public function getZeroGameCount(string $type = null): int
 	{
-		return count(
-			array_filter(
-				$this->goalsFailed,
-				function ($goals) {
-					return $goals == 0;
-				}
-			)
-		);
+		if ($type === null) {
+			return array_sum($this->zeroGamesCount);
+		}
+		return $this->zeroGamesCount[(string)$type] ?? 0;
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getTotalSecondsTime(): int
+	public function getTotalSecondsTime(string $type = null): int
 	{
-		return $this->totalSecondsTime;
+		if ($type === null) {
+			return array_sum($this->totalSecondsTime);
+		}
+		return $this->totalSecondsTime[(string)$type] ?? 0;
 	}
 
 	/**
 	 * @param int $totalSecondsTime
+	 * @param string $type
 	 */
-	public function setTotalSecondsTime(int $totalSecondsTime)
+	private function setTotalSecondsTime(int $totalSecondsTime, string $type)
 	{
-		$this->totalSecondsTime = $totalSecondsTime;
+		$this->totalSecondsTime[(string)$type] = $totalSecondsTime;
 	}
 
 	/**
 	 * @return float
 	 */
-	public function getReliabilityCoef(): float
+	public function getReliabilityCoef(string $type = null): float
 	{
-		if ($this->getTotalMinutesTime() === 0.) {
+		if ($this->getTotalMinutesTime($type) === 0.) {
 			return 0;
 		}
-		return 60 * $this->getGoalsFailed() / $this->getTotalMinutesTime();
+		return 60 * $this->getGoalsFailedByType($type) / $this->getTotalMinutesTime($type);
 	}
 
 	/**
 	 * @return float
 	 */
-	public function getReflectedBulletsPercent(): float
+	public function getReflectedBulletsPercent(string $type = null): float
 	{
-		if ($this->getBullets() === 0) {
+		if ($this->getBullets($type) === 0) {
 			return 0;
 		}
-		return ($this->getBullets() - $this->getGoalsFailed()) / $this->getBullets() * 100;
+		return ($this->getBullets($type) - $this->getGoalsFailedByType($type)) / $this->getBullets($type) * 100;
 	}
 
 	/**
 	 * @return float
 	 */
-	public function getTotalMinutesTime(): float
+	public function getTotalMinutesTime(string $type = null): float
 	{
-		return $this->getTotalSecondsTime() / 60;
+		return $this->getTotalSecondsTime($type) / 60;
+	}
+
+	/**
+	 * @param string|null $type
+	 * @return int
+	 */
+	public function getGamesCountAsGoalkeeper(string $type = null): int
+	{
+		if ($type === null) {
+			return array_sum($this->gamesCountAsGoalkeeper);
+		}
+		return $this->gamesCountAsGoalkeeper[(string)$type] ?? 0;
+	}
+
+	/**
+	 * @param int $value
+	 * @param string $type
+	 */
+	public function setGamesCountAsGoalkeeper(int $value, string $type)
+	{
+		$this->gamesCountAsGoalkeeper[(string)$type] = $value;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getGamesCountAsGoalkeeper(): int
+	public function getForwardScore(string $type = null)
 	{
-		return count($this->goalsFailed);
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getForwardScore()
-	{
-		return $this->getGoals() + $this->getAssistantGoals();
+		return $this->getGoals($type) + $this->getAssistantGoals($type);
 	}
 
 	/**
@@ -240,9 +287,10 @@ class SeasonTeamMember
 				if ($event->getMember()->getId() === $this->getMember()->getId()) {
 					$memberIsGoalkeeper = true;
 					$memberGameGoalsFailed = $event->getGoals();
-					$this->setBullets($this->getBullets() + $event->getBullets());
-					$this->setGoalsFailed($this->getGoalsFailed($game) + $event->getGoals(), $game);
-					$this->setTotalSecondsTime($this->getTotalSecondsTime() + $event->getDuration());
+					$this->setBullets($this->getBullets($game->getType()) + $event->getBullets(), $game->getType());
+					$this->setGoalsFailedByType($this->getGoalsFailedByType($game->getType()) + $event->getGoals(), $game->getType());
+					$this->setTotalSecondsTime($this->getTotalSecondsTime($game->getType()) + $event->getDuration(), $game->getType());
+					$this->setGamesCountAsGoalkeeper($this->getGamesCountAsGoalkeeper($game->getType()) + 1, $game->getType());
 				}
 				break;
 			case 'goal':
@@ -255,15 +303,15 @@ class SeasonTeamMember
 					$assistants[] = $event->getAssistantB()->getId();
 				}
 				if ($event->getMember()->getId() === $this->getMember()->getId()) {
-					$this->setGoals($this->getGoals() + 1);
+					$this->setGoals($this->getGoals($game->getType()) + 1, $game->getType());
 				} elseif (in_array($this->getMember()->getId(), $assistants)) {
-					$this->setAssistantGoals($this->getAssistantGoals() + 1);
+					$this->setAssistantGoals($this->getAssistantGoals($game->getType()) + 1, $game->getType());
 				}
 				break;
 			case 'penalty':
 				/** @var PenaltyEvent $event */
 				if ($event->getMember()->getId() === $this->getMember()->getId()) {
-					$this->setPenaltyTime($this->getPenaltyTime() + $event->getPenaltyTime());
+					$this->setPenaltyTime($this->getPenaltyTime($game->getType()) + $event->getPenaltyTime(), $game->getType());
 				}
 				break;
 			default:
@@ -272,18 +320,23 @@ class SeasonTeamMember
 	}
 
 	/**
+	 * @param string|null $type
 	 * @return int
 	 */
-	public function getBullets(): int
+	public function getBullets(string $type = null): int
 	{
-		return $this->bullets;
+		if ($type === null) {
+			return array_sum($this->bullets);
+		}
+		return $this->bullets[(string)$type] ?? 0;
 	}
 
 	/**
 	 * @param int $bullets
+	 * @param string $type
 	 */
-	public function setBullets(int $bullets)
+	private function setBullets(int $bullets, string $type)
 	{
-		$this->bullets = $bullets;
+		$this->bullets[(string)$type] = $bullets;
 	}
 }

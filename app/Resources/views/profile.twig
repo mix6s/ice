@@ -42,6 +42,8 @@
             </div>
         </div>
         {% endif %}
+
+    {% set types = {playoff: 'Плей-офф', regular: 'Регулярный чемпионат'} %}
         <div class="profile__table">
             {% if profile.position == 'goalkeeper' %}
                 <div class="profile__table-header">Статистика вратаря</div>
@@ -49,6 +51,7 @@
                     <tr>
                         <th>Сезон</th>
                         <th>Лига</th>
+                        <th>Тип</th>
                         <th>Команда</th>
                         <th title="Игровой номер">№</th>
                         <th title="Количество проведенных игр">И</th>
@@ -59,18 +62,21 @@
                         <th title="Процент отраженных бросков">%ОБ</th>
                     </tr>
                     {% for num, seasonteammember in members %}
+                        {% for type, typeTitle in types %}
                         <tr>
                             <td>{{ seasonteammember.seasonTeam.season.year - 1 }} - {{ seasonteammember.seasonTeam.season.year }}</td>
                             <td>{{ seasonteammember.seasonTeam.league.metadata.title }}</td>
+                            <td>{{ typeTitle }}</td>
                             <td>{{ seasonteammember.seasonTeam.team.metadata.title }}</td>
                             <td>{{ seasonteammember.number }}</td>
-                            <td>{{ seasonteammember|memberStatistic.gamesCountAsGoalkeeper }}</td>
-                            <td>{{ seasonteammember|memberStatistic.zeroGameCount }}</td>
-                            <td>{{ seasonteammember|memberStatistic.goalsFailed }}</td>
-                            <td>{{ seasonteammember|memberStatistic.totalMinutesTime|number_format(0, '.', ',') }}</td>
-                            <td>{{ seasonteammember|memberStatistic.reliabilityCoef|number_format(1, '.', ',') }}</td>
-                            <td>{{ seasonteammember|memberStatistic.reflectedBulletsPercent|number_format(1, '.', ',') }}</td>
+                            <td>{{ seasonteammember|memberStatistic.gamesCountAsGoalkeeper(type) }}</td>
+                            <td>{{ seasonteammember|memberStatistic.zeroGameCount(type) }}</td>
+                            <td>{{ seasonteammember|memberStatistic.goalsFailedByType(type) }}</td>
+                            <td>{{ seasonteammember|memberStatistic.totalMinutesTime(type)|number_format(0, '.', ',') }}</td>
+                            <td>{{ seasonteammember|memberStatistic.reliabilityCoef(type)|number_format(1, '.', ',') }}</td>
+                            <td>{{ seasonteammember|memberStatistic.reflectedBulletsPercent(type)|number_format(1, '.', ',') }}</td>
                         </tr>
+                        {% endfor %}
                     {% endfor %}
                 </table>
             {% else %}
@@ -79,6 +85,7 @@
                 <tr>
                     <th>Сезон</th>
                     <th>Лига</th>
+                    <th>Тип</th>
                     <th>Команда</th>
                     <th title="Игровой номер">№</th>
                     <th title="Количество проведенных игр">И</th>
@@ -88,17 +95,20 @@
                     <th title="Штрафное время">Штр</th>
                 </tr>
                 {% for num, seasonteammember in members %}
-                <tr>
-                    <td>{{ seasonteammember.seasonTeam.season.year - 1 }} - {{ seasonteammember.seasonTeam.season.year }}</td>
-                    <td>{{ seasonteammember.seasonTeam.league.metadata.title }}</td>
-                    <td>{{ seasonteammember.seasonTeam.team.metadata.title }}</td>
-                    <td>{{ seasonteammember.number }}</td>
-                    <td>{{ seasonteammember|memberStatistic.gamesCount }}</td>
-                    <td>{{ seasonteammember|memberStatistic.goals }}</td>
-                    <td>{{ seasonteammember|memberStatistic.assistantGoals }}</td>
-                    <td>{{ seasonteammember|memberStatistic.score }}</td>
-                    <td>{{ seasonteammember|memberStatistic.penaltyTime }}</td>
-                </tr>
+                    {% for type, typeTitle in types %}
+                    <tr>
+                        <td>{{ seasonteammember.seasonTeam.season.year - 1 }} - {{ seasonteammember.seasonTeam.season.year }}</td>
+                        <td>{{ seasonteammember.seasonTeam.league.metadata.title }}</td>
+                        <td>{{ typeTitle }}</td>
+                        <td>{{ seasonteammember.seasonTeam.team.metadata.title }}</td>
+                        <td>{{ seasonteammember.number }}</td>
+                        <td>{{ seasonteammember|memberStatistic.gamesCount(type) }}</td>
+                        <td>{{ seasonteammember|memberStatistic.goals(type) }}</td>
+                        <td>{{ seasonteammember|memberStatistic.assistantGoals(type) }}</td>
+                        <td>{{ seasonteammember|memberStatistic.score(type) }}</td>
+                        <td>{{ seasonteammember|memberStatistic.penaltyTime(type) }}</td>
+                    </tr>
+                    {% endfor %}
                 {% endfor %}
             </table>
             {% endif %}
