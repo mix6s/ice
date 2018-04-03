@@ -21,19 +21,19 @@
             {% set best = item.bests %}
         <div id="list_{{ item.bests.league.id }}" class="leaders__list" style="{{ k == 0 ? '' : 'display:none' }}">
             {% if best.bestForward %}
-                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestForward.forwardScore, name: utils.declension(best.bestForward.forwardScore, ['Очко','Очка', 'Очков']), role: 'Бомбардир'}, member: best.bestForward.member } %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestForward.forwardScore('playoff'), name: utils.declension(best.bestForward.forwardScore('playoff'), ['Очко','Очка', 'Очков']), role: 'Бомбардир'}, member: best.bestForward.member } %}
             {% endif %}
             {% if best.bestSniper %}
-                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestSniper.goals, name: utils.declension(best.bestSniper.goals, ['Гол','Гола', 'Голов']), role: 'Снайпер'}, member: best.bestSniper.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestSniper.goals('playoff'), name: utils.declension(best.bestSniper.goals('playoff'), ['Гол','Гола', 'Голов']), role: 'Снайпер'}, member: best.bestSniper.member} %}
             {% endif %}
             {% if best.bestAssistant %}
-                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestAssistant.assistantGoals, name: utils.declension(best.bestAssistant.assistantGoals, ['Пас','Паса', 'Пасов']), role: 'Ассистент'}, member: best.bestAssistant.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestAssistant.assistantGoals('playoff'), name: utils.declension(best.bestAssistant.assistantGoals('playoff'), ['Пас','Паса', 'Пасов']), role: 'Ассистент'}, member: best.bestAssistant.member} %}
             {% endif %}
             {% if best.bestBack %}
-                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestBack.forwardScore, name: utils.declension(best.bestBack.forwardScore, ['Очко','Очка', 'Очков']), role: 'Защитник'}, member: best.bestBack.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestBack.forwardScore('playoff'), name: utils.declension(best.bestBack.forwardScore('playoff'), ['Очко','Очка', 'Очков']), role: 'Защитник'}, member: best.bestBack.member} %}
             {% endif %}
             {% if best.bestGoalkeeper %}
-                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestGoalkeeper.reflectedBulletsPercent|number_format(1, '.', ','), name: '%ОБ', role: 'Вратарь'}, member: best.bestGoalkeeper.member} %}
+                {% include 'blocks/leaders-item.twig' with {item: {points: best.bestGoalkeeper.reflectedBulletsPercent('playoff')|number_format(1, '.', ','), name: '%ОБ', role: 'Вратарь'}, member: best.bestGoalkeeper.member} %}
             {% endif %}
         </div>
             {% set k = 1 %}
