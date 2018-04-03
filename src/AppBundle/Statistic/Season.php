@@ -10,6 +10,7 @@ namespace AppBundle\Statistic;
 
 
 use Domain\Entity\League;
+use Domain\ValueObject\GameType;
 
 /**
  * Class Season
@@ -43,7 +44,7 @@ class Season
 	public function getBestsByLeague(League $league): LeagueBests
 	{
 		if (!array_key_exists($league->getId(), $this->bestsByLeague)) {
-			return new LeagueBests($league);
+			return new LeagueBests($league, GameType::playoff());
 		}
 		return $this->bestsByLeague[$league->getId()];
 	}

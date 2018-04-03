@@ -9,6 +9,7 @@
 namespace AppBundle\Statistic;
 
 use Domain\Entity\League;
+use Domain\ValueObject\GameType;
 use DomainBundle\Entity\PlayerMetadata;
 
 
@@ -37,15 +38,19 @@ class LeagueBests
 	 * @var \AppBundle\Statistic\SeasonTeamMember[]
 	 */
 	private $members = [];
+	/**
+	 * @var GameType|null
+	 */
+	private $type;
 
 	/**
 	 * LeagueBests constructor.
 	 * @param League $league
 	 */
-	public function __construct(League $league)
+	public function __construct(League $league, GameType $type = null)
 	{
-
 		$this->league = $league;
+		$this->type = $type;
 	}
 
 	/**
@@ -95,10 +100,10 @@ class LeagueBests
 	{
 		if ($this->bestAssistant === null) {
 			$this->bestAssistant = $bestAssistant;
-		} elseif ($this->bestAssistant->getAssistantGoals() < $bestAssistant->getAssistantGoals()) {
+		} elseif ($this->bestAssistant->getAssistantGoals($this->type) < $bestAssistant->getAssistantGoals($this->type)) {
 			$this->bestAssistant = $bestAssistant;
-		} elseif ($this->bestAssistant->getAssistantGoals() === $bestAssistant->getAssistantGoals()
-			&& $this->bestAssistant->getGamesCount() > $bestAssistant->getGamesCount()
+		} elseif ($this->bestAssistant->getAssistantGoals($this->type) === $bestAssistant->getAssistantGoals($this->type)
+			&& $this->bestAssistant->getGamesCount($this->type) > $bestAssistant->getGamesCount($this->type)
 		) {
 			$this->bestAssistant = $bestAssistant;
 		}
@@ -111,15 +116,15 @@ class LeagueBests
 	{
 		if ($this->bestForward === null) {
 			$this->bestForward = $bestForward;
-		} elseif ($this->bestForward->getForwardScore() < $bestForward->getForwardScore()) {
+		} elseif ($this->bestForward->getForwardScore($this->type) < $bestForward->getForwardScore($this->type)) {
 			$this->bestForward = $bestForward;
-		} elseif ($this->bestForward->getForwardScore() === $bestForward->getForwardScore()
-			&& $this->bestForward->getGoals() < $bestForward->getGoals()
+		} elseif ($this->bestForward->getForwardScore($this->type) === $bestForward->getForwardScore($this->type)
+			&& $this->bestForward->getGoals($this->type) < $bestForward->getGoals($this->type)
 		) {
 			$this->bestForward = $bestForward;
-		} elseif ($this->bestForward->getForwardScore() === $bestForward->getForwardScore()
-			&& $this->bestForward->getGoals() === $bestForward->getGoals()
-			&& $this->bestForward->getGamesCount() > $bestForward->getGamesCount()
+		} elseif ($this->bestForward->getForwardScore($this->type) === $bestForward->getForwardScore($this->type)
+			&& $this->bestForward->getGoals($this->type) === $bestForward->getGoals($this->type)
+			&& $this->bestForward->getGamesCount($this->type) > $bestForward->getGamesCount($this->type)
 		) {
 			$this->bestForward = $bestForward;
 		}
@@ -132,10 +137,10 @@ class LeagueBests
 	{
 		if ($this->bestSniper === null) {
 			$this->bestSniper = $bestSniper;
-		} elseif ($this->bestSniper->getGoals() < $bestSniper->getGoals()) {
+		} elseif ($this->bestSniper->getGoals($this->type) < $bestSniper->getGoals($this->type)) {
 			$this->bestSniper = $bestSniper;
-		} elseif ($this->bestSniper->getGoals() === $bestSniper->getGoals()
-			&& $this->bestSniper->getGamesCount() > $bestSniper->getGamesCount()
+		} elseif ($this->bestSniper->getGoals($this->type) === $bestSniper->getGoals($this->type)
+			&& $this->bestSniper->getGamesCount($this->type) > $bestSniper->getGamesCount($this->type)
 		) {
 			$this->bestSniper = $bestSniper;
 		}
@@ -149,15 +154,15 @@ class LeagueBests
 	{
 		if ($this->bestBack === null) {
 			$this->bestBack  = $bestBack;
-		} elseif ($this->bestBack ->getForwardScore() < $bestBack->getForwardScore()) {
+		} elseif ($this->bestBack ->getForwardScore($this->type) < $bestBack->getForwardScore($this->type)) {
 			$this->bestBack  = $bestBack;
-		} elseif ($this->bestBack ->getForwardScore() === $bestBack->getForwardScore()
-			&& $this->bestBack ->getGoals() < $bestBack->getGoals()
+		} elseif ($this->bestBack ->getForwardScore($this->type) === $bestBack->getForwardScore($this->type)
+			&& $this->bestBack ->getGoals($this->type) < $bestBack->getGoals($this->type)
 		) {
 			$this->bestBack  = $bestBack;
-		} elseif ($this->bestBack ->getForwardScore() === $bestBack->getForwardScore()
-			&& $this->bestBack ->getGoals() === $bestBack->getGoals()
-			&& $this->bestBack ->getGamesCount() > $bestBack->getGamesCount()
+		} elseif ($this->bestBack ->getForwardScore($this->type) === $bestBack->getForwardScore($this->type)
+			&& $this->bestBack ->getGoals($this->type) === $bestBack->getGoals($this->type)
+			&& $this->bestBack ->getGamesCount($this->type) > $bestBack->getGamesCount($this->type)
 		) {
 			$this->bestBack  = $bestBack;
 		}
@@ -170,10 +175,10 @@ class LeagueBests
 	{
 		if ($this->bestGoalkeeper === null) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
-		} elseif ($this->bestGoalkeeper->getReflectedBulletsPercent() < $bestGoalkeeper->getReflectedBulletsPercent()) {
+		} elseif ($this->bestGoalkeeper->getReflectedBulletsPercent($this->type) < $bestGoalkeeper->getReflectedBulletsPercent($this->type)) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
-		} elseif ($this->bestGoalkeeper->getReflectedBulletsPercent() === $bestGoalkeeper->getReflectedBulletsPercent()
-			&& $this->bestGoalkeeper->getTotalSecondsTime() < $bestGoalkeeper->getTotalSecondsTime()
+		} elseif ($this->bestGoalkeeper->getReflectedBulletsPercent($this->type) === $bestGoalkeeper->getReflectedBulletsPercent($this->type)
+			&& $this->bestGoalkeeper->getTotalSecondsTime($this->type) < $bestGoalkeeper->getTotalSecondsTime($this->type)
 		) {
 			$this->bestGoalkeeper = $bestGoalkeeper;
 		}
@@ -190,10 +195,10 @@ class LeagueBests
 	public function getBestPenaltyList(): array
 	{
 		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
-			return !empty($member->getPenaltyTime());
+			return !empty($member->getPenaltyTime($this->type));
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getPenaltyTime() < $memberB->getPenaltyTime()) {
+			if ($memberA->getPenaltyTime($this->type) < $memberB->getPenaltyTime($this->type)) {
 				return 1;
 			}
 			return -1;
@@ -212,10 +217,10 @@ class LeagueBests
 			return !$playerMeta->isPositionGoalkeeper();
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getAssistantGoals() < $memberB->getAssistantGoals()) {
+			if ($memberA->getAssistantGoals($this->type) < $memberB->getAssistantGoals($this->type)) {
 				return 1;
-			} elseif ($memberA->getAssistantGoals() === $memberB->getAssistantGoals()
-				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			} elseif ($memberA->getAssistantGoals($this->type) === $memberB->getAssistantGoals($this->type)
+				&& $memberA->getGamesCount($this->type) > $memberB->getGamesCount($this->type)
 			) {
 				return 1;
 			}
@@ -235,15 +240,15 @@ class LeagueBests
 			return !$playerMeta->isPositionGoalkeeper();
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getForwardScore() < $memberB->getForwardScore()) {
+			if ($memberA->getForwardScore($this->type) < $memberB->getForwardScore($this->type)) {
 				return 1;
-			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
-				&& $memberA->getGoals() < $memberB->getGoals()
+			} elseif ($memberA->getForwardScore($this->type) === $memberB->getForwardScore($this->type)
+				&& $memberA->getGoals($this->type) < $memberB->getGoals($this->type)
 			) {
 				return 1;
-			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
-				&& $memberA->getGoals() === $memberB->getGoals()
-				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			} elseif ($memberA->getForwardScore($this->type) === $memberB->getForwardScore($this->type)
+				&& $memberA->getGoals($this->type) === $memberB->getGoals($this->type)
+				&& $memberA->getGamesCount($this->type) > $memberB->getGamesCount($this->type)
 			) {
 				return 1;
 			}
@@ -263,10 +268,10 @@ class LeagueBests
 			return !$playerMeta->isPositionGoalkeeper();
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getGoals() < $memberB->getGoals()) {
+			if ($memberA->getGoals($this->type) < $memberB->getGoals($this->type)) {
 				return 1;
-			} elseif ($memberA->getGoals() === $memberB->getGoals()
-				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			} elseif ($memberA->getGoals($this->type) === $memberB->getGoals($this->type)
+				&& $memberA->getGamesCount($this->type) > $memberB->getGamesCount($this->type)
 			) {
 				return 1;
 			}
@@ -286,15 +291,15 @@ class LeagueBests
 			return $playerMeta->isPositionBack();
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getForwardScore() < $memberB->getForwardScore()) {
+			if ($memberA->getForwardScore($this->type) < $memberB->getForwardScore($this->type)) {
 				return 1;
-			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
-				&& $memberA ->getGoals() < $memberB->getGoals()
+			} elseif ($memberA->getForwardScore($this->type) === $memberB->getForwardScore($this->type)
+				&& $memberA ->getGoals($this->type) < $memberB->getGoals($this->type)
 			) {
 				return 1;
-			} elseif ($memberA->getForwardScore() === $memberB->getForwardScore()
-				&& $memberA->getGoals() === $memberB->getGoals()
-				&& $memberA->getGamesCount() > $memberB->getGamesCount()
+			} elseif ($memberA->getForwardScore($this->type) === $memberB->getForwardScore($this->type)
+				&& $memberA->getGoals($this->type) === $memberB->getGoals($this->type)
+				&& $memberA->getGamesCount($this->type) > $memberB->getGamesCount($this->type)
 			) {
 				return 1;
 			}
@@ -311,13 +316,13 @@ class LeagueBests
 		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
 			/** @var PlayerMetadata $playerMeta */
 			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
-			return $member->getTotalSecondsTime() > 0 && $playerMeta->isPositionGoalkeeper() && $member->getGamesCountAsGoalkeeper() >= 8;
+			return $member->getTotalSecondsTime($this->type) > 0 && $playerMeta->isPositionGoalkeeper() && $member->getGamesCountAsGoalkeeper($this->type) >= 8;
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
-			if ($memberA->getReflectedBulletsPercent() < $memberB->getReflectedBulletsPercent()) {
+			if ($memberA->getReflectedBulletsPercent($this->type) < $memberB->getReflectedBulletsPercent($this->type)) {
 				return 1;
-			} elseif ($memberA->getReflectedBulletsPercent() === $memberB->getReflectedBulletsPercent()
-				&& $memberA->getTotalSecondsTime() < $memberB->getTotalSecondsTime()
+			} elseif ($memberA->getReflectedBulletsPercent($this->type) === $memberB->getReflectedBulletsPercent($this->type)
+				&& $memberA->getTotalSecondsTime($this->type) < $memberB->getTotalSecondsTime($this->type)
 			) {
 				return 1;
 			}
