@@ -316,7 +316,9 @@ class LeagueBests
 		$stats = array_filter($this->members, function (SeasonTeamMember $member) {
 			/** @var PlayerMetadata $playerMeta */
 			$playerMeta = $member->getMember()->getPlayer()->getMetadata();
-			return $member->getTotalSecondsTime($this->type) > 0 && $playerMeta->isPositionGoalkeeper() && $member->getGamesCountAsGoalkeeper($this->type) >= 8;
+			return $member->getTotalSecondsTime($this->type) > 0
+				&& $playerMeta->isPositionGoalkeeper()
+				&& $member->getGamesCountAsGoalkeeper($this->type) >= ($this->type->isEquals(GameType::playoff()) ? 0 : 8);
 		});
 		usort($stats, function (SeasonTeamMember $memberA, SeasonTeamMember $memberB) {
 			if ($memberA->getReflectedBulletsPercent($this->type) < $memberB->getReflectedBulletsPercent($this->type)) {
@@ -344,7 +346,9 @@ class LeagueBests
 		if ($playerMeta->isPositionBack()) {
 			$this->setBestBack($member);
 		}
-		if ($playerMeta->isPositionGoalkeeper() && $member->getTotalSecondsTime() > 0 && $member->getGamesCountAsGoalkeeper() >= 8) {
+		if ($playerMeta->isPositionGoalkeeper()
+			&& $member->getTotalSecondsTime() > 0
+			&& $member->getGamesCountAsGoalkeeper() >= ($this->type->isEquals(GameType::playoff()) ? 0 : 8)) {
 			$this->setBestGoalkeeper($member);
 		}
 	}
