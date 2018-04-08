@@ -25,7 +25,6 @@ class SeasonTeamMember
 	private $assistantGoals = [];
 	private $penaltyTime = [];
 
-	private $goalsFailed = [];
 	private $goalsFailedByType = [];
 	private $totalSecondsTime = [];
 	/**

@@ -59,7 +59,7 @@
                     {% else %}
                         <td>{{ memberStat.member|memberStatistic.gamesCountAsGoalkeeper('playoff') }}</td>
                         <td>{{ memberStat.member|memberStatistic.zeroGameCount('playoff') }}</td>
-                        <td>{{ memberStat.member|memberStatistic.goalsFailed('playoff') }}</td>
+                        <td>{{ memberStat.member|memberStatistic.goalsFailedByType('playoff') }}</td>
                         <td>{{ memberStat.member|memberStatistic.totalMinutesTime('playoff')|number_format(0, '.', ',') }}</td>
                         <td>{{ memberStat.member|memberStatistic.reliabilityCoef('playoff')|number_format(1, '.', ',') }}</td>
                         <td>{{ memberStat.member|memberStatistic.reflectedBulletsPercent('playoff')|number_format(1, '.', ',') }}</td>
