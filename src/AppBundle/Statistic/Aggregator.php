@@ -128,13 +128,21 @@ class Aggregator
 			if ($game->getState() !== Game::STATE_FINISHED) {
 				continue;
 			}
-			$gameStat = $this->getGameStatistic($game);
+			$events = $this->gameEventRepository->findByGame($game);
+			foreach ($events as $event) {
+				foreach ($seasonTeamMembers as $member) {
+					$memberStat = $stat->getMemberStatistic($member);
+					$memberStat->aggregate($game, $event);
+					$stat->setMemberStatistic($memberStat);
+				}
+			}
 
-			$stat->setGamesCount($stat->getGamesCount() + 1);
+			if (!$game->getType()->isEquals(GameType::regular())) {
+				continue;
+			}
 
 			$lastEventPeriod = GameEvent::PERIOD_1;
 			$oppositeTeam = $game->getSeasonTeamA()->getId() === $seasonTeam->getId() ? $game->getSeasonTeamB() : $game->getSeasonTeamA();
-			$events = $this->gameEventRepository->findByGame($game);
 			foreach ($events as $event) {
 				switch ($event->getType()) {
 					case 'goalkeeper':
@@ -156,12 +164,10 @@ class Aggregator
 					default:
 						break;
 				}
-				foreach ($seasonTeamMembers as $member) {
-					$memberStat = $stat->getMemberStatistic($member);
-					$memberStat->aggregate($game, $event);
-					$stat->setMemberStatistic($memberStat);
-				}
 			}
+
+			$gameStat = $this->getGameStatistic($game);
+			$stat->setGamesCount($stat->getGamesCount() + 1);
 			$isWinner = false;
 			if ($game->getSeasonTeamA()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() > $gameStat->getTeamBGoals()
 				|| $game->getSeasonTeamB()->getId() === $seasonTeam->getId() && $gameStat->getTeamAGoals() < $gameStat->getTeamBGoals()) {
