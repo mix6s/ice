@@ -166,9 +166,15 @@ class SeasonTeamMember
 	private function setGoalsFailedByType(int $goalsFailed, string $type)
 	{
 		$this->goalsFailedByType[(string)$type] = $goalsFailed;
-		if ($goalsFailed === 0) {
-			$this->zeroGamesCount[(string)$type] = ($this->zeroGamesCount[(string)$type] ?? 0) + 1;
-		}
+	}
+
+	/**
+	 * @param int $count
+	 * @param string $type
+	 */
+	private function setZeroGameCount(int $count, string $type)
+	{
+		$this->zeroGamesCount[(string)$type] = $count;
 	}
 
 	/**
@@ -288,6 +294,9 @@ class SeasonTeamMember
 					$memberGameGoalsFailed = $event->getGoals();
 					$this->setBullets($this->getBullets($game->getType()) + $event->getBullets(), $game->getType());
 					$this->setGoalsFailedByType($this->getGoalsFailedByType($game->getType()) + $event->getGoals(), $game->getType());
+					if ($event->getGoals() === 0) {
+						$this->setZeroGameCount($this->getZeroGameCount($game->getType()) + 1, $game->getType());
+					}
 					$this->setTotalSecondsTime($this->getTotalSecondsTime($game->getType()) + $event->getDuration(), $game->getType());
 					$this->setGamesCountAsGoalkeeper($this->getGamesCountAsGoalkeeper($game->getType()) + 1, $game->getType());
 				}
