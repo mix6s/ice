@@ -44,6 +44,7 @@
                         <th width="50" title="Процент отраженных бросков">%ОБ</th>
                     {% endif %}
                 </tr>
+                {% set gameType = "regular" %}
                 {% for num, memberStat in list %}
                 <tr>
                     <td>{{ num + 1 }}</td>
@@ -51,18 +52,18 @@
                     <td>{{ memberStat.member.player.metadata.fullName }}</td>
                     <td>{{ memberStat.member.seasonTeam.team.metadata.title }}</td>
                     {% if top != 'goalkeeper' %}
-                    <td>{{ memberStat.member|memberStatistic.gamesCount('playoff') }}</td>
-                    <td>{{ memberStat.member|memberStatistic.goals('playoff') }}</td>
-                    <td>{{ memberStat.member|memberStatistic.assistantGoals('playoff') }}</td>
-                    <td>{{ memberStat.member|memberStatistic.score('playoff') }}</td>
-                    <td>{{ memberStat.member|memberStatistic.penaltyTime('playoff') }}</td>
+                    <td>{{ memberStat.member|memberStatistic.gamesCount(gameType) }}</td>
+                    <td>{{ memberStat.member|memberStatistic.goals(gameType) }}</td>
+                    <td>{{ memberStat.member|memberStatistic.assistantGoals(gameType) }}</td>
+                    <td>{{ memberStat.member|memberStatistic.score(gameType) }}</td>
+                    <td>{{ memberStat.member|memberStatistic.penaltyTime(gameType) }}</td>
                     {% else %}
-                        <td>{{ memberStat.member|memberStatistic.gamesCountAsGoalkeeper('playoff') }}</td>
-                        <td>{{ memberStat.member|memberStatistic.zeroGameCount('playoff') }}</td>
-                        <td>{{ memberStat.member|memberStatistic.goalsFailedByType('playoff') }}</td>
-                        <td>{{ memberStat.member|memberStatistic.totalMinutesTime('playoff')|number_format(0, '.', ',') }}</td>
-                        <td>{{ memberStat.member|memberStatistic.reliabilityCoef('playoff')|number_format(1, '.', ',') }}</td>
-                        <td>{{ memberStat.member|memberStatistic.reflectedBulletsPercent('playoff')|number_format(1, '.', ',') }}</td>
+                        <td>{{ memberStat.member|memberStatistic.gamesCountAsGoalkeeper(gameType) }}</td>
+                        <td>{{ memberStat.member|memberStatistic.zeroGameCount(gameType) }}</td>
+                        <td>{{ memberStat.member|memberStatistic.goalsFailedByType(gameType) }}</td>
+                        <td>{{ memberStat.member|memberStatistic.totalMinutesTime(gameType)|number_format(0, '.', ',') }}</td>
+                        <td>{{ memberStat.member|memberStatistic.reliabilityCoef(gameType)|number_format(1, '.', ',') }}</td>
+                        <td>{{ memberStat.member|memberStatistic.reflectedBulletsPercent(gameType)|number_format(1, '.', ',') }}</td>
                     {% endif %}
                 </tr>
                 {% endfor %}
