@@ -1,1 +1,2 @@
 web/backend/* linguist-vendored
+app/Resources/assets/* linguist-vendored
